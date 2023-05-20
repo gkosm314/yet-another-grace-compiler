@@ -1,29 +1,8 @@
 %{
 
+#include "parser.hpp"
+
 #define T_eof 0
-#define T_and 1001
-#define T_int 1002
-#define T_then 1003
-#define T_char 1004
-#define T_mod 1005
-#define T_var 1006
-#define T_div 1007
-#define T_not 1008
-#define T_while 1009
-#define T_do 1010
-#define T_nothing 1011
-#define T_else 1012
-#define T_or 1013
-#define T_fun 1014
-#define T_ref 1015
-#define T_if 1016
-#define T_return 1017
-#define T_leq 1018
-#define T_geq 1019
-#define T_arr 1020
-#define T_id 1021
-#define T_char_lit 1023
-#define T_writestring 1024
 
 void ERROR (const char msg []);
 
@@ -73,7 +52,7 @@ E [\n\t\r\0\\\'\"\x[0-9][0-9]]
 
 {L}[a-zA-Z0-9\_]* { return T_id; }
 
-{D}+ { return T_int; }
+{D}+ { return T_int_lit; }
 
 \'("\\n"|"\\0"|"\\t"|"\\r"|"\\\\"|"\\'"|"\\\"")\' { return T_char_lit; }
 \'{HEX}\' { return T_char_lit; }
@@ -90,7 +69,7 @@ E [\n\t\r\0\\\'\"\x[0-9][0-9]]
 <SINGLE_COMMENT>[^\n]+ {}
 
 \" { BEGIN(STRING); }
-<STRING>\" { BEGIN(INITIAL); return 20000; }
+<STRING>\" { BEGIN(INITIAL); return T_string_lit; }
 <STRING>[^\"]+ {}
 
 {W}+ { /* nothing */ }
@@ -106,12 +85,3 @@ void ERROR (const char msg []) {
     exit(1);
 }
 
-
-int main() {
-  int token;
-  do {
-    token = yylex();
-    printf("token = %d, lexeme = \"%s\"\n", token, yytext);
-  } while(token != T_eof);
-  return 0;
-}
