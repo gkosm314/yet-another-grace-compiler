@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-
+#include <string>
 
 
 class AST
@@ -129,6 +129,7 @@ class Assign : public Stmt
   public:
     Assign(AbstractLvalue *l, Expr *e) : lval(l), expr(e) {};
     void execute() const override {
+      // TODO
       // Update the valaue of lval to e->eval()
       // variables[*lval->Getval]  = e->eval()
     };
@@ -181,24 +182,103 @@ class Return : public Stmt
 };
 
 
-// TODO
-/* In situations like a = f(); the rhs has to implement eval() */ 
-class FuncCallExpression : public Expr 
+
+class Id : public AbstractLvalue
 {
   public:
-    FuncCallExpression();
-    int eval() const override;
+    Id(std::string *s) : str(s) {}
+    // TODO
+    int eval() const override {
+      return 0;
+    }
+  
+    void printAST(std::ostream &out) const override {
+      out << "Id(" << *str <<  ")";
+    }
+
+  private:
+    std::string *str;
 };
 
+
+class StrLit : public AbstractLvalue
+{
+  public:
+    StrLit(std::string *s) : str(s) {}
+    // TODO
+    // std::string eval() const override {
+    //   return *str;
+    // }
+    // Just for compilation, replace with template
+    int eval() const override {
+      return 1;
+    }
+
+    void printAST(std::ostream &out) const override {
+      out << "StrLit(" << *str <<  ")";
+    }
+
+  private:
+    std::string *str;
+};
+
+
+// class LMatrix : public AbstractLvalue
+// {
+//   public:
+//     LMatrix();
+//     int eval() const override;
+// };
+
+
+
 // TODO
+/* In situations like a <- f(); the rhs has to implement eval() */ 
+class FuncCall : public Expr 
+{
+  public:
+    FuncCall(Id *f, std::vector<Expr *> *par) : funcName(f), parametersExprList(par) {}
+    int eval() const override {
+
+    }
+
+    void printAST(std::ostream &out) const override {
+      bool first = true;
+      out << "FuncCall(" << *funcName;
+      if (!(parametersExprList->empty())) {
+        out << "[";
+        for (auto exprPtr : *parametersExprList) {
+          if (!first)
+            out << ",";
+          first = false;
+          out << *exprPtr;
+        }
+        out << "]";
+      }
+      out << ")";
+    }
+
+  private:
+    Id *funcName;
+    std::vector<Expr *> *parametersExprList;
+};
+
+
+/* For example f(); */
 class FuncCallStmt : public Stmt
 {
   public:
-    FuncCallStmt(FuncCallExpression *fe) : funcexpr(fe) {};
-    void execute() const override;
+    FuncCallStmt(FuncCall *fc) : func(fc) {};
+    void execute() const override {
+      func->eval(); 
+    }
   
+    void printAST(std::ostream &out) const override {
+      out << "FuncCallStmt(" << *func << ")";
+    }
+
   private:
-    FuncCallExpression* funcexpr;
+    FuncCall* func;
 };
 
 
@@ -208,7 +288,7 @@ class IntConst : public Expr
   public:
     IntConst(int v) : val(v) {};
     
-    int eval() const override{
+    int eval() const override {
       return val;
     }
 
@@ -224,11 +304,11 @@ class IntConst : public Expr
 class CharConst : public Expr 
 {
   public:
-    CharConst(char c) : val(c) {};
+    CharConst(char c) : val(c) {}
     
     int eval() const override {
       return val;
-    };
+    }
   
     void printAST(std::ostream &out) const override {
       out << "CharConst(" << val << ")";
@@ -242,115 +322,174 @@ class CharConst : public Expr
 class BinOp : public Expr 
 {
   public:
-    BinOp();
-    int eval() const override;
+    BinOp(Expr *l, char o, Expr *r): left(l), op(o), right(r) {}
+  
+    virtual int eval() const override {
+      switch (op) {
+        case '+': return left->eval() + right->eval();
+        case '-': return left->eval() - right->eval();
+        case '*': return left->eval() * right->eval();
+        case '/': return left->eval() / right->eval();
+        case '%': return left->eval() % right->eval();
+      }
+      return 0; /* This will never be reached */
+    }
+
+    void printAST(std::ostream &out) const override {
+      out << op << "(" << *left << ", " << *right << ")";
+    }
+
+  private:
+    Expr *left;
+    char op;
+    Expr *right;
+
 };
 
 
 class UnaryOp : public Expr 
 {
   public:
-    UnaryOp();
-    int eval() const override;
+    UnaryOp(char o, Expr *e) : expr(e), op(o) {}
+    int eval() const override {
+      if (op == '+')
+        return expr->eval();
+      if (op == '-')
+        return -1*expr->eval();
+      
+      exit(1);  /* This should never be reached */
+      return 0; 
+    }
+  
+    void printAST(std::ostream &out) const override {
+      out << op << "(" << *expr;
+    }
+
+  private:
+    Expr *expr;
+    char op;
 };
 
 
 class LogicalCond : public Condition
 {
   public:
-    LogicalCond();
-    int eval() const override;
+    LogicalCond(Condition *l, char o, Condition *r = nullptr): c1(l), op(o), c2(r) {}
+    int eval() const override {
+      // Take care of short-circuit
+      switch (op) {
+        case 'n': return !(c1->eval());
+        case 'a': {
+          if (c1->eval() != 1)
+            return 0;
+          return c2->eval();
+        }
+        case 'o': {
+          if (c1->eval() == 1)
+            return 1;
+          return c2->eval();
+        }
+      }
+      return 0; /* This will never be reached */
+    }
+
+    void printAST(std::ostream &out) const override {
+      out << op << "(" << *c1;
+      if (c2 != nullptr)
+        out << ", " << *c2 << ")";
+    }
+
+  private:
+    Condition *c1;
+    char op;
+    Condition *c2;
 };
 
 
 class NumericCond : public Condition
 {
   public:
-    NumericCond();
-    int eval() const override;
-};
+    NumericCond(Expr *l, char o, Expr *r) : left(l), op(o), right(r) {}
+    int eval() const override {
+      switch (op) {
+        case '=': return (left->eval() == right->eval());
+        case '#': return (left->eval() != right->eval());
+        case '>': return (left->eval() > right->eval());
+        case '<': return (left->eval() < right->eval());
+        case 'l': return (left->eval() <= right->eval());
+        case 'g': return (left->eval() >= right->eval());
+      }
+      return 0; /* This will never be reached */
+    }
 
-class Id : AbstractLvalue
-{
-  public:
-    Id();
-    int eval() const override;
-};
+    void printAST(std::ostream &out) const override {
+      out << op << "(" << *left << ", " << *right << ")";
+    }
 
-
-class StrLit : AbstractLvalue
-{
-  public:
-    StrLit();
-    int eval() const override;
-};
-
-
-class LMatrix : AbstractLvalue
-{
-  public:
-    LMatrix();
-    int eval() const override;
+  private:
+    Expr *left;
+    char op;
+    Expr *right;
 };
 
 
-class Type : public AbstractType
-{
-  public:
-    Type();
+// class VarType : public AbstractType
+// {
+//   public:
+//     VarType();
 
-};
-
-
-class RetType : public AbstractType
-{
-  public:
-    RetType();
-
-};
+// };
 
 
-class FParType : public AbstractType
-{
-  public:
-    FParType();
+// class RetType : public AbstractType
+// {
+//   public:
+//     RetType();
 
-};
-
-
-class VarDef : public LocalDef
-{
-  public:
-    VarDef();
-};
+// };
 
 
-class FuncDecl : public LocalDef
-{
-  public:
-    FuncDecl();
-};
+// class FParType : public AbstractType
+// {
+//   public:
+//     FParType();
+
+// };
 
 
-class Program : public FuncDef
-{
-  public:
-    Program();
-};
+// class VarDef : public LocalDef
+// {
+//   public:
+//     VarDef();
+// };
 
 
-class FParDef : public AST
-{
-  public:
-    FParDef();
-};
+// class FuncDecl : public LocalDef
+// {
+//   public:
+//     FuncDecl();
+// };
 
 
-class Header : public AST
-{
-  public:
-    Header();
-};
+// class Program : public FuncDef
+// {
+//   public:
+//     Program();
+// };
+
+
+// class FParDef : public AST
+// {
+//   public:
+//     FParDef();
+// };
+
+
+// class Header : public AST
+// {
+//   public:
+//     Header();
+// };
 
 
 #endif

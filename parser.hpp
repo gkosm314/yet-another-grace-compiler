@@ -91,15 +91,19 @@ union YYSTYPE
 
     Stmt *stmt;
     Expr *expr;
+    Block *block;
     Condition *cond;
     LocalDef *localdef;
     FuncDef *funcdef;
     AbstractLvalue *abstractlvalue;
+    FuncCall *funccall;
+    Id *id;
     char char_val;
     int  int_val;
     std::string *str_val;
+    std::vector<Expr *> *vector_expr;
 
-#line 103 "parser.hpp"
+#line 107 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

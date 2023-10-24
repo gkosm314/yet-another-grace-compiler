@@ -103,18 +103,18 @@ Grammar
 Terminals, with rules where they appear
 
     $end (0) 0
-    '#' (35) 65
+    '#' <char_val> (35) 65
     '(' (40) 5 40 51 60
     ')' (41) 5 40 51 60
-    '*' (42) 57
-    '+' (43) 53 55
+    '*' <char_val> (42) 57
+    '+' <char_val> (43) 53 55
     ',' (44) 13 44
-    '-' (45) 54 56
+    '-' <char_val> (45) 54 56
     ':' (58) 5 10 11 27
     ';' (59) 9 26 27 28 29 31 35 36
-    '<' (60) 66
-    '=' (61) 64
-    '>' (62) 67
+    '<' <char_val> (60) 66
+    '=' <char_val> (61) 64
+    '>' <char_val> (62) 67
     '[' (91) 18 21 47
     ']' (93) 18 21 47
     '{' (123) 37
@@ -140,10 +140,10 @@ Terminals, with rules where they appear
     "leq" (275) 68
     "geq" (276) 69
     "arr" (277) 29
-    T_id (278) 5 10 11 13 27 40 45
-    T_int_lit (279) 18 48
-    T_char_lit (280) 49
-    T_string_lit (281) 46
+    T_id <id> (278) 5 10 11 13 27 40 45
+    T_int_lit <int_val> (279) 18 48
+    T_char_lit <char_val> (280) 49
+    T_string_lit <str_val> (281) 46
     UNARY (282)
 
 
@@ -199,31 +199,31 @@ Nonterminals, with rules where they appear
     var_def (60)
         on left: 27
         on right: 25
-    stmt (61)
+    stmt <stmt> (61)
         on left: 28 29 30 31 32 33 34 35 36
         on right: 32 33 34 39
-    block (62)
+    block <block> (62)
         on left: 37
         on right: 2 30
-    stmt_list (63)
+    stmt_list <block> (63)
         on left: 38 39
         on right: 37 39
-    func_call (64)
+    func_call <funccall> (64)
         on left: 40
         on right: 31 52
-    expr_list (65)
+    expr_list <vector_expr> (65)
         on left: 41 42
         on right: 40
-    expr_rest (66)
+    expr_rest <vector_expr> (66)
         on left: 43 44
         on right: 42 44
-    l_value (67)
+    l_value <abstractlvalue> (67)
         on left: 45 46 47
         on right: 29 47 50
-    expr (68)
+    expr <expr> (68)
         on left: 48 49 50 51 52 53 54 55 56 57 58 59
         on right: 29 36 42 44 47 51 53 54 55 56 57 58 59 64 65 66 67 68 69
-    cond (69)
+    cond <cond> (69)
         on left: 60 61 62 63 64 65 66 67 68 69
         on right: 32 33 34 60 61 62 63
 

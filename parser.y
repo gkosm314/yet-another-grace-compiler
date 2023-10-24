@@ -34,11 +34,11 @@ extern int yylineno;
 %token T_geq "geq"
 %token T_arr "arr" /* Short for arrow, the assignement op <- */
 
-%token T_id
+%token<id> T_id
 /* %token T_writestring */
-%token T_int_lit
-%token T_char_lit
-%token T_string_lit
+%token<int_val> T_int_lit
+%token<char_val> T_char_lit
+%token<str_val> T_string_lit
 
 %left "or"
 %left "and"
@@ -53,14 +53,27 @@ extern int yylineno;
 %union {
     Stmt *stmt;
     Expr *expr;
+    Block *block;
     Condition *cond;
     LocalDef *localdef;
     FuncDef *funcdef;
     AbstractLvalue *abstractlvalue;
+    FuncCall *funccall;
+    Id *id;
     char char_val;
     int  int_val;
     std::string *str_val;
+    std::vector<Expr *> *vector_expr;
 }
+
+%type<stmt> stmt 
+%type<expr> expr 
+%type<block> block stmt_list
+%type<cond> cond 
+%type<abstractlvalue> l_value
+%type<funccall> func_call
+%type<char_val> '+' '-' '*' '=' '#' '<' '>'
+%type<vector_expr> expr_list expr_rest
 
 %%
 
@@ -140,72 +153,73 @@ var_def:
 ;
 
 stmt:
-    ';'
-|   l_value "arr" expr ';'            /*{ $$ = new Assign($1, $3);   } */
-|   block                             /*{ $$ = $1;                   } */
-|   func_call ';'                     /*{ $$ = new FuncCallStmt($1); } */
-|   "if" cond "then" stmt "else" stmt /*{ $$ = new If($2, $4, $6);   } */
-|   "if" cond "then" stmt             /*{ $$ = new If($2, $4);       } */
-|   "while" cond "do" stmt            /*{ $$ = new While($2, $4);    } */
-|   "return" ';'                      /*{ $$ = new Return();         } */
-|   "return" expr ';'                 /*{ $$ = new Return($2);       } */
+    ';'                               { /* nothing */              }
+|   l_value "arr" expr ';'            { $$ = new Assign($1, $3);   }
+|   block                             { $$ = $1;                   }
+|   func_call ';'                     { $$ = new FuncCallStmt($1); }
+|   "if" cond "then" stmt "else" stmt { $$ = new If($2, $4, $6);   }
+|   "if" cond "then" stmt             { $$ = new If($2, $4);       }
+|   "while" cond "do" stmt            { $$ = new While($2, $4);    }
+|   "return" ';'                      { $$ = new Return();         }
+|   "return" expr ';'                 { $$ = new Return($2);       }
 
 block:
-    '{' stmt_list '}'                 /*{ $$ = $2;                   } */
+    '{' stmt_list '}'                 { $$ = $2;                   }
 
 
 stmt_list:
-    /* nothing */                     /*{ $$ = new Block();          } */
-|   stmt_list stmt                    /*{ $1->append($2); $$ = $1;   } */
+    /* nothing */                     { $$ = new Block();          }
+|   stmt_list stmt                    { $1->append($2); $$ = $1;   }
 ;
 
 func_call:
-    T_id '(' expr_list ')'
+    T_id '(' expr_list ')'  { $$ = new FuncCall($1, $3); }
 ;
 
 
+/* TODO */
 expr_list:
-    /* nothing */
-|   expr expr_rest
+    /* nothing */           { $$ = new std::vector<Expr *>(); }
+|   expr expr_rest          { $2->insert($2->begin(), $1); $$ = $2;        }
 ;
 
 expr_rest:
-    /* nothing */
-|   ',' expr expr_rest
+    /* nothing */           { $$ = new std::vector<Expr *>(); }
+|   ',' expr expr_rest      { $3->push_back($2); $$ = $3; }
 ;
 
 l_value:
-    T_id
-|   T_string_lit
+    T_id                  { $$ = new Id(yylval.str_val);     }
+|   T_string_lit          { $$ = new StrLit(yylval.str_val); }
 |   l_value '[' expr ']'
 ;
 
 expr:
-    T_int_lit             /*{ $$ = new IntConst($1);  }*/
-|   T_char_lit            /*{ $$ = new CharConst($1); }*/
-|   l_value
-|   '(' expr ')'
-|   func_call
-|   '+' expr %prec UNARY 
-|   '-' expr %prec UNARY
-|   expr '+' expr
-|   expr '-' expr
-|   expr '*' expr
-|   expr T_div expr
-|   expr T_mod expr
+    T_int_lit             { $$ = new IntConst($1);       }
+|   T_char_lit            { $$ = new CharConst($1);      }
+|   l_value               { $$ = $1;                     }
+|   '(' expr ')'          { $$ = $2;                     }
+|   func_call             { $$ = $1;                     }
+|   '+' expr %prec UNARY  { $$ = new UnaryOp($1, $2);    }
+|   '-' expr %prec UNARY  { $$ = new UnaryOp($1, $2);    }
+|   expr '+' expr         { $$ = new BinOp($1, '+', $3); }
+|   expr '-' expr         { $$ = new BinOp($1, '-', $3); }
+|   expr '*' expr         { $$ = new BinOp($1, '*', $3); }
+|   expr T_div expr       { $$ = new BinOp($1, '/', $3); }
+|   expr T_mod expr       { $$ = new BinOp($1, '%', $3); }
 ;
 
 cond:
-    '(' cond ')'
-|   "not" cond
-|   cond "and" cond
-|   cond "or" cond
-|   expr '=' expr
-|   expr '#' expr
-|   expr '<' expr
-|   expr '>' expr
-|   expr T_leq expr
-|   expr T_geq expr
+    '(' cond ')'          { $$ = $2;                           }
+|   "not" cond            { $$ = new LogicalCond($2, 'n');     }
+|   cond "and" cond       { $$ = new LogicalCond($1, 'a', $3); }
+|   cond "or" cond        { $$ = new LogicalCond($1, 'o', $3); }
+|   expr '=' expr         { $$ = new NumericCond($1, $2, $3);  }
+|   expr '#' expr         { $$ = new NumericCond($1, $2, $3);  }
+|   expr '<' expr         { $$ = new NumericCond($1, $2, $3);  }
+|   expr '>' expr         { $$ = new NumericCond($1, $2, $3);  }
+|   expr T_leq expr       { $$ = new NumericCond($1, 'l', $3); }
+|   expr T_geq expr       { $$ = new NumericCond($1, 'g', $3); }
 ;
 
 %%
