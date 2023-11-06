@@ -121,11 +121,11 @@ void ERROR (const char msg []) {
     exit(1);
 }
 
-int main() {
+/* int main() {
   int token;
   do {
     token = yylex();
     printf("token = %d, lexeme = \"%s\"\n", token, yytext);
   } while(token != T_eof);
   return 0;
-}
+} */

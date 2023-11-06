@@ -96,22 +96,22 @@ header:
 
 fpar_def_list:
     /* nothing */
-|   fpar_def fpar_def_rest
+|   fpar_def_rest fpar_def
 ;
 
 fpar_def_rest:
     /* nothing */
-|   ';' fpar_def fpar_def_rest
+|   fpar_def_rest fpar_def ';'
 ;
 
 fpar_def:
-    "ref" T_id id_rest ':' fpar_type
-|   T_id id_rest ':' fpar_type
+    "ref" id_rest T_id ':' fpar_type
+|   id_rest T_id ':' fpar_type
 ;
 
 id_rest:
-/* nothing */
-|   ',' T_id id_rest
+    /* nothing */
+|   id_rest T_id ','
 ;
 
 data_type:
@@ -120,12 +120,12 @@ data_type:
 ;
 
 type:
-    data_type int_const_bracket_list
+    data_type int_const_bracket_list_var
 ;
 
-int_const_bracket_list:
+int_const_bracket_list_var:
     /* nothing */
-|   '[' T_int_lit ']' int_const_bracket_list
+|   '[' T_int_lit ']' int_const_bracket_list_var
 ;
 
 ret_type:
@@ -133,9 +133,15 @@ ret_type:
 |   "nothing"
 ;
 
+int_const_bracket_list:
+    ']'
+|   T_int_lit ']'
+|   int_const_bracket_list '[' T_int_lit ']'
+;
+
 fpar_type:
-    data_type '[' ']' int_const_bracket_list
-|   data_type int_const_bracket_list
+    data_type
+|   data_type '[' int_const_bracket_list
 ;
 
 local_def:
@@ -149,7 +155,7 @@ func_decl:
 ;
 
 var_def:
-    "var" T_id id_rest ':' type ';'
+    "var" id_rest T_id ':' type ';'
 ;
 
 stmt:
@@ -177,15 +183,14 @@ func_call:
 ;
 
 
-/* TODO */
 expr_list:
     /* nothing */           { $$ = new std::vector<Expr *>(); }
-|   expr expr_rest          { $2->insert($2->begin(), $1); $$ = $2;        }
+|   expr_rest expr          { $1->push_back($2); $$ = $1;        }
 ;
 
 expr_rest:
     /* nothing */           { $$ = new std::vector<Expr *>(); }
-|   ',' expr expr_rest      { $3->push_back($2); $$ = $3; }
+|   expr_rest expr ','      { $1->push_back($2); $$ = $1; }
 ;
 
 l_value:
@@ -229,8 +234,8 @@ void yyerror(const char *msg) {
   exit(1);
 }
 
-/* int main() {
+int main() {
   int result = yyparse();
   if (result == 0) printf("Success!\n");
   return result;
-} */
+}
