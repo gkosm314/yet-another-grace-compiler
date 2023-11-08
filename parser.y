@@ -64,6 +64,14 @@ extern int yylineno;
     int  int_val;
     std::string *str_val;
     std::vector<Expr *> *vector_expr;
+    std::vector<LocalDef *> *vector_local_def;
+    std::vector<FParDef *> *vector_fpar_def;
+    Header *header;
+    FParDef *fpar_def;
+    std::vector<Id *> *id_defs;
+    FParType *fpar_type;
+    DATA_TYPE data_type;
+    std::vector<int> *int_vec;
 }
 
 %type<stmt> stmt 
@@ -74,6 +82,16 @@ extern int yylineno;
 %type<funccall> func_call
 %type<char_val> '+' '-' '*' '=' '#' '<' '>'
 %type<vector_expr> expr_list expr_rest
+%type<funcdef> func_def
+%type<vector_local_def> local_def_list
+%type<header> header
+%type<localdef> local_def
+%type<vector_fpar_def> fpar_def_list fpar_def_rest
+%type<fpar_def> fpar_def
+%type<id_defs> id_rest
+%type<fpar_type> fpar_type
+%type<data_type> data_type ret_type
+%type<int_vec> int_const_bracket_list
 
 %%
 
@@ -82,45 +100,45 @@ program:
 ;
 
 func_def:
-    header local_def_list block
+    header local_def_list block { $$ = new FuncDef($1, $2, $3); }
 ;
 
 local_def_list:
-    /* nothing */
-|   local_def_list local_def;
+    /* nothing */             { $$ = new std::vector<LocalDef *>(); }  
+|   local_def_list local_def  { $1->push_back($2); $$ = $1;         } 
 ;
 
 header:
-    "fun" T_id '(' fpar_def_list ')' ':' ret_type
+    "fun" T_id '(' fpar_def_list ')' ':' ret_type { $$ = new Header($2, $4, $7); }
 ;
 
 fpar_def_list:
-    /* nothing */
-|   fpar_def_rest fpar_def
+    /* nothing */           { $$ = new std::vector<FParDef *>(); }
+|   fpar_def_rest fpar_def  { $1->push_back($2); $$ = $1;        }
 ;
 
 fpar_def_rest:
-    /* nothing */
-|   fpar_def_rest fpar_def ';'
+    /* nothing */               { $$ = new std::vector<FParDef *>(); }
+|   fpar_def_rest fpar_def ';'  { $1->push_back($2); $$ = $1;        }
 ;
 
 fpar_def:
-    "ref" id_rest T_id ':' fpar_type
-|   id_rest T_id ':' fpar_type
+    "ref" id_rest T_id ':' fpar_type { $2->push_back($3); $$ = new FParDef($2, $5, true);  }
+|   id_rest T_id ':' fpar_type       { $1->push_back($2); $$ = new FParDef($1, $4, false); }
 ;
 
 id_rest:
-    /* nothing */
-|   id_rest T_id ','
+    /* nothing */    { $$ = new std::vector<Id *>(); }
+|   id_rest T_id ',' { $1->push_back($2); $$ = $1;   }
 ;
 
 data_type:
-    "int"
-|   "char"
+    "int"   { $$ = DATA_TYPE_int;  }
+|   "char"  { $$ = DATA_TYPE_char; } 
 ;
 
 type:
-    data_type int_const_bracket_list_var
+    data_type int_const_bracket_list_var         {}
 ;
 
 int_const_bracket_list_var:
@@ -129,25 +147,25 @@ int_const_bracket_list_var:
 ;
 
 ret_type:
-    data_type
-|   "nothing"
+    data_type  { $$ = $1;                }
+|   "nothing"  { $$ = DATA_TYPE_nothing; }
 ;
 
 int_const_bracket_list:
-    ']'
-|   T_int_lit ']'
-|   int_const_bracket_list '[' T_int_lit ']'
+    ']'                                       { $$ = new std::vector<int>(); $$->push_back(INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE); }
+|   T_int_lit ']'                             { $$ = new std::vector<int>(); $$->push_back($1);                                            }
+|   int_const_bracket_list '[' T_int_lit ']'  { $1->push_back($3); $$ = $1;                                                                }
 ;
 
 fpar_type:
-    data_type
-|   data_type '[' int_const_bracket_list
+    data_type                            { $$ = new FParType($1);     }
+|   data_type '[' int_const_bracket_list { $$ = new FParType($1, $3); }
 ;
 
 local_def:
-    func_def
-|   func_decl
-|   var_def
+    func_def  {  }
+|   func_decl {  }
+|   var_def   {  }
 ;
 
 func_decl:
@@ -185,7 +203,7 @@ func_call:
 
 expr_list:
     /* nothing */           { $$ = new std::vector<Expr *>(); }
-|   expr_rest expr          { $1->push_back($2); $$ = $1;        }
+|   expr_rest expr          { $1->push_back($2); $$ = $1;     }
 ;
 
 expr_rest:

@@ -158,28 +158,28 @@ Nonterminals, with rules where they appear
     program (45)
         on left: 1
         on right: 0
-    func_def (46)
+    func_def <funcdef> (46)
         on left: 2
         on right: 1 26
-    local_def_list (47)
+    local_def_list <vector_local_def> (47)
         on left: 3 4
         on right: 2 4
-    header (48)
+    header <header> (48)
         on left: 5
         on right: 2 29
-    fpar_def_list (49)
+    fpar_def_list <vector_fpar_def> (49)
         on left: 6 7
         on right: 5
-    fpar_def_rest (50)
+    fpar_def_rest <vector_fpar_def> (50)
         on left: 8 9
         on right: 7 9
-    fpar_def (51)
+    fpar_def <fpar_def> (51)
         on left: 10 11
         on right: 7 9
-    id_rest (52)
+    id_rest <id_defs> (52)
         on left: 12 13
         on right: 10 11 13 30
-    data_type (53)
+    data_type <data_type> (53)
         on left: 14 15
         on right: 16 19 24 25
     type (54)
@@ -188,16 +188,16 @@ Nonterminals, with rules where they appear
     int_const_bracket_list_var (55)
         on left: 17 18
         on right: 16 18
-    ret_type (56)
+    ret_type <data_type> (56)
         on left: 19 20
         on right: 5
-    int_const_bracket_list (57)
+    int_const_bracket_list <int_vec> (57)
         on left: 21 22 23
         on right: 23 25
-    fpar_type (58)
+    fpar_type <fpar_type> (58)
         on left: 24 25
         on right: 10 11
-    local_def (59)
+    local_def <localdef> (59)
         on left: 26 27 28
         on right: 4
     func_decl (60)

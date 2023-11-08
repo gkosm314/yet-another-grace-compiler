@@ -7,6 +7,13 @@
 #include <string>
 
 
+#define INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE -1
+
+
+// TODO: Move this to the correct file, probably symbol.hpp
+enum DATA_TYPE { DATA_TYPE_int, DATA_TYPE_char, DATA_TYPE_nothing };
+
+
 class AST
 {
   public:
@@ -61,13 +68,6 @@ class AbstractType : public AST
 {
   public:
 
-};
-
-// TODO
-class FuncDef : public LocalDef
-{
-  public:
-    
 };
 
 
@@ -433,14 +433,17 @@ class NumericCond : public Condition
 };
 
 
-// class VarType : public AbstractType
-// {
-//   public:
-//     VarType();
+class VarType : public AbstractType
+{
+  public:
+    VarType();
 
-// };
+};
 
 
+
+// Not needed, implemented using enum
+// Leaving it here in case this needs to be implemented in the future
 // class RetType : public AbstractType
 // {
 //   public:
@@ -449,12 +452,40 @@ class NumericCond : public Condition
 // };
 
 
-// class FParType : public AbstractType
-// {
-//   public:
-//     FParType();
+class FParType : public AbstractType
+{
+  public:
+    FParType(DATA_TYPE t, std::vector<int> *dims_vec = nullptr): data_type(t), dims(dims_vec) {};
+  
+    void printAST(std::ostream &out) const override {
+        out << "FParType(";
+        switch (data_type)
+        {
+        case DATA_TYPE_int:
+          out << "int";
+          break;
+        case DATA_TYPE_char:
+          out << "char";
+          break;
+        default:
+          exit(1); /* Will never be reached */
+          break;
+        }
+        if (dims != nullptr) {
+          for (const auto &s : *dims) {
+            out << "[";
+            if (s != INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE) out << s; 
+            out << "]";
+          }
+        }
+        out << ")";
+      }
 
-// };
+  private:
+    DATA_TYPE data_type;
+    std::vector<int> *dims;
+
+};
 
 
 // class VarDef : public LocalDef
@@ -471,25 +502,108 @@ class NumericCond : public Condition
 // };
 
 
-// class Program : public FuncDef
-// {
-//   public:
-//     Program();
-// };
 
 
-// class FParDef : public AST
-// {
-//   public:
-//     FParDef();
-// };
+class FParDef : public AST
+{
+  public:
+    FParDef(std::vector<Id *> *ids_vec, FParType *f, bool b) : ids(ids_vec), fpar_type(f), ref(b) {};
+
+    void printAST(std::ostream &out) const override {
+      out << "FParDef(";
+      if (ref) out << "ref:";
+      out << "Ids(";
+      bool first = true;
+      for (const auto &s : *ids) {
+        if (!first) out << ", ";
+        first = false;
+        out << *s;
+      }
+      out << ") : ";
+      out << *fpar_type;
+      out << ")";
+    }
+
+  private:
+    std::vector<Id *> *ids;
+    FParType *fpar_type;
+    bool ref;
+};
 
 
-// class Header : public AST
-// {
-//   public:
-//     Header();
-// };
+class Header : public AST
+{
+  public:
+    Header(Id *i, std::vector<FParDef *> *vec_defs, DATA_TYPE dt) : id(i), fpar_defs(vec_defs), ret_type(dt) {} ;
 
+    void printAST(std::ostream &out) const override {
+      out << "Header(";
+      out << *id;
+      out << "FParDefs(";
+      bool first = true;
+      for (const auto &s : *fpar_defs) {
+        if (!first) out << ", ";
+        first = false;
+        out << *s;
+      }
+      
+      out << ") : ";
+      switch (ret_type)
+      {
+        case DATA_TYPE_int:
+          out << "int";
+          break;
+        case DATA_TYPE_char:
+          out << "char";
+          break;
+        case DATA_TYPE_nothing:
+          out << "nothing";
+          break;
+        default:
+          exit(1); /* Will never be reached */
+          break;
+      }
+      out << ")";
+    }
+
+  private:
+    Id *id;
+    std::vector<FParDef *> *fpar_defs;
+    DATA_TYPE ret_type;
+};
+
+// TODO
+class FuncDef : public LocalDef
+{
+  public:
+    FuncDef(Header *h,  std::vector<LocalDef *> *vector_def, Block *b) : header(h), local_defs(vector_def), block(b) {} ;
+  
+    void printAST(std::ostream &out) const override {
+      out << "FuncDef(";
+      out << *header;
+      out << "LocalDefs(";
+      bool first = true;
+      for (const auto &s : *local_defs) {
+        if (!first) out << ", ";
+        first = false;
+        out << *s;
+      }
+      out << ") : ";
+      out << *block;
+      out << ")";
+    }
+
+  private:
+    Header *header;
+    std::vector<LocalDef *> *local_defs;
+    Block *block;
+};
+
+
+class Program : public FuncDef
+{
+  public:
+    Program();
+};
 
 #endif

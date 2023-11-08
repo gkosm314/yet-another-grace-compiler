@@ -102,8 +102,16 @@ union YYSTYPE
     int  int_val;
     std::string *str_val;
     std::vector<Expr *> *vector_expr;
+    std::vector<LocalDef *> *vector_local_def;
+    std::vector<FParDef *> *vector_fpar_def;
+    Header *header;
+    FParDef *fpar_def;
+    std::vector<Id *> *id_defs;
+    FParType *fpar_type;
+    DATA_TYPE data_type;
+    std::vector<int> *int_vec;
 
-#line 107 "parser.hpp"
+#line 115 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
