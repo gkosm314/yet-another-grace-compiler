@@ -63,13 +63,6 @@ class AbstractLvalue : public Expr
 };
 
 
-/* abstract class */
-class AbstractType : public AST
-{
-  public:
-
-};
-
 
 class If : public Stmt
 {
@@ -433,32 +426,13 @@ class NumericCond : public Condition
 };
 
 
-class VarType : public AbstractType
+class Type : public AST
 {
   public:
-    VarType();
-
-};
-
-
-
-// Not needed, implemented using enum
-// Leaving it here in case this needs to be implemented in the future
-// class RetType : public AbstractType
-// {
-//   public:
-//     RetType();
-
-// };
-
-
-class FParType : public AbstractType
-{
-  public:
-    FParType(DATA_TYPE t, std::vector<int> *dims_vec = nullptr): data_type(t), dims(dims_vec) {};
+    Type(DATA_TYPE t, std::vector<int> *dims_vec) : data_type(t), dims(dims_vec) {};
   
     void printAST(std::ostream &out) const override {
-        out << "FParType(";
+        out << "Type(";
         switch (data_type)
         {
         case DATA_TYPE_int:
@@ -483,23 +457,44 @@ class FParType : public AbstractType
 
   private:
     DATA_TYPE data_type;
+    /*
+    Possibilites for dims:
+    - dims.size() == 0 : The type is a basic one meaning either int or char (not an arr)
+    - dims[0] == INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE : The type is defined in a function definition without the first dimension eg fun reverse (ref s : char[])
+    TODO: Make sure that the user can't somehow define the dimension to be equal to INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE eg fun reverse (ref s : char[-1]) should produce an error
+    - In all other cases the dims vector holds the actual dimensions passed by the programmer
+    */
     std::vector<int> *dims;
 
 };
 
 
-// class VarDef : public LocalDef
-// {
-//   public:
-//     VarDef();
-// };
+class VarDef : public LocalDef
+{
+  public:
+    VarDef(std::vector<Id *> *ids_vec, Type *t ) : ids(ids_vec), type(t) {};
+
+    void printAST(std::ostream &out) const override {
+      out << "VarDef(";
+      out << *type;
+      out << "Ids: (";
+      bool first = true;
+      for (const auto &s : *ids) {
+        if (!first) out << ", ";
+        first = false;
+        out << *s;
+      }
+      out << ")";
+    }
 
 
-// class FuncDecl : public LocalDef
-// {
-//   public:
-//     FuncDecl();
-// };
+  private:
+    std::vector<Id *> *ids; // Will never be nullptr by construction of parser
+    Type *type;
+};
+
+
+
 
 
 
@@ -507,7 +502,7 @@ class FParType : public AbstractType
 class FParDef : public AST
 {
   public:
-    FParDef(std::vector<Id *> *ids_vec, FParType *f, bool b) : ids(ids_vec), fpar_type(f), ref(b) {};
+    FParDef(std::vector<Id *> *ids_vec, Type *f, bool b) : ids(ids_vec), fpar_type(f), ref(b) {};
 
     void printAST(std::ostream &out) const override {
       out << "FParDef(";
@@ -526,9 +521,10 @@ class FParDef : public AST
 
   private:
     std::vector<Id *> *ids;
-    FParType *fpar_type;
+    Type *fpar_type;
     bool ref;
 };
+
 
 
 class Header : public AST
@@ -570,6 +566,22 @@ class Header : public AST
     Id *id;
     std::vector<FParDef *> *fpar_defs;
     DATA_TYPE ret_type;
+};
+
+
+class FuncDecl : public LocalDef
+{
+  public:
+    FuncDecl(Header *h) : header(h) {};
+    
+    void printAST(std::ostream &out) const override {
+      out << "FuncDecl(";
+      out << *header;
+      out << ")";
+    }
+
+  private:
+    Header *header; 
 };
 
 // TODO

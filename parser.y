@@ -69,8 +69,10 @@ extern int yylineno;
     Header *header;
     FParDef *fpar_def;
     std::vector<Id *> *id_defs;
-    FParType *fpar_type;
+    Type *type;
     DATA_TYPE data_type;
+    FuncDecl* func_decl;
+    VarDef* var_def;
     std::vector<int> *int_vec;
 }
 
@@ -89,9 +91,11 @@ extern int yylineno;
 %type<vector_fpar_def> fpar_def_list fpar_def_rest
 %type<fpar_def> fpar_def
 %type<id_defs> id_rest
-%type<fpar_type> fpar_type
+%type<type> fpar_type type
 %type<data_type> data_type ret_type
-%type<int_vec> int_const_bracket_list
+%type<int_vec> int_const_bracket_list int_const_bracket_list_var
+%type<func_decl> func_decl
+%type<var_def> var_def
 
 %%
 
@@ -138,12 +142,12 @@ data_type:
 ;
 
 type:
-    data_type int_const_bracket_list_var         {}
+    data_type int_const_bracket_list_var         { $$ = new Type($1, $2); }
 ;
 
 int_const_bracket_list_var:
-    /* nothing */
-|   '[' T_int_lit ']' int_const_bracket_list_var
+    /* nothing */                                { $$ = new std::vector<int>(); }
+|   int_const_bracket_list_var '[' T_int_lit ']' { $1->push_back($3); $$ = $1;  }
 ;
 
 ret_type:
@@ -158,22 +162,22 @@ int_const_bracket_list:
 ;
 
 fpar_type:
-    data_type                            { $$ = new FParType($1);     }
-|   data_type '[' int_const_bracket_list { $$ = new FParType($1, $3); }
+    data_type                            { $$ = new Type($1, new std::vector<int>()); }
+|   data_type '[' int_const_bracket_list { $$ = new Type($1, $3);                     }
 ;
 
 local_def:
-    func_def  {  }
-|   func_decl {  }
-|   var_def   {  }
+    func_def  { $$ = $1; }
+|   func_decl { $$ = $1; }
+|   var_def   { $$ = $1; }
 ;
 
 func_decl:
-    header ';'
+    header ';' { $$ = new FuncDecl($1); }
 ;
 
 var_def:
-    "var" id_rest T_id ':' type ';'
+    "var" id_rest T_id ':' type ';'  { $2->push_back($3); $$ = new VarDef($2, $5); }
 ;
 
 stmt:

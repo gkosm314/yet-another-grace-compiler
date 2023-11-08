@@ -107,11 +107,13 @@ union YYSTYPE
     Header *header;
     FParDef *fpar_def;
     std::vector<Id *> *id_defs;
-    FParType *fpar_type;
+    Type *type;
     DATA_TYPE data_type;
+    FuncDecl* func_decl;
+    VarDef* var_def;
     std::vector<int> *int_vec;
 
-#line 115 "parser.hpp"
+#line 117 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;

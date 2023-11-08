@@ -1,4 +1,4 @@
-State 119 conflicts: 1 shift/reduce
+State 118 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -32,7 +32,7 @@ Grammar
    16 type: data_type int_const_bracket_list_var
 
    17 int_const_bracket_list_var: ε
-   18                           | '[' T_int_lit ']' int_const_bracket_list_var
+   18                           | int_const_bracket_list_var '[' T_int_lit ']'
 
    19 ret_type: data_type
    20         | "nothing"
@@ -182,10 +182,10 @@ Nonterminals, with rules where they appear
     data_type <data_type> (53)
         on left: 14 15
         on right: 16 19 24 25
-    type (54)
+    type <type> (54)
         on left: 16
         on right: 30
-    int_const_bracket_list_var (55)
+    int_const_bracket_list_var <int_vec> (55)
         on left: 17 18
         on right: 16 18
     ret_type <data_type> (56)
@@ -194,16 +194,16 @@ Nonterminals, with rules where they appear
     int_const_bracket_list <int_vec> (57)
         on left: 21 22 23
         on right: 23 25
-    fpar_type <fpar_type> (58)
+    fpar_type <type> (58)
         on left: 24 25
         on right: 10 11
     local_def <localdef> (59)
         on left: 26 27 28
         on right: 4
-    func_decl (60)
+    func_decl <func_decl> (60)
         on left: 29
         on right: 27
-    var_def (61)
+    var_def <var_def> (61)
         on left: 30
         on right: 28
     stmt <stmt> (62)
@@ -960,18 +960,16 @@ State 69
 
    16 type: data_type • int_const_bracket_list_var
 
-    '['  shift, and go to state 100
-
     $default  reduce using rule 17 (int_const_bracket_list_var)
 
-    int_const_bracket_list_var  go to state 101
+    int_const_bracket_list_var  go to state 100
 
 
 State 70
 
    30 var_def: "var" id_rest T_id ':' type • ';'
 
-    ';'  shift, and go to state 102
+    ';'  shift, and go to state 101
 
 
 State 71
@@ -1033,7 +1031,7 @@ State 74
     '+'    shift, and go to state 84
     '-'    shift, and go to state 85
     '*'    shift, and go to state 86
-    ')'    shift, and go to state 103
+    ')'    shift, and go to state 102
 
 
 State 75
@@ -1044,7 +1042,7 @@ State 75
 
     "and"  shift, and go to state 87
     "or"   shift, and go to state 89
-    ')'    shift, and go to state 104
+    ')'    shift, and go to state 103
 
 
 State 76
@@ -1061,7 +1059,7 @@ State 76
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 105
+    expr       go to state 104
 
 
 State 77
@@ -1078,7 +1076,7 @@ State 77
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 106
+    expr       go to state 105
 
 
 State 78
@@ -1095,7 +1093,7 @@ State 78
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 107
+    expr       go to state 106
 
 
 State 79
@@ -1112,7 +1110,7 @@ State 79
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 108
+    expr       go to state 107
 
 
 State 80
@@ -1129,7 +1127,7 @@ State 80
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 109
+    expr       go to state 108
 
 
 State 81
@@ -1146,7 +1144,7 @@ State 81
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 110
+    expr       go to state 109
 
 
 State 82
@@ -1163,7 +1161,7 @@ State 82
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 111
+    expr       go to state 110
 
 
 State 83
@@ -1180,7 +1178,7 @@ State 83
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 112
+    expr       go to state 111
 
 
 State 84
@@ -1197,7 +1195,7 @@ State 84
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 113
+    expr       go to state 112
 
 
 State 85
@@ -1214,7 +1212,7 @@ State 85
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 114
+    expr       go to state 113
 
 
 State 86
@@ -1231,7 +1229,7 @@ State 86
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 115
+    expr       go to state 114
 
 
 State 87
@@ -1250,7 +1248,7 @@ State 87
     func_call  go to state 50
     l_value    go to state 51
     expr       go to state 52
-    cond       go to state 116
+    cond       go to state 115
 
 
 State 88
@@ -1265,7 +1263,7 @@ State 88
     ';'           shift, and go to state 32
     '{'           shift, and go to state 10
 
-    stmt       go to state 117
+    stmt       go to state 116
     block      go to state 35
     func_call  go to state 36
     l_value    go to state 37
@@ -1287,7 +1285,7 @@ State 89
     func_call  go to state 50
     l_value    go to state 51
     expr       go to state 52
-    cond       go to state 118
+    cond       go to state 117
 
 
 State 90
@@ -1303,7 +1301,7 @@ State 90
     ';'           shift, and go to state 32
     '{'           shift, and go to state 10
 
-    stmt       go to state 119
+    stmt       go to state 118
     block      go to state 35
     func_call  go to state 36
     l_value    go to state 37
@@ -1323,7 +1321,7 @@ State 91
     '+'    shift, and go to state 84
     '-'    shift, and go to state 85
     '*'    shift, and go to state 86
-    ')'    shift, and go to state 103
+    ')'    shift, and go to state 102
 
 
 State 92
@@ -1337,7 +1335,7 @@ State 93
 
    43 func_call: T_id '(' expr_list • ')'
 
-    ')'  shift, and go to state 120
+    ')'  shift, and go to state 119
 
 
 State 94
@@ -1355,7 +1353,7 @@ State 94
 
     func_call  go to state 50
     l_value    go to state 51
-    expr       go to state 121
+    expr       go to state 120
 
 
 State 95
@@ -1372,7 +1370,7 @@ State 95
     '+'    shift, and go to state 84
     '-'    shift, and go to state 85
     '*'    shift, and go to state 86
-    ';'    shift, and go to state 122
+    ';'    shift, and go to state 121
 
 
 State 96
@@ -1389,7 +1387,7 @@ State 96
     '+'    shift, and go to state 84
     '-'    shift, and go to state 85
     '*'    shift, and go to state 86
-    ']'    shift, and go to state 123
+    ']'    shift, and go to state 122
 
 
 State 97
@@ -1400,7 +1398,7 @@ State 97
     "char"  shift, and go to state 63
 
     data_type  go to state 98
-    fpar_type  go to state 124
+    fpar_type  go to state 123
 
 
 State 98
@@ -1408,7 +1406,7 @@ State 98
    24 fpar_type: data_type •
    25          | data_type • '[' int_const_bracket_list
 
-    '['  shift, and go to state 125
+    '['  shift, and go to state 124
 
     $default  reduce using rule 24 (fpar_type)
 
@@ -1422,40 +1420,36 @@ State 99
 
 State 100
 
-   18 int_const_bracket_list_var: '[' • T_int_lit ']' int_const_bracket_list_var
-
-    T_int_lit  shift, and go to state 126
-
-
-State 101
-
    16 type: data_type int_const_bracket_list_var •
+   18 int_const_bracket_list_var: int_const_bracket_list_var • '[' T_int_lit ']'
+
+    '['  shift, and go to state 125
 
     $default  reduce using rule 16 (type)
 
 
-State 102
+State 101
 
    30 var_def: "var" id_rest T_id ':' type ';' •
 
     $default  reduce using rule 30 (var_def)
 
 
-State 103
+State 102
 
    54 expr: '(' expr ')' •
 
     $default  reduce using rule 54 (expr)
 
 
-State 104
+State 103
 
    63 cond: '(' cond ')' •
 
     $default  reduce using rule 63 (cond)
 
 
-State 105
+State 104
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1467,7 +1461,7 @@ State 105
     $default  reduce using rule 62 (expr)
 
 
-State 106
+State 105
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1479,7 +1473,7 @@ State 106
     $default  reduce using rule 61 (expr)
 
 
-State 107
+State 106
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1497,7 +1491,7 @@ State 107
     $default  reduce using rule 71 (cond)
 
 
-State 108
+State 107
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1515,7 +1509,7 @@ State 108
     $default  reduce using rule 72 (cond)
 
 
-State 109
+State 108
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1533,7 +1527,7 @@ State 109
     $default  reduce using rule 67 (cond)
 
 
-State 110
+State 109
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1551,7 +1545,7 @@ State 110
     $default  reduce using rule 68 (cond)
 
 
-State 111
+State 110
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1569,7 +1563,7 @@ State 111
     $default  reduce using rule 70 (cond)
 
 
-State 112
+State 111
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1587,7 +1581,7 @@ State 112
     $default  reduce using rule 69 (cond)
 
 
-State 113
+State 112
 
    58 expr: expr • '+' expr
    58     | expr '+' expr •
@@ -1603,7 +1597,7 @@ State 113
     $default  reduce using rule 58 (expr)
 
 
-State 114
+State 113
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1619,7 +1613,7 @@ State 114
     $default  reduce using rule 59 (expr)
 
 
-State 115
+State 114
 
    58 expr: expr • '+' expr
    59     | expr • '-' expr
@@ -1631,7 +1625,7 @@ State 115
     $default  reduce using rule 60 (expr)
 
 
-State 116
+State 115
 
    65 cond: cond • "and" cond
    65     | cond "and" cond •
@@ -1640,14 +1634,14 @@ State 116
     $default  reduce using rule 65 (cond)
 
 
-State 117
+State 116
 
    37 stmt: "while" cond "do" stmt •
 
     $default  reduce using rule 37 (stmt)
 
 
-State 118
+State 117
 
    65 cond: cond • "and" cond
    66     | cond • "or" cond
@@ -1658,12 +1652,12 @@ State 118
     $default  reduce using rule 66 (cond)
 
 
-State 119
+State 118
 
    35 stmt: "if" cond "then" stmt • "else" stmt
    36     | "if" cond "then" stmt •
 
-    "else"  shift, and go to state 127
+    "else"  shift, and go to state 126
 
     "else"    [reduce using rule 36 (stmt)]
     $default  reduce using rule 36 (stmt)
@@ -1683,14 +1677,14 @@ State 119
 
 
 
-State 120
+State 119
 
    43 func_call: T_id '(' expr_list ')' •
 
     $default  reduce using rule 43 (func_call)
 
 
-State 121
+State 120
 
    45 expr_list: expr_rest expr •
    47 expr_rest: expr_rest expr • ','
@@ -1705,50 +1699,50 @@ State 121
     '+'    shift, and go to state 84
     '-'    shift, and go to state 85
     '*'    shift, and go to state 86
-    ','    shift, and go to state 128
+    ','    shift, and go to state 127
 
     $default  reduce using rule 45 (expr_list)
 
 
-State 122
+State 121
 
    32 stmt: l_value "arr" expr ';' •
 
     $default  reduce using rule 32 (stmt)
 
 
-State 123
+State 122
 
    50 l_value: l_value '[' expr ']' •
 
     $default  reduce using rule 50 (l_value)
 
 
-State 124
+State 123
 
    10 fpar_def: "ref" id_rest T_id ':' fpar_type •
 
     $default  reduce using rule 10 (fpar_def)
 
 
-State 125
+State 124
 
    25 fpar_type: data_type '[' • int_const_bracket_list
 
-    T_int_lit  shift, and go to state 129
-    ']'        shift, and go to state 130
+    T_int_lit  shift, and go to state 128
+    ']'        shift, and go to state 129
 
-    int_const_bracket_list  go to state 131
+    int_const_bracket_list  go to state 130
+
+
+State 125
+
+   18 int_const_bracket_list_var: int_const_bracket_list_var '[' • T_int_lit ']'
+
+    T_int_lit  shift, and go to state 131
 
 
 State 126
-
-   18 int_const_bracket_list_var: '[' T_int_lit • ']' int_const_bracket_list_var
-
-    ']'  shift, and go to state 132
-
-
-State 127
 
    35 stmt: "if" cond "then" stmt "else" • stmt
 
@@ -1760,90 +1754,86 @@ State 127
     ';'           shift, and go to state 32
     '{'           shift, and go to state 10
 
-    stmt       go to state 133
+    stmt       go to state 132
     block      go to state 35
     func_call  go to state 36
     l_value    go to state 37
 
 
-State 128
+State 127
 
    47 expr_rest: expr_rest expr ',' •
 
     $default  reduce using rule 47 (expr_rest)
 
 
-State 129
+State 128
 
    22 int_const_bracket_list: T_int_lit • ']'
 
-    ']'  shift, and go to state 134
+    ']'  shift, and go to state 133
 
 
-State 130
+State 129
 
    21 int_const_bracket_list: ']' •
 
     $default  reduce using rule 21 (int_const_bracket_list)
 
 
-State 131
+State 130
 
    23 int_const_bracket_list: int_const_bracket_list • '[' T_int_lit ']'
    25 fpar_type: data_type '[' int_const_bracket_list •
 
-    '['  shift, and go to state 135
+    '['  shift, and go to state 134
 
     $default  reduce using rule 25 (fpar_type)
 
 
+State 131
+
+   18 int_const_bracket_list_var: int_const_bracket_list_var '[' T_int_lit • ']'
+
+    ']'  shift, and go to state 135
+
+
 State 132
-
-   18 int_const_bracket_list_var: '[' T_int_lit ']' • int_const_bracket_list_var
-
-    '['  shift, and go to state 100
-
-    $default  reduce using rule 17 (int_const_bracket_list_var)
-
-    int_const_bracket_list_var  go to state 136
-
-
-State 133
 
    35 stmt: "if" cond "then" stmt "else" stmt •
 
     $default  reduce using rule 35 (stmt)
 
 
-State 134
+State 133
 
    22 int_const_bracket_list: T_int_lit ']' •
 
     $default  reduce using rule 22 (int_const_bracket_list)
 
 
-State 135
+State 134
 
    23 int_const_bracket_list: int_const_bracket_list '[' • T_int_lit ']'
 
-    T_int_lit  shift, and go to state 137
+    T_int_lit  shift, and go to state 136
 
 
-State 136
+State 135
 
-   18 int_const_bracket_list_var: '[' T_int_lit ']' int_const_bracket_list_var •
+   18 int_const_bracket_list_var: int_const_bracket_list_var '[' T_int_lit ']' •
 
     $default  reduce using rule 18 (int_const_bracket_list_var)
 
 
-State 137
+State 136
 
    23 int_const_bracket_list: int_const_bracket_list '[' T_int_lit • ']'
 
-    ']'  shift, and go to state 138
+    ']'  shift, and go to state 137
 
 
-State 138
+State 137
 
    23 int_const_bracket_list: int_const_bracket_list '[' T_int_lit ']' •
 
