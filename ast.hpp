@@ -67,7 +67,7 @@ class AbstractLvalue : public Expr
 class If : public Stmt
 {
   public:
-    If(Condition *c, Stmt *s1, Stmt *s2 = nullptr) : cond(c),  stmt1(s1), stmt2(s2) {};
+    If(Condition *c, Stmt *s1, Stmt *s2 = nullptr) : cond(c),  stmt1(s1), stmt2(s2) {}
     
     void execute() const override {
       if (cond->eval())
@@ -92,7 +92,7 @@ class If : public Stmt
 class Block : public Stmt
 {
   public:
-    Block() {};
+    Block() {}
     
     void execute() const override {
       for (Stmt *s : stmt_list)
@@ -120,7 +120,7 @@ class Block : public Stmt
 class Assign : public Stmt 
 {
   public:
-    Assign(AbstractLvalue *l, Expr *e) : lval(l), expr(e) {};
+    Assign(AbstractLvalue *l, Expr *e) : lval(l), expr(e) {}
     void execute() const override {
       // TODO
       // Update the valaue of lval to e->eval()
@@ -140,7 +140,7 @@ class Assign : public Stmt
 class While : public Stmt 
 {
   public:
-    While(Condition *c, Stmt *s) : cond(c), stmt(s) {};
+    While(Condition *c, Stmt *s) : cond(c), stmt(s) {}
     
     void execute() const override {
       while(cond->eval())
@@ -160,8 +160,8 @@ class While : public Stmt
 class Return : public Stmt
 {
   public:
-    Return(Expr *e = nullptr) : expr(e) {};
-    void execute() const override {};
+    Return(Expr *e = nullptr) : expr(e) {}
+    void execute() const override {}
 
     void printAST(std::ostream &out) const override {
       out << "Return(";
@@ -179,18 +179,18 @@ class Return : public Stmt
 class Id : public AbstractLvalue
 {
   public:
-    Id(std::string *s) : str(s) {}
+    Id(std::string s) : str(s) {}
     // TODO
     int eval() const override {
       return 0;
     }
   
     void printAST(std::ostream &out) const override {
-      out << "Id(" << *str <<  ")";
+      out << "Id: " << str;
     }
 
   private:
-    std::string *str;
+    std::string str;
 };
 
 
@@ -216,14 +216,26 @@ class StrLit : public AbstractLvalue
 };
 
 
-// class LMatrix : public AbstractLvalue
-// {
-//   public:
-//     LMatrix();
-//     int eval() const override;
-// };
+class LMatrix : public AbstractLvalue
+{
+  public:
+    LMatrix(AbstractLvalue *lval, Expr *e) : lvalue(lval), expr(e) {}
+    // TODO
+    int eval() const override {
+      return 0;
+    }
 
+    void printAST(std::ostream &out) const override {
+      out << *lvalue;
+      out << "[";
+      out << *expr;
+      out << "]";  
+    }
 
+  private:
+    AbstractLvalue *lvalue;
+    Expr *expr;
+};
 
 // TODO
 /* In situations like a <- f(); the rhs has to implement eval() */ 
@@ -232,7 +244,7 @@ class FuncCall : public Expr
   public:
     FuncCall(Id *f, std::vector<Expr *> *par) : funcName(f), parametersExprList(par) {}
     int eval() const override {
-
+      return 0;
     }
 
     void printAST(std::ostream &out) const override {
@@ -261,7 +273,7 @@ class FuncCall : public Expr
 class FuncCallStmt : public Stmt
 {
   public:
-    FuncCallStmt(FuncCall *fc) : func(fc) {};
+    FuncCallStmt(FuncCall *fc) : func(fc) {}
     void execute() const override {
       func->eval(); 
     }
@@ -279,7 +291,7 @@ class FuncCallStmt : public Stmt
 class IntConst : public Expr 
 {
   public:
-    IntConst(int v) : val(v) {};
+    IntConst(int v) : val(v) {}
     
     int eval() const override {
       return val;
@@ -612,10 +624,17 @@ class FuncDef : public LocalDef
 };
 
 
-class Program : public FuncDef
+class Program : public AST
 {
   public:
-    Program();
+    Program(FuncDef *f) : fd(f) {}
+  
+    void printAST(std::ostream &out) const override {
+      out << "Program(" << *fd << ")";
+    }
+
+  private:
+    FuncDef *fd;
 };
 
 #endif

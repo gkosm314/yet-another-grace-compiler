@@ -1,7 +1,7 @@
 .PHONY: clean distclean default
 
 CXX=c++
-CXXFLAGS=-Wall -std=c++11
+CXXFLAGS=-Wall -std=c++11 -g
 
 default: gracec
 
@@ -9,7 +9,7 @@ lexer.cpp: lexer.l
 	flex -s -o lexer.cpp lexer.l
 
 lexer.o: lexer.cpp lexer.hpp parser.hpp ast.hpp
-
+	
 parser.hpp parser.cpp: parser.y
 	bison -dv -Wcounterexamples -o parser.cpp parser.y
 

@@ -34,19 +34,8 @@ extern int yylineno;
 %token T_geq "geq"
 %token T_arr "arr" /* Short for arrow, the assignement op <- */
 
-%token<id> T_id
-/* %token T_writestring */
-%token<int_val> T_int_lit
-%token<char_val> T_char_lit
-%token<str_val> T_string_lit
 
-%left "or"
-%left "and"
-%precedence "not"
-%nonassoc '=' '#' '>' '<' "leq" "geq"
-%left '+' '-'
-%left '*' "div" "mod"
-%precedence UNARY /*unary minus and plus signs*/
+
 
 %expect 1
 
@@ -74,7 +63,24 @@ extern int yylineno;
     FuncDecl* func_decl;
     VarDef* var_def;
     std::vector<int> *int_vec;
+    Program *program;
 }
+
+%token<str_val> T_id
+/* %token T_writestring */
+%token<int_val> T_int_lit
+%token<char_val> T_char_lit
+%token<str_val> T_string_lit
+
+
+%left "or"
+%left "and"
+%precedence "not"
+%nonassoc '=' '#' '>' '<' "leq" "geq"
+%left '+' '-'
+%left '*' "div" "mod"
+%precedence UNARY /*unary minus and plus signs*/
+
 
 %type<stmt> stmt 
 %type<expr> expr 
@@ -96,11 +102,15 @@ extern int yylineno;
 %type<int_vec> int_const_bracket_list int_const_bracket_list_var
 %type<func_decl> func_decl
 %type<var_def> var_def
+%type<program> program
+
+
+
 
 %%
 
 program:
-    func_def { }
+    func_def { $$ = new Program($1); std::cout << *$$ << std::endl; }
 ;
 
 func_def:
@@ -113,7 +123,11 @@ local_def_list:
 ;
 
 header:
-    "fun" T_id '(' fpar_def_list ')' ':' ret_type { $$ = new Header($2, $4, $7); }
+    "fun" T_id '(' fpar_def_list ')' ':' ret_type { 
+        Id *id; 
+        id = new Id(*$2);
+        $$ = new Header(id, $4, $7); 
+    }
 ;
 
 fpar_def_list:
@@ -127,13 +141,28 @@ fpar_def_rest:
 ;
 
 fpar_def:
-    "ref" id_rest T_id ':' fpar_type { $2->push_back($3); $$ = new FParDef($2, $5, true);  }
-|   id_rest T_id ':' fpar_type       { $1->push_back($2); $$ = new FParDef($1, $4, false); }
+    "ref" id_rest T_id ':' fpar_type { 
+        Id *id; 
+        id = new Id(*$3);
+        $2->push_back(id); 
+        $$ = new FParDef($2, $5, true);  
+    }
+|   id_rest T_id ':' fpar_type { 
+        Id *id; 
+        id = new Id(*$2);
+        $1->push_back(id); 
+        $$ = new FParDef($1, $4, false); 
+    }
 ;
 
 id_rest:
     /* nothing */    { $$ = new std::vector<Id *>(); }
-|   id_rest T_id ',' { $1->push_back($2); $$ = $1;   }
+|   id_rest T_id ',' { 
+        Id *id; 
+        id = new Id(*$2);
+        $1->push_back(id); 
+        $$ = $1;   
+    }
 ;
 
 data_type:
@@ -177,7 +206,12 @@ func_decl:
 ;
 
 var_def:
-    "var" id_rest T_id ':' type ';'  { $2->push_back($3); $$ = new VarDef($2, $5); }
+    "var" id_rest T_id ':' type ';'  {
+        Id *id; 
+        id = new Id(*$3);
+        $2->push_back(id);
+        $$ = new VarDef($2, $5); 
+    }
 ;
 
 stmt:
@@ -201,7 +235,11 @@ stmt_list:
 ;
 
 func_call:
-    T_id '(' expr_list ')'  { $$ = new FuncCall($1, $3); }
+    T_id '(' expr_list ')'  { 
+        Id *id; 
+        id = new Id(*$1);
+        $$ = new FuncCall(id, $3);
+    }
 ;
 
 
@@ -216,9 +254,9 @@ expr_rest:
 ;
 
 l_value:
-    T_id                  { $$ = new Id(yylval.str_val);     }
+    T_id                  { $$ = new Id(*$1);    }
 |   T_string_lit          { $$ = new StrLit(yylval.str_val); }
-|   l_value '[' expr ']'
+|   l_value '[' expr ']'  { $$ = new LMatrix($1, $3);        }
 ;
 
 expr:

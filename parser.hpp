@@ -87,7 +87,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 53 "parser.y"
+#line 42 "parser.y"
 
     Stmt *stmt;
     Expr *expr;
@@ -112,8 +112,9 @@ union YYSTYPE
     FuncDecl* func_decl;
     VarDef* var_def;
     std::vector<int> *int_vec;
+    Program *program;
 
-#line 117 "parser.hpp"
+#line 118 "parser.hpp"
 
 };
 typedef union YYSTYPE YYSTYPE;
