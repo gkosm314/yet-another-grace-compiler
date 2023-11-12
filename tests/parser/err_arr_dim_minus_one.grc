@@ -1,7 +1,7 @@
 fun main () : nothing
    
    $ The following should be illegeal because first dimension is -1
-   var r : char[x];
+   var r : char[-1];
 
    fun reverse (ref s : char[]) : nothing
       var i, l : int;
