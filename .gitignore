@@ -1,0 +1,21 @@
+#object files
+*.o
+
+#flex
+lexer.cpp
+
+#bison
+parser.cpp
+parser.hpp
+parser.output
+
+#executables
+lexer
+gracec
+
+#vscode
+.vscode/
+
+#backups/drafts
+bck/
+a.txt
