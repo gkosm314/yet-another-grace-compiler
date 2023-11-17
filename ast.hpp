@@ -367,7 +367,7 @@ class UnaryOp : public Expr
     }
   
     void printAST(std::ostream &out) const override {
-      out << op << "(" << *expr;
+      out << op << "(" << *expr << ")";
     }
 
   private:
