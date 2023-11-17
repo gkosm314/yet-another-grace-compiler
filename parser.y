@@ -13,30 +13,6 @@ extern int yylineno;
 
 %define parse.error verbose /* For debug purposes*/
 
-%token T_and "and"
-%token T_int "int"
-%token T_then "then"
-%token T_char "char"
-%token T_mod "mod"
-%token T_var "var"
-%token T_div "div"
-%token T_not "not"
-%token T_while "while"
-%token T_do "do"
-%token T_nothing "nothing"
-%token T_else "else"
-%token T_or "or"
-%token T_fun "fun"
-%token T_ref "ref"
-%token T_if "if"
-%token T_return "return"
-%token T_leq "leq"
-%token T_geq "geq"
-%token T_arr "arr" /* Short for arrow, the assignement op <- */
-
-
-
-
 %expect 1
 
 %union {
@@ -66,6 +42,26 @@ extern int yylineno;
     Program *program;
 }
 
+%token T_and "and"
+%token T_int "int"
+%token T_then "then"
+%token T_char "char"
+%token<char_val> T_mod "mod"
+%token T_var "var"
+%token<char_val> T_div "div"
+%token T_not "not"
+%token T_while "while"
+%token T_do "do"
+%token T_nothing "nothing"
+%token T_else "else"
+%token T_or "or"
+%token T_fun "fun"
+%token T_ref "ref"
+%token T_if "if"
+%token T_return "return"
+%token T_arr "arr" /* Short for arrow, the assignement op <- */
+%token<char_val> T_leq "leq"
+%token<char_val> T_geq "geq"
 %token<str_val> T_id
 /* %token T_writestring */
 %token<int_val> T_int_lit
@@ -267,11 +263,11 @@ expr:
 |   func_call             { $$ = $1;                     }
 |   '+' expr %prec UNARY  { $$ = new UnaryOp($1, $2);    }
 |   '-' expr %prec UNARY  { $$ = new UnaryOp($1, $2);    }
-|   expr '+' expr         { $$ = new BinOp($1, '+', $3); }
-|   expr '-' expr         { $$ = new BinOp($1, '-', $3); }
-|   expr '*' expr         { $$ = new BinOp($1, '*', $3); }
-|   expr T_div expr       { $$ = new BinOp($1, '/', $3); }
-|   expr T_mod expr       { $$ = new BinOp($1, '%', $3); }
+|   expr '+' expr         { $$ = new BinOp($1, $2, $3); }
+|   expr '-' expr         { $$ = new BinOp($1, $2, $3); }
+|   expr '*' expr         { $$ = new BinOp($1, $2, $3); }
+|   expr T_div expr       { $$ = new BinOp($1, $2, $3); }
+|   expr T_mod expr       { $$ = new BinOp($1, $2, $3); }
 ;
 
 cond:
@@ -283,8 +279,8 @@ cond:
 |   expr '#' expr         { $$ = new NumericCond($1, $2, $3);  }
 |   expr '<' expr         { $$ = new NumericCond($1, $2, $3);  }
 |   expr '>' expr         { $$ = new NumericCond($1, $2, $3);  }
-|   expr T_leq expr       { $$ = new NumericCond($1, 'l', $3); }
-|   expr T_geq expr       { $$ = new NumericCond($1, 'g', $3); }
+|   expr T_leq expr       { $$ = new NumericCond($1, $2, $3); }
+|   expr T_geq expr       { $$ = new NumericCond($1, $2, $3); }
 ;
 
 %%

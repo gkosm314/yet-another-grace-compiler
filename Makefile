@@ -8,10 +8,10 @@ default: gracec
 lexer.cpp: lexer.l
 	flex -s -o lexer.cpp lexer.l
 
-lexer.o: lexer.cpp lexer.hpp parser.hpp ast.hpp
-	
 parser.hpp parser.cpp: parser.y
 	bison -dv -Wcounterexamples -o parser.cpp parser.y
+
+lexer.o: lexer.cpp lexer.hpp parser.hpp ast.hpp
 
 parser.o: parser.cpp lexer.hpp ast.hpp
 

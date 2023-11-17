@@ -33,9 +33,9 @@ HEX_VAL  [0-9a-f][0-9a-f]
 "int"     { return T_int; }
 "then"    { return T_then; }
 "char"    { return T_char; }
-"mod"     { return T_mod; }
+"mod"     { yylval.char_val = '%'; return T_mod; }
 "var"     { return T_var; }
-"div"     { return T_div; }
+"div"     { yylval.char_val = '/'; return T_div; }
 "not"     { return T_not; }
 "while"   { return T_while; }
 "do"      { return T_do; }
@@ -48,9 +48,9 @@ HEX_VAL  [0-9a-f][0-9a-f]
 "return"  { return T_return; }
 
 
-[\+\-\*\=\#\<\>\(\)\[\]\{\}\,\;\:] { return yytext[0]; }
-"<=" { return T_leq; }
-">=" { return T_geq; }
+[\+\-\*\=\#\<\>\(\)\[\]\{\}\,\;\:] { yylval.char_val = yytext[0]; return yytext[0]; }
+"<=" { yylval.char_val = 'l'; return T_leq; }
+">=" { yylval.char_val = 'g'; return T_geq; }
 "<-" { return T_arr; }
 
 {L}[a-zA-Z0-9\_]* {  yylval.str_val = new std::string(yytext, yyleng); return T_id; }
