@@ -1,22 +1,9 @@
 fun main () : nothing
    
-   $ The following should be illegean because the size of the array is not an int const
+   $ The following should be illegal because the size of the array is not an int const
    var x : int;
    var r : char[x];
 
-   fun reverse (ref s : char[]) : nothing
-      var i, l : int;
-   {
-      l <- strlen(s);
-      i <- 0;
-      while i < l do {
-         r[i] <- s[l-i-1];
-         i <- i+1;
-      }
-      r[i] <- '\0';
-   }
-
 { $ main
-   reverse("\n!dlrow olleH");
-   writeString(r);
+
 } $ main

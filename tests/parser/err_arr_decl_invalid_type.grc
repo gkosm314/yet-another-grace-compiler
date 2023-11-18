@@ -1,7 +1,7 @@
 fun main () : nothing
    
    $ The following should be illegal because the type of a var declaration
-   var r : char[];
+   var r : invalid[];
 
 { $ main
 
