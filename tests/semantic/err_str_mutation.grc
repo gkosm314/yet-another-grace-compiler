@@ -7,5 +7,5 @@ fun main () : nothing
    }
 
 { $ main
-   f("\n!dlrow olleH");
+   f("Hello");
 } $ main

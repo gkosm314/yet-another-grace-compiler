@@ -1,11 +1,12 @@
 fun main(): nothing
-    var a : char;
 
-    fun f() : int
+    var i : char;
+
+    fun f(): int 
     {
         return 1;
     }
 
 {
-    a <- f();
+    i <- f();
 }
