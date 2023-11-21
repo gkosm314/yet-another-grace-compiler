@@ -637,4 +637,12 @@ class Program : public AST
     FuncDef *fd;
 };
 
+class NoOp : public Stmt
+{
+  public:
+    NoOp() {}
+    void printAST(std::ostream &out) const override { out << "NoOp()"; }
+    void execute() const override {}
+};
+
 #endif

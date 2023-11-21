@@ -106,7 +106,7 @@ extern int yylineno;
 %%
 
 program:
-    func_def { $$ = new Program($1); *$$->sem(); std::cout << *$$ << std::endl; }
+    func_def { $$ = new Program($1); std::cout << *$$ << std::endl; }
 ;
 
 func_def:
@@ -211,7 +211,7 @@ var_def:
 ;
 
 stmt:
-    ';'                               { /* nothing */              }
+    ';'                               { $$ = new NoOp();           }
 |   l_value "arr" expr ';'            { $$ = new Assign($1, $3);   }
 |   block                             { $$ = $1;                   }
 |   func_call ';'                     { $$ = new FuncCallStmt($1); }
@@ -227,7 +227,7 @@ block:
 
 stmt_list:
     /* nothing */                     { $$ = new Block();          }
-|   stmt_list stmt                    { $1->append($2); $$ = $1;   }
+|   stmt_list stmt                    { if ($2 != nullptr) {$1->append($2); }  $$ = $1; }
 ;
 
 func_call:
