@@ -106,7 +106,7 @@ extern int yylineno;
 %%
 
 program:
-    func_def { $$ = new Program($1); std::cout << *$$ << std::endl; }
+    func_def { $$ = new Program($1); *$$->sem(); std::cout << *$$ << std::endl; }
 ;
 
 func_def:
