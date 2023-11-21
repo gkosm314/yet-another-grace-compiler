@@ -17,6 +17,7 @@ enum DATA_TYPE { DATA_TYPE_int, DATA_TYPE_char, DATA_TYPE_nothing };
 class AST
 {
   public:
+    virtual ~AST() = default;
     virtual void printAST(std::ostream &out) const = 0;
 };
 
@@ -69,6 +70,8 @@ class If : public Stmt
   public:
     If(Condition *c, Stmt *s1, Stmt *s2 = nullptr) : cond(c),  stmt1(s1), stmt2(s2) {}
     
+    ~If() { delete cond; delete stmt1; delete stmt2; }
+    
     void execute() const override {
       if (cond->eval())
         stmt1->execute();
@@ -94,6 +97,10 @@ class Block : public Stmt
   public:
     Block() {}
     
+    ~Block() {
+      for (Stmt *s : stmt_list) delete s;
+    }
+
     void execute() const override {
       for (Stmt *s : stmt_list)
         s->execute();
@@ -121,6 +128,9 @@ class Assign : public Stmt
 {
   public:
     Assign(AbstractLvalue *l, Expr *e) : lval(l), expr(e) {}
+    
+    ~Assign() { delete lval; delete expr; }
+    
     void execute() const override {
       // TODO
       // Update the valaue of lval to e->eval()
@@ -141,7 +151,9 @@ class While : public Stmt
 {
   public:
     While(Condition *c, Stmt *s) : cond(c), stmt(s) {}
-    
+
+    ~While() { delete cond; delete stmt; }
+
     void execute() const override {
       while(cond->eval())
         stmt->execute();
@@ -161,6 +173,9 @@ class Return : public Stmt
 {
   public:
     Return(Expr *e = nullptr) : expr(e) {}
+    
+    ~Return() { delete expr; }
+
     void execute() const override {}
 
     void printAST(std::ostream &out) const override {
@@ -197,22 +212,19 @@ class Id : public AbstractLvalue
 class StrLit : public AbstractLvalue
 {
   public:
-    StrLit(std::string *s) : str(s) {}
-    // TODO
-    // std::string eval() const override {
-    //   return *str;
-    // }
-    // Just for compilation, replace with template
+    StrLit(std::string s) : str(s) {}
+
+
     int eval() const override {
       return 1;
     }
 
     void printAST(std::ostream &out) const override {
-      out << "StrLit(" << *str <<  ")";
+      out << "StrLit(" << str <<  ")";
     }
 
   private:
-    std::string *str;
+    std::string str;
 };
 
 
@@ -220,7 +232,9 @@ class LMatrix : public AbstractLvalue
 {
   public:
     LMatrix(AbstractLvalue *lval, Expr *e) : lvalue(lval), expr(e) {}
-    // TODO
+    
+    ~LMatrix() { delete lvalue; delete expr; }
+    
     int eval() const override {
       return 0;
     }
@@ -243,6 +257,14 @@ class FuncCall : public Expr
 {
   public:
     FuncCall(Id *f, std::vector<Expr *> *par) : funcName(f), parametersExprList(par) {}
+    
+    ~FuncCall() { 
+      delete funcName; 
+      for (Expr *e : *parametersExprList) 
+        delete e;
+      delete parametersExprList;
+    }
+
     int eval() const override {
       return 0;
     }
@@ -274,6 +296,9 @@ class FuncCallStmt : public Stmt
 {
   public:
     FuncCallStmt(FuncCall *fc) : func(fc) {}
+    
+    ~FuncCallStmt() { delete func; }
+    
     void execute() const override {
       func->eval(); 
     }
@@ -329,6 +354,8 @@ class BinOp : public Expr
   public:
     BinOp(Expr *l, char o, Expr *r): left(l), op(o), right(r) {}
   
+    ~BinOp() { delete left; delete right; }
+
     virtual int eval() const override {
       switch (op) {
         case '+': return left->eval() + right->eval();
@@ -356,6 +383,9 @@ class UnaryOp : public Expr
 {
   public:
     UnaryOp(char o, Expr *e) : expr(e), op(o) {}
+    
+    ~UnaryOp() { delete expr; }
+    
     int eval() const override {
       if (op == '+')
         return expr->eval();
@@ -380,6 +410,9 @@ class LogicalCond : public Condition
 {
   public:
     LogicalCond(Condition *l, char o, Condition *r = nullptr): c1(l), op(o), c2(r) {}
+    
+    ~LogicalCond() { delete c1; delete c2; }
+    
     int eval() const override {
       // Take care of short-circuit
       switch (op) {
@@ -415,6 +448,9 @@ class NumericCond : public Condition
 {
   public:
     NumericCond(Expr *l, char o, Expr *r) : left(l), op(o), right(r) {}
+    
+    ~NumericCond() { delete left; delete right; }
+    
     int eval() const override {
       switch (op) {
         case '=': return (left->eval() == right->eval());
@@ -443,6 +479,8 @@ class Type : public AST
   public:
     Type(DATA_TYPE t, std::vector<int> *dims_vec) : data_type(t), dims(dims_vec) {};
   
+    ~Type() { delete dims; }
+
     void printAST(std::ostream &out) const override {
         out << "Type(";
         switch (data_type)
@@ -486,6 +524,12 @@ class VarDef : public LocalDef
   public:
     VarDef(std::vector<Id *> *ids_vec, Type *t ) : ids(ids_vec), type(t) {};
 
+    ~VarDef() {
+      for (Id *i : *ids) delete i;
+      delete type;
+      delete ids;
+    }
+
     void printAST(std::ostream &out) const override {
       out << "VarDef(";
       out << *type;
@@ -516,6 +560,12 @@ class FParDef : public AST
   public:
     FParDef(std::vector<Id *> *ids_vec, Type *f, bool b) : ids(ids_vec), fpar_type(f), ref(b) {};
 
+    ~FParDef() {
+      for (Id *i : *ids) delete i;
+      delete fpar_type;
+      delete ids;
+    }
+
     void printAST(std::ostream &out) const override {
       out << "FParDef(";
       if (ref) out << "ref:";
@@ -543,6 +593,12 @@ class Header : public AST
 {
   public:
     Header(Id *i, std::vector<FParDef *> *vec_defs, DATA_TYPE dt) : id(i), fpar_defs(vec_defs), ret_type(dt) {} ;
+
+    ~Header() {
+      delete id;
+      for (FParDef *f: *fpar_defs) delete f;
+      delete fpar_defs;
+    }
 
     void printAST(std::ostream &out) const override {
       out << "Header(";
@@ -586,6 +642,8 @@ class FuncDecl : public LocalDef
   public:
     FuncDecl(Header *h) : header(h) {};
     
+    ~FuncDecl() { delete header; }
+
     void printAST(std::ostream &out) const override {
       out << "FuncDecl(";
       out << *header;
@@ -602,6 +660,13 @@ class FuncDef : public LocalDef
   public:
     FuncDef(Header *h,  std::vector<LocalDef *> *vector_def, Block *b) : header(h), local_defs(vector_def), block(b) {} ;
   
+    ~FuncDef() {
+      delete header;
+      for (LocalDef *l: *local_defs) delete l;
+      delete local_defs;
+      delete block;
+    }
+
     void printAST(std::ostream &out) const override {
       out << "FuncDef(";
       out << *header;
@@ -629,6 +694,8 @@ class Program : public AST
   public:
     Program(FuncDef *f) : fd(f) {}
   
+    ~Program() { delete fd; }
+
     void printAST(std::ostream &out) const override {
       out << "Program(" << *fd << ")";
     }

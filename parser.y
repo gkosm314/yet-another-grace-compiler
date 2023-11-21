@@ -106,7 +106,7 @@ extern int yylineno;
 %%
 
 program:
-    func_def { $$ = new Program($1); std::cout << *$$ << std::endl; }
+    func_def { $$ = new Program($1); std::cout << *$$ << std::endl; delete $$; }
 ;
 
 func_def:
@@ -123,6 +123,7 @@ header:
         Id *id; 
         id = new Id(*$2);
         $$ = new Header(id, $4, $7); 
+        delete $2;  /* delete str_val which was dynamically created in lexer */
     }
 ;
 
@@ -141,13 +142,15 @@ fpar_def:
         Id *id; 
         id = new Id(*$3);
         $2->push_back(id); 
-        $$ = new FParDef($2, $5, true);  
+        $$ = new FParDef($2, $5, true);
+        delete $3; /* delete str_val which was dynamically created in lexer */
     }
 |   id_rest T_id ':' fpar_type { 
         Id *id; 
         id = new Id(*$2);
         $1->push_back(id); 
-        $$ = new FParDef($1, $4, false); 
+        $$ = new FParDef($1, $4, false);
+        delete $2; /* delete str_val which was dynamically created in lexer */
     }
 ;
 
@@ -157,7 +160,8 @@ id_rest:
         Id *id; 
         id = new Id(*$2);
         $1->push_back(id); 
-        $$ = $1;   
+        $$ = $1;
+        delete $2; /* delete str_val which was dynamically created in lexer */
     }
 ;
 
@@ -207,6 +211,7 @@ var_def:
         id = new Id(*$3);
         $2->push_back(id);
         $$ = new VarDef($2, $5); 
+        delete $3; /* delete str_val which was dynamically created in lexer */
     }
 ;
 
@@ -235,6 +240,7 @@ func_call:
         Id *id; 
         id = new Id(*$1);
         $$ = new FuncCall(id, $3);
+        delete $1; /* delete str_val which was dynamically created in lexer */
     }
 ;
 
@@ -250,8 +256,8 @@ expr_rest:
 ;
 
 l_value:
-    T_id                  { $$ = new Id(*$1);    }
-|   T_string_lit          { $$ = new StrLit(yylval.str_val); }
+    T_id                  { $$ = new Id(*$1);  delete $1; /* delete str_val which was dynamically created in lexer */ }
+|   T_string_lit          { $$ = new StrLit(*$1); delete $1; }
 |   l_value '[' expr ']'  { $$ = new LMatrix($1, $3);        }
 ;
 
