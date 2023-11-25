@@ -1,8 +1,6 @@
 #ifndef __ASSIGN_HPP__ 
 #define __ASSIGN_HPP__ 
 
-#include <iostream>
-
 #include "stmt.hpp"
 #include "abstractlvalue.hpp"
 

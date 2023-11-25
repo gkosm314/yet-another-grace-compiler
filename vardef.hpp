@@ -1,7 +1,6 @@
 #ifndef __VARDEF_HPP__ 
 #define __VARDEF_HPP__ 
 
-#include <iostream>
 #include <vector>
 
 #include "localdef.hpp"

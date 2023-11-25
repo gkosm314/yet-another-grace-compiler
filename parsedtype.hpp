@@ -1,7 +1,6 @@
 #ifndef __PARSEDTYPE_HPP__ 
 #define __PARSEDTYPE_HPP__ 
 
-#include <iostream>
 #include <vector>
 
 #include "ast.hpp"

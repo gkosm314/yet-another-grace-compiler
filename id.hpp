@@ -1,8 +1,6 @@
 #ifndef __ID_HPP__ 
 #define __ID_HPP__ 
 
-#include <iostream>
-
 #include "abstractlvalue.hpp"
 
 class Id : public AbstractLvalue

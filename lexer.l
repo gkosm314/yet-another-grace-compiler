@@ -2,7 +2,6 @@
 
 #include <string>
 #include <stdio.h>
-#include "ast.hpp"
 #include "parser.hpp"
 
 #define T_eof 0

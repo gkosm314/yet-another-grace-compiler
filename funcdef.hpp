@@ -1,7 +1,6 @@
 #ifndef __FUNCDEF_HPP__ 
 #define __FUNCDEF_HPP__ 
 
-#include <iostream>
 #include <vector>
 
 #include "localdef.hpp"

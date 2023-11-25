@@ -1,8 +1,6 @@
 #ifndef __FUNCDECL_HPP__ 
 #define __FUNCDECL_HPP__ 
 
-#include <iostream>
-
 #include "localdef.hpp"
 #include "header.hpp"
 

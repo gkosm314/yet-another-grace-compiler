@@ -1,7 +1,6 @@
 #ifndef __HEADER_HPP__ 
 #define __HEADER_HPP__ 
 
-#include <iostream>
 #include <vector>
 
 #include "ast.hpp"

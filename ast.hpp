@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-extern void ERROR(const char msg[]);
-
 class AST
 {
   public:

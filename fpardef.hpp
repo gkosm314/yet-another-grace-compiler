@@ -1,7 +1,6 @@
 #ifndef __FPARDEF_HPP__ 
 #define __FPARDEF_HPP__ 
 
-#include <iostream>
 #include <vector>
 
 #include "ast.hpp"

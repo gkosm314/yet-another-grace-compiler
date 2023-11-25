@@ -1,14 +1,45 @@
-%{
+%code requires{
+    
 #include <cstdio>
 #include <cstdlib>
 
-#include "ast.hpp"
 #include "lexer.hpp"
+
+#include "ast.hpp"
+#include "abstractlvalue.hpp"
+#include "assign.hpp"
+#include "binop.hpp"
+#include "block.hpp"
+#include "charconst.hpp"
+#include "condition.hpp"
+#include "expr.hpp"
+#include "fpardef.hpp"
+#include "funccall.hpp"
+#include "funccallstmt.hpp"
+#include "funcdecl.hpp"
+#include "funcdef.hpp"
+#include "header.hpp"
+#include "id.hpp"
+#include "if.hpp"
+#include "intconst.hpp"
+#include "lmatrix.hpp"
+#include "localdef.hpp"
+#include "logicalcond.hpp"
+#include "noop.hpp"
+#include "numericcond.hpp"
+#include "parsedtype.hpp"
+#include "program.hpp"
+#include "return.hpp"
+#include "stmt.hpp"
+#include "strlit.hpp"
+#include "unaryop.hpp"
+#include "vardef.hpp"
+#include "while.hpp"
 
 /* Use yylineno from lexer file, since the main is in this file we need to use extern here */
 extern int yylineno;
 
-%}
+}
 
 
 %define parse.error verbose /* For debug purposes*/

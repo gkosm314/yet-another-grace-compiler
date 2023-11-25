@@ -1,8 +1,6 @@
 #ifndef __BINOP_HPP__ 
 #define __BINOP_HPP__ 
 
-#include <iostream>
-
 #include "expr.hpp"
 
 class BinOp : public Expr 
