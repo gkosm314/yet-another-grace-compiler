@@ -3,9 +3,11 @@
 
 #include <iostream>
 #include <vector>
-#include <map>
 #include <string>
 
+#include "symbol.h"
+
+extern void ERROR(const char msg[]);
 
 #define INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE -1
 
@@ -19,6 +21,7 @@ class AST
   public:
     virtual ~AST() = default;
     virtual void printAST(std::ostream &out) const = 0;
+    virtual void sem() {};
 };
 
 inline std::ostream &operator<<(std::ostream &out, const AST &ast)
@@ -39,7 +42,17 @@ class Expr : public AST
 {
   public:
     virtual int eval() const = 0;
+    virtual void type_check(Type t)
+    {
+      sem();
+      if(expr_type != t)
+      {
+        ERROR("Type mismatch");
+      }
+    }
 
+  protected:
+    Type expr_type;
 };
 
 /* abstract class */
@@ -474,15 +487,15 @@ class NumericCond : public Condition
 };
 
 
-class Type : public AST
+class ParsedType : public AST
 {
   public:
-    Type(DATA_TYPE t, std::vector<int> *dims_vec) : data_type(t), dims(dims_vec) {};
+    ParsedType(DATA_TYPE t, std::vector<int> *dims_vec) : data_type(t), dims(dims_vec) {};
   
-    ~Type() { delete dims; }
+    ~ParsedType() { delete dims; }
 
     void printAST(std::ostream &out) const override {
-        out << "Type(";
+        out << "ParsedType(";
         switch (data_type)
         {
         case DATA_TYPE_int:
@@ -522,7 +535,7 @@ class Type : public AST
 class VarDef : public LocalDef
 {
   public:
-    VarDef(std::vector<Id *> *ids_vec, Type *t ) : ids(ids_vec), type(t) {};
+    VarDef(std::vector<Id *> *ids_vec, ParsedType *t ) : ids(ids_vec), type(t) {};
 
     ~VarDef() {
       for (Id *i : *ids) delete i;
@@ -546,19 +559,14 @@ class VarDef : public LocalDef
 
   private:
     std::vector<Id *> *ids; // Will never be nullptr by construction of parser
-    Type *type;
+    ParsedType *type;
 };
-
-
-
-
-
 
 
 class FParDef : public AST
 {
   public:
-    FParDef(std::vector<Id *> *ids_vec, Type *f, bool b) : ids(ids_vec), fpar_type(f), ref(b) {};
+    FParDef(std::vector<Id *> *ids_vec, ParsedType *f, bool b) : ids(ids_vec), fpar_type(f), ref(b) {};
 
     ~FParDef() {
       for (Id *i : *ids) delete i;
@@ -583,10 +591,9 @@ class FParDef : public AST
 
   private:
     std::vector<Id *> *ids;
-    Type *fpar_type;
+    ParsedType *fpar_type;
     bool ref;
 };
-
 
 
 class Header : public AST
@@ -654,6 +661,7 @@ class FuncDecl : public LocalDef
     Header *header; 
 };
 
+
 // TODO
 class FuncDef : public LocalDef
 {
@@ -703,6 +711,7 @@ class Program : public AST
   private:
     FuncDef *fd;
 };
+
 
 class NoOp : public Stmt
 {

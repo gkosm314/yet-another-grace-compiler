@@ -34,7 +34,7 @@ extern int yylineno;
     Header *header;
     FParDef *fpar_def;
     std::vector<Id *> *id_defs;
-    Type *type;
+    ParsedType *type;
     DATA_TYPE data_type;
     FuncDecl* func_decl;
     VarDef* var_def;
@@ -171,7 +171,7 @@ data_type:
 ;
 
 type:
-    data_type int_const_bracket_list_var         { $$ = new Type($1, $2); }
+    data_type int_const_bracket_list_var         { $$ = new ParsedType($1, $2); }
 ;
 
 int_const_bracket_list_var:
@@ -191,8 +191,8 @@ int_const_bracket_list:
 ;
 
 fpar_type:
-    data_type                            { $$ = new Type($1, new std::vector<int>()); }
-|   data_type '[' int_const_bracket_list { $$ = new Type($1, $3);                     }
+    data_type                            { $$ = new ParsedType($1, new std::vector<int>()); }
+|   data_type '[' int_const_bracket_list { $$ = new ParsedType($1, $3);                     }
 ;
 
 local_def:
