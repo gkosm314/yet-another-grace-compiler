@@ -1,3 +1,6 @@
+#ifndef __LMATRIX_HPP__ 
+#define __LMATRIX_HPP__ 
+
 #include <iostream>
 
 #include "abstractlvalue.hpp"
@@ -13,3 +16,5 @@ class LMatrix : public AbstractLvalue
     AbstractLvalue *lvalue;
     Expr *expr;
 };
+
+#endif

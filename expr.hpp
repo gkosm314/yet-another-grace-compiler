@@ -1,3 +1,6 @@
+#ifndef __EXPR_HPP__ 
+#define __EXPR_HPP__ 
+
 #include "ast.hpp"
 #include "symbol.h"
 
@@ -9,3 +12,5 @@ class Expr : public AST
   protected:
     Type expr_type;
 };
+
+#endif

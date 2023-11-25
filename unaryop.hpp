@@ -1,3 +1,6 @@
+#ifndef __UNARYOP_HPP__ 
+#define __UNARYOP_HPP__ 
+
 #include "expr.hpp"
 
 class UnaryOp : public Expr 
@@ -11,3 +14,6 @@ class UnaryOp : public Expr
     Expr *expr;
     char op;
 };
+
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef __HEADER_HPP__ 
+#define __HEADER_HPP__ 
+
 #include <iostream>
 #include <vector>
 
@@ -16,3 +19,5 @@ class Header : public AST
     std::vector<FParDef *> *fpar_defs;
     DATA_TYPE ret_type;
 };
+
+#endif

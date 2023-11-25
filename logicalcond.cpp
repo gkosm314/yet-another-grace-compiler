@@ -1,6 +1,6 @@
 #include "logicalcond.hpp"
 
-LogicalCond::LogicalCond(Condition *l, char o, Condition *r = nullptr): c1(l), op(o), c2(r) {}
+LogicalCond::LogicalCond(Condition *l, char o, Condition *r): c1(l), op(o), c2(r) {}
 
 LogicalCond::~LogicalCond() { delete c1; delete c2; }
 

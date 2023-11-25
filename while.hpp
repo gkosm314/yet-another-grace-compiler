@@ -1,3 +1,6 @@
+#ifndef __WHILE_HPP__ 
+#define __WHILE_HPP__ 
+
 #include "stmt.hpp"
 #include "condition.hpp"
 
@@ -12,3 +15,5 @@ class While : public Stmt
     Condition *cond;
     Stmt *stmt;
 };
+
+#endif

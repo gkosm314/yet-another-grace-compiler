@@ -1,3 +1,6 @@
+#ifndef __PROGRAM_HPP__ 
+#define __PROGRAM_HPP__ 
+
 #include "ast.hpp"
 #include "funcdef.hpp"
 
@@ -11,3 +14,5 @@ class Program : public AST
   private:
     FuncDef *fd;
 };
+
+#endif

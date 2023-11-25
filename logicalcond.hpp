@@ -1,3 +1,6 @@
+#ifndef __LOGICALCOND_HPP__ 
+#define __LOGICALCOND_HPP__ 
+
 #include "condition.hpp"
 
 class LogicalCond : public Condition
@@ -12,3 +15,5 @@ class LogicalCond : public Condition
     char op;
     Condition *c2;
 };
+
+#endif

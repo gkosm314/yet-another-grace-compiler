@@ -1,6 +1,6 @@
 #include "return.hpp"
 
-Return::Return(Expr *e = nullptr) : expr(e) {}
+Return::Return(Expr *e) : expr(e) {}
 
 Return::~Return() { delete expr; }
 

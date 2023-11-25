@@ -1,3 +1,6 @@
+#ifndef __NUMERICCOND_HPP__ 
+#define __NUMERICCOND_HPP__ 
+
 #include "condition.hpp"
 
 class NumericCond : public Condition
@@ -12,3 +15,6 @@ class NumericCond : public Condition
     char op;
     Expr *right;
 };
+
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef __VARDEF_HPP__ 
+#define __VARDEF_HPP__ 
+
 #include <iostream>
 #include <vector>
 
@@ -16,3 +19,6 @@ class VarDef : public LocalDef
     std::vector<Id *> *ids; // Will never be nullptr by construction of parser
     ParsedType *type;
 };
+
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef __BLOCK_HPP__ 
+#define __BLOCK_HPP__ 
+
 #include <iostream>
 #include <vector>
 
@@ -15,3 +18,5 @@ class Block : public Stmt
   private:
     std::vector<Stmt*> stmt_list;
 };
+
+#endif

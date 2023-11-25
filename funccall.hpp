@@ -1,3 +1,6 @@
+#ifndef __FUNCCALL_HPP__ 
+#define __FUNCCALL_HPP__ 
+
 #include <iostream>
 #include <vector>
 
@@ -16,3 +19,5 @@ class FuncCall : public Expr
     Id *funcName;
     std::vector<Expr *> *parametersExprList;
 };
+
+#endif

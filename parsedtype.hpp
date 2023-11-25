@@ -1,3 +1,6 @@
+#ifndef __PARSEDTYPE_HPP__ 
+#define __PARSEDTYPE_HPP__ 
+
 #include <iostream>
 #include <vector>
 
@@ -26,3 +29,5 @@ class ParsedType : public AST
     */
     std::vector<int> *dims;
 };
+
+#endif

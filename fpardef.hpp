@@ -1,3 +1,6 @@
+#ifndef __FPARDEF_HPP__ 
+#define __FPARDEF_HPP__ 
+
 #include <iostream>
 #include <vector>
 
@@ -17,3 +20,5 @@ class FParDef : public AST
     ParsedType *fpar_type;
     bool ref;
 };
+
+#endif

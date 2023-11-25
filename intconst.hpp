@@ -1,3 +1,6 @@
+#ifndef __INTCONST_HPP__ 
+#define __INTCONST_HPP__ 
+
 #include "expr.hpp"
 
 class IntConst : public Expr 
@@ -9,3 +12,5 @@ class IntConst : public Expr
   private:
     const int val; 
 };
+
+#endif

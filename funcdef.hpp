@@ -1,3 +1,6 @@
+#ifndef __FUNCDEF_HPP__ 
+#define __FUNCDEF_HPP__ 
+
 #include <iostream>
 #include <vector>
 
@@ -17,3 +20,5 @@ class FuncDef : public LocalDef
     std::vector<LocalDef *> *local_defs;
     Block *block;
 };
+
+#endif

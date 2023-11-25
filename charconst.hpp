@@ -1,3 +1,6 @@
+#ifndef __CHARCONST_HPP__ 
+#define __CHARCONST_HPP__ 
+
 #include <iostream>
 
 #include "expr.hpp"
@@ -11,3 +14,5 @@ class CharConst : public Expr
   private:
     char val;
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef __STRLIT_HPP__ 
+#define __STRLIT_HPP__ 
+
 #include "abstractlvalue.hpp"
 
 class StrLit : public AbstractLvalue
@@ -9,3 +12,5 @@ class StrLit : public AbstractLvalue
   private:
     std::string str;
 };
+
+#endif
