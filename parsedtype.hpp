@@ -7,10 +7,6 @@
 
 #define INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE -1
 
-/* This enum is used during the parsing.
-   It is different from the enums used in "symbol.h", which are used for the semantic analysis. */
-enum DATA_TYPE { DATA_TYPE_int, DATA_TYPE_char, DATA_TYPE_nothing };
-
 class ParsedType : public AST
 {
   public:

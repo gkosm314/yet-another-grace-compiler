@@ -11,7 +11,7 @@ class Expr : public AST
     void type_check(Type expected_type);
 
   protected:
-    Type expr_type;
+    Type expr_type = nullptr;
 };
 
 #endif

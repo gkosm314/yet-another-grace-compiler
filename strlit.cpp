@@ -5,7 +5,7 @@ StrLit::StrLit(std::string s) : str(s) {}
 
 StrLit::~StrLit()
 {
-  destroyType(expr_type);
+  if(expr_type) destroyType(expr_type);
 }
 
 void StrLit::printAST(std::ostream &out) const {

@@ -31,6 +31,10 @@ extern "C" {
   extern bool          equalType          (Type type1, Type type2);
 }
 
+/* This enum is used during the parsing.
+   It is different from the enums used in "symbol.h", which are used for the semantic analysis. */
+enum DATA_TYPE { DATA_TYPE_int, DATA_TYPE_char, DATA_TYPE_nothing };
+
 class AST
 {
   public:
@@ -42,6 +46,12 @@ class AST
 inline std::ostream &operator<<(std::ostream &out, const AST &ast)
 {
   ast.printAST(out);
+  return out;
+}
+
+inline std::ostream &operator<<(std::ostream &out, const Type &t)
+{
+  printType(t);
   return out;
 }
 

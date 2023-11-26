@@ -7,11 +7,13 @@
 class Return : public Stmt
 {
   public:
-    Return(Expr *e = nullptr);
+    Return(DATA_TYPE parsed_ret_type, Expr *e = nullptr);
     ~Return();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
+    Type  expected_ret_type;
     Expr *expr;
 };
 
