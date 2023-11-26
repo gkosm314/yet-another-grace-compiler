@@ -18,3 +18,8 @@ void Block::printAST(std::ostream &out) const {
   }
   out << ")";
 }
+
+void Block::sem()
+{
+  for (Stmt *s : stmt_list) s->sem();
+}

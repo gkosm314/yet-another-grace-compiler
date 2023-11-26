@@ -13,6 +13,7 @@ class Block : public Stmt
     ~Block();
     void append(Stmt *s);
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     std::vector<Stmt*> stmt_list;
