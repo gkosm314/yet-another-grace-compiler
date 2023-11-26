@@ -36,9 +36,6 @@
 #include "vardef.hpp"
 #include "while.hpp"
 
-/* Use yylineno from lexer file, since the main is in this file we need to use extern here */
-extern int yylineno;
-
 }
 
 
@@ -321,11 +318,6 @@ cond:
 ;
 
 %%
-
-void yyerror(const char *msg) {
-  fprintf(stderr, "Error: %s at line %d\n", msg, yylineno);
-  exit(1);
-}
 
 int main() {
   int result = yyparse();

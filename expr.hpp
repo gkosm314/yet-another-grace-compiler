@@ -2,13 +2,13 @@
 #define __EXPR_HPP__ 
 
 #include "ast.hpp"
-#include "symbol.h"
 
 /* abstract class */
 class Expr : public AST
 {
   public:
-    
+    void type_check(Type expected_type);
+
   protected:
     Type expr_type;
 };
