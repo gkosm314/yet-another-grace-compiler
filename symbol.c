@@ -428,7 +428,7 @@ static unsigned int fixOffset (SymbolEntry * args)
         
         args->u.eParameter.offset = START_POSITIVE_OFFSET + rest;
         if (args->u.eParameter.mode == PASS_BY_REFERENCE)
-            return rest + 2;
+            return rest + REFERENCE_SIZE;
         else
             return rest + sizeOfType(args->u.eParameter.type);
     }
