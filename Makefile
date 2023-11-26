@@ -9,7 +9,7 @@ lexer.cpp: lexer.l
 	flex -s -o lexer.cpp lexer.l
 
 parser.hpp parser.cpp: parser.y
-	bison -dv -Wcounterexamples -o parser.cpp parser.y
+	bison -dv -o parser.cpp parser.y
 
 lexer.o: lexer.cpp lexer.hpp parser.hpp ast.hpp
 
