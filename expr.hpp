@@ -7,6 +7,7 @@
 class Expr : public AST
 {
   public:
+    Type getType();
     void type_check(Type expected_type);
 
   protected:

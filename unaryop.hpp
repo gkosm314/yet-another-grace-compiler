@@ -9,6 +9,7 @@ class UnaryOp : public Expr
     UnaryOp(char o, Expr *e);
     ~UnaryOp();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     Expr *expr;

@@ -9,3 +9,10 @@ void If::printAST(std::ostream &out) const {
   if (stmt2 != nullptr) out << ", " << *stmt2;
   out << ")";
 }
+
+void If::sem()
+{
+  cond->type_check(typeBoolean);
+  stmt1->sem();
+  if (stmt2 != nullptr) stmt2->sem();
+}

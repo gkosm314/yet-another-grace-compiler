@@ -10,6 +10,7 @@ class While : public Stmt
     While(Condition *c, Stmt *s);
     ~While();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     Condition *cond;

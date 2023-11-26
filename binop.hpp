@@ -9,6 +9,7 @@ class BinOp : public Expr
     BinOp(Expr *l, char o, Expr *r);
     ~BinOp();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     Expr *left;

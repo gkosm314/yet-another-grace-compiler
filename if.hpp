@@ -9,7 +9,9 @@ class If : public Stmt
   public:
     If(Condition *c, Stmt *s1, Stmt *s2 = nullptr);
     ~If();
-    void printAST(std::ostream &out) const;
+    void printAST(std::ostream &out) const override;
+    void sem() override;
+
   private:
     Condition *cond;
     Stmt      *stmt1;

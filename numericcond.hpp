@@ -9,6 +9,7 @@ class NumericCond : public Condition
     NumericCond(Expr *l, char o, Expr *r);
     ~NumericCond();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     Expr *left;

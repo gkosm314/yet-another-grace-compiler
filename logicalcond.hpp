@@ -9,6 +9,7 @@ class LogicalCond : public Condition
     LogicalCond(Condition *l, char o, Condition *r = nullptr);
     ~LogicalCond();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     Condition *c1;
