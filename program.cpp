@@ -10,6 +10,6 @@ void Program::printAST(std::ostream &out) const {
 
 void Program::sem()
 {
-  fd->isValidProgram();
+  fd->hasProgramSignature();
   fd->sem();
 }
