@@ -12,6 +12,8 @@ class Header : public AST
     Header(Id *i, std::vector<FParDef *> *vec_defs, DATA_TYPE dt);
     ~Header();
     void printAST(std::ostream &out) const override;
+    size_t getParametersCount();
+    DATA_TYPE getReturnType();
 
   private:
     Id *id;

@@ -224,7 +224,7 @@ int_const_bracket_list_var:
 
 ret_type:
     data_type  { $$ = $1;                 ret_types_stack.push_back($$); }
-|   "nothing"  { $$ = DATA_TYPE_nothing;  ret_types_stack.push_back($$); }
+|   "nothing"  { $$ = DATA_TYPE_void;  ret_types_stack.push_back($$); }
 ;
 
 int_const_bracket_list:

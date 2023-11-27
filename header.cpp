@@ -28,7 +28,7 @@ void Header::printAST(std::ostream &out) const {
     case DATA_TYPE_char:
       out << "char";
       break;
-    case DATA_TYPE_nothing:
+    case DATA_TYPE_void:
       out << "nothing";
       break;
     default:
@@ -36,4 +36,14 @@ void Header::printAST(std::ostream &out) const {
       break;
   }
   out << ")";
+}
+
+size_t Header::getParametersCount()
+{
+  return fpar_defs->size();
+}
+
+DATA_TYPE Header::getReturnType()
+{
+  return ret_type;
 }

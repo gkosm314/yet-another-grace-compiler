@@ -13,6 +13,7 @@ class FuncDef : public LocalDef
     FuncDef(Header *h,  std::vector<LocalDef *> *vector_def, Block *b);
     ~FuncDef();
     void printAST(std::ostream &out) const override;
+    void isValidProgram();
 
   private:
     Header *header;

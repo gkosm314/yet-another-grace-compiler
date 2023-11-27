@@ -15,7 +15,7 @@ Return::Return(DATA_TYPE parsed_ret_type, Expr *e) : expr(e) {
     case DATA_TYPE_char:
       expected_ret_type = typeChar;
       break;
-    case DATA_TYPE_nothing:
+    case DATA_TYPE_void:
       expected_ret_type = typeVoid;
       break;
     default:

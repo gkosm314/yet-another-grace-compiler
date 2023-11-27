@@ -7,3 +7,9 @@ Program::~Program() { delete fd; }
 void Program::printAST(std::ostream &out) const {
   out << "Program(" << *fd << ")";
 }
+
+void Program::sem()
+{
+  fd->isValidProgram();
+  fd->sem();
+}

@@ -10,6 +10,7 @@ class Program : public AST
     Program(FuncDef *f);
     ~Program();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     FuncDef *fd;

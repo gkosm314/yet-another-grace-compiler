@@ -11,6 +11,7 @@ class FuncCallStmt : public Stmt
     FuncCallStmt(FuncCall *fc);
     ~FuncCallStmt();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     FuncCall* func;

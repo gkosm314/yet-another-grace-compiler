@@ -9,6 +9,7 @@ class LMatrix : public AbstractLvalue
     LMatrix(AbstractLvalue *lval, Expr *e);
     ~LMatrix();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     AbstractLvalue *lvalue;

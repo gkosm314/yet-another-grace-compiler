@@ -7,3 +7,8 @@ FuncCallStmt::~FuncCallStmt() { delete func; }
 void FuncCallStmt::printAST(std::ostream &out) const {
   out << "FuncCallStmt(" << *func << ")";
 }
+
+void FuncCallStmt::sem()
+{
+  func->type_check(typeVoid);
+}

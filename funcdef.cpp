@@ -23,3 +23,9 @@ void FuncDef::printAST(std::ostream &out) const {
   out << *block;
   out << ")";
 }
+
+void FuncDef::isValidProgram()
+{
+  if(header->getParametersCount() != 0) yyerror("Program cannot take parameters");
+  if(header->getReturnType() != DATA_TYPE_void) yyerror("Program must be of type nothing");
+}
