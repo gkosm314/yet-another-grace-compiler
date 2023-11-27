@@ -60,4 +60,27 @@ inline void yyerror(const char *msg) {
   exit(1);
 }
 
+inline Type toType(DATA_TYPE datatype_arg)
+{
+  Type t;
+
+  switch (datatype_arg) {
+    case DATA_TYPE_int:
+      t = typeInteger;
+      break;
+    case DATA_TYPE_char:
+      t = typeChar;
+      break;
+    case DATA_TYPE_void:
+      t = typeVoid;
+      break;
+    default:
+      /* Execution should never reach this point */
+      yyerror("Invalid datatype_arg passed in toType()");
+      break;
+  }  
+
+  return t;
+}
+
 #endif

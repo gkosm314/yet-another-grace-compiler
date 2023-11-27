@@ -8,22 +8,13 @@ Return::Return(DATA_TYPE parsed_ret_type, Expr *e) : expr(e) {
    * This means that it is a reference to a stack object that will be popped
    * at the end of the function definition. We should not store it.
    */
-  switch (parsed_ret_type) {
-    case DATA_TYPE_int:
-      expected_ret_type = typeInteger;
-      break;
-    case DATA_TYPE_char:
-      expected_ret_type = typeChar;
-      break;
-    case DATA_TYPE_void:
-      expected_ret_type = typeVoid;
-      break;
-    default:
-      yyerror("Invalid parsed_ret_type passed to Return() constructor");
-  }
+   expected_ret_type = toType(parsed_ret_type);
 }
 
-Return::~Return() { delete expr; }
+Return::~Return() { 
+  if(expected_ret_type) destroyType(expected_ret_type);
+  delete expr;
+}
 
 void Return::printAST(std::ostream &out) const {
   out << "Return(";

@@ -335,7 +335,14 @@ cond:
 %%
 
 int main() {
+
+  /* Initialize symbol table with hash table of size 256 */
+  initSymbolTable(256);
+
   int result = yyparse();
   if (result == 0) printf("Success!\n");
   return result;
+
+  /* Destroy symbol table */
+  destroySymbolTable();
 }

@@ -13,6 +13,7 @@ class ParsedType : public AST
     ParsedType(DATA_TYPE t, std::vector<int> *dims_vec);
     ~ParsedType();
     void printAST(std::ostream &out) const override;
+    friend Type toType(ParsedType *t);
 
   private:
     DATA_TYPE data_type;

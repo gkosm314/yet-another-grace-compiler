@@ -8,9 +8,10 @@ class Id : public AbstractLvalue
   public:
     Id(std::string s);
     void printAST(std::ostream &out) const override;
+    const char * getName() const;
 
   private:
-    std::string str;
+    std::string name;
 };
 
 
