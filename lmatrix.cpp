@@ -14,7 +14,7 @@ void LMatrix::printAST(std::ostream &out) const {
 void LMatrix::sem()
 {
   /* LMatrix is of the form LVALUE[EXPR] 
-   * Example for a[5*3][4/2][8+6]: LVALUE = a[5], EXPR = 8+6
+   * Example for a[5*3][4/2][8+6]: LVALUE = a[15][2], EXPR = 8+6
    */
 
   /* Perform semantic analysis for EXPR and ensure it is an integer */
