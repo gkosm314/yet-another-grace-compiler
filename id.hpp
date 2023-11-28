@@ -1,9 +1,10 @@
 #ifndef __ID_HPP__ 
 #define __ID_HPP__ 
 
-#include "abstractlvalue.hpp"
+#include "ast.hpp"
 
-class Id : public AbstractLvalue
+/* This class could be removed as it is essentially a wrapper for string::std */
+class Id : public AST
 {
   public:
     Id(std::string s);

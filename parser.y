@@ -25,6 +25,7 @@
 #include "lmatrix.hpp"
 #include "localdef.hpp"
 #include "logicalcond.hpp"
+#include "lvalue.hpp"
 #include "noop.hpp"
 #include "numericcond.hpp"
 #include "parsedtype.hpp"
@@ -299,7 +300,12 @@ expr_rest:
 ;
 
 l_value:
-    T_id                  { $$ = new Id(*$1);  delete $1; /* delete str_val which was dynamically created in lexer */ }
+    T_id                  { 
+                            Id *id;
+                            id = new Id(*$1);
+                            $$ = new LValue(id);
+                            delete $1; /* delete str_val which was dynamically created in lexer */
+                          }
 |   T_string_lit          { $$ = new StrLit(*$1); delete $1; }
 |   l_value '[' expr ']'  { $$ = new LMatrix($1, $3);        }
 ;
