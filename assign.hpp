@@ -10,6 +10,7 @@ class Assign : public Stmt
     Assign(AbstractLvalue *l, Expr *e);
     ~Assign();
     void printAST(std::ostream &out) const override;
+    void sem() override;
     
   private:
     AbstractLvalue *lval;

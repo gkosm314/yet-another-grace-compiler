@@ -6,6 +6,8 @@
 #include "ast.hpp"
 #include "fpardef.hpp"
 
+extern std::vector<Type> ret_types_stack;
+
 class Header : public AST
 {
   public:
@@ -13,12 +15,16 @@ class Header : public AST
     ~Header();
     void printAST(std::ostream &out) const override;
     size_t getParametersCount();
-    DATA_TYPE getReturnType();
+    Type getReturnType();
+    void setForward();
+    void sem() override;
 
   private:
     Id *id;
-    std::vector<FParDef *> *fpar_defs;
-    DATA_TYPE ret_type;
+    std::vector<FParDef*> *fpar_defs;
+    Type ret_type;
+    
+    bool isForward = false;
 };
 
 #endif

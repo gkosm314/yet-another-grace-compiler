@@ -4,16 +4,19 @@
 #include "stmt.hpp"
 #include "expr.hpp"
 
+#include <vector>
+
+extern std::vector<Type> ret_types_stack;
+
 class Return : public Stmt
 {
   public:
-    Return(DATA_TYPE parsed_ret_type, Expr *e = nullptr);
+    Return(Expr *e = nullptr);
     ~Return();
     void printAST(std::ostream &out) const override;
     void sem() override;
 
   private:
-    Type  expected_ret_type;
     Expr *expr;
 };
 

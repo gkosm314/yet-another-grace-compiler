@@ -14,10 +14,11 @@ class FuncDef : public LocalDef
     ~FuncDef();
     void printAST(std::ostream &out) const override;
     void hasProgramSignature();
+    void sem() override;
 
   private:
     Header *header;
-    std::vector<LocalDef *> *local_defs;
+    std::vector<LocalDef*> *local_defs;
     Block *block;
 };
 

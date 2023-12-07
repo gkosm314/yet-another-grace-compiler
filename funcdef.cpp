@@ -27,5 +27,16 @@ void FuncDef::printAST(std::ostream &out) const {
 void FuncDef::hasProgramSignature()
 {
   if(header->getParametersCount() != 0) yyerror("Program cannot take parameters");
-  if(header->getReturnType() != DATA_TYPE_void) yyerror("Program must be of type nothing");
+  if(!equalType(header->getReturnType(), typeVoid)) yyerror("Program must be of type nothing");
+}
+
+void FuncDef::sem()
+{
+  header->sem();
+  for (LocalDef *i : *local_defs) i->sem();
+  block->sem();
+
+  /* The new scope is opened inside header->sem() */
+  ret_types_stack.pop_back();
+  closeScope();
 }

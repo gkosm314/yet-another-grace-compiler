@@ -39,22 +39,6 @@
 
 }
 
-%code {
-    /* If we declare this vector inside the %code requires block,
-     * it will be declared twice (once in the parser and once in the lexer)
-     */
-
-    /* We keep the return types of the function definitions we parse in this stack,
-     * in order to know the expected return type of a return statement when we parse it.
-     * Using a stack works correctly because function definitions are nested.
-     * We push the return type every type we parse a ret_type.
-     * This includes ret_types inside the headers of forward-declared functions (func-decl). 
-     * We pop the ret_type from the stack when the definition (or declaration) finishes.
-     * TODO: this process should be performed to the semantic pass when we implement FuncDef.sem()
-     */
-    std::vector<DATA_TYPE> ret_types_stack;
-}
-
 %define parse.error verbose /* For debug purposes*/
 
 %expect 1
@@ -154,7 +138,7 @@ program:
 ;
 
 func_def:
-    header local_def_list block { $$ = new FuncDef($1, $2, $3); ret_types_stack.pop_back(); }
+    header local_def_list block { $$ = new FuncDef($1, $2, $3); }
 ;
 
 local_def_list:
@@ -224,8 +208,8 @@ int_const_bracket_list_var:
 ;
 
 ret_type:
-    data_type  { $$ = $1;                 ret_types_stack.push_back($$); }
-|   "nothing"  { $$ = DATA_TYPE_void;  ret_types_stack.push_back($$); }
+    data_type  { $$ = $1;             }
+|   "nothing"  { $$ = DATA_TYPE_void; }
 ;
 
 int_const_bracket_list:
@@ -246,7 +230,7 @@ local_def:
 ;
 
 func_decl:
-    header ';' { $$ = new FuncDecl($1); ret_types_stack.pop_back(); }
+    header ';' { $$ = new FuncDecl($1); }
 ;
 
 var_def:
@@ -267,8 +251,8 @@ stmt:
 |   "if" cond "then" stmt "else" stmt { $$ = new If($2, $4, $6);   }
 |   "if" cond "then" stmt             { $$ = new If($2, $4);       }
 |   "while" cond "do" stmt            { $$ = new While($2, $4);    }
-|   "return" ';'                      { $$ = new Return(ret_types_stack.back());     }
-|   "return" expr ';'                 { $$ = new Return(ret_types_stack.back(), $2); }
+|   "return" ';'                      { $$ = new Return();     }
+|   "return" expr ';'                 { $$ = new Return($2); }
 
 block:
     '{' stmt_list '}'                 { $$ = $2;                   }

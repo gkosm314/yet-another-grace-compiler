@@ -53,6 +53,7 @@ Type toType(ParsedType *t)
    *       (this occurs when we autocomplete first dimension of fpardef)
    */
 
+  /* This toType() call always returns a basic type so no delete is needed*/
   Type baseType = toType(t->data_type);
   Type tempType;
 

@@ -9,7 +9,8 @@ class FuncDecl : public LocalDef
   public:
     FuncDecl(Header *h);
     ~FuncDecl();
-    void printAST(std::ostream &out) const;
+    void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
     Header *header; 

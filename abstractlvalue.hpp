@@ -7,6 +7,7 @@
 class AbstractLvalue : public Expr
 {
   public:
+    bool isLvalue() override;
 };
 
 #endif

@@ -9,9 +9,12 @@ class Expr : public AST
   public:
     Type getType();
     void type_check(Type expected_type);
+    virtual bool isLvalue();
 
   protected:
     Type expr_type = nullptr;
 };
+
+bool check_assignable_operands(Expr *left, Expr *right);
 
 #endif

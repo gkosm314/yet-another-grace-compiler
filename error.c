@@ -80,6 +80,9 @@ void error (const char * fmt, ...)
    vfprintf(stderr, fmt, ap);
    fprintf(stderr, "\n");
    va_end(ap);
+
+   /* Warning: this was added by us to terminate compilation in case of error */
+   exit(1);
 }
 
 void warning (const char * fmt, ...)
