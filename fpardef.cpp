@@ -38,6 +38,13 @@ void FParDef::setFunction(SymbolEntry *e)
 
 void FParDef::sem()
 {
+  /* Arrays passed as function parameters can be passed by reference only */
+  bool isArrayType = !equalType(param_type, typeInteger) && !equalType(param_type, typeChar);
+  if(isArrayType && pass_mode != PASS_BY_REFERENCE)
+  {
+    yyerror("Arrays can only be passed by reference.");
+  }
+
   /* Iterate over the ids of the params that we want to define */
   for(Id* id : *ids)
   {
