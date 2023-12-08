@@ -5,8 +5,9 @@
 
 #include "ast.hpp"
 #include "fpardef.hpp"
+#include "returnstack.hpp"
 
-extern std::vector<Type> ret_types_stack;
+extern ReturnStack return_stack;
 
 class Header : public AST
 {

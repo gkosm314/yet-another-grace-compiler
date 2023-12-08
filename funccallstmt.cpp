@@ -11,4 +11,7 @@ void FuncCallStmt::printAST(std::ostream &out) const {
 void FuncCallStmt::sem()
 {
   func->type_check(typeVoid);
+
+  /* If the function has already returned we should not generate code */
+  checkIfStmtIsAfterReturn();  
 }

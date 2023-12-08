@@ -15,4 +15,7 @@ void If::sem()
   cond->type_check(typeBoolean);
   stmt1->sem();
   if (stmt2 != nullptr) stmt2->sem();
+
+  /* If the function has already returned we should not generate code */
+  checkIfStmtIsAfterReturn();  
 }

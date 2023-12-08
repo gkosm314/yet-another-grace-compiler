@@ -22,18 +22,32 @@ void Return::printAST(std::ostream &out) const {
 void Return::sem()
 {
   /* This is a reference to a stack object that will be popped
-   * at the end of the function definition. We should not store it. */  
-  Type expected_ret_type = ret_types_stack.back();
+     at the end of the function definition. We should not store it. */  
+  Type expected_ret_type = return_stack.getType();
   
+  /* Check that return statement returns the correct type */
   if(equalType(expected_ret_type, typeVoid))
   {
+    /* void function may end with "return;" but not with "return e;" */
     if(expr != nullptr) yyerror("Return did not expect an expression");
   }
   else if(equalType(expected_ret_type, typeInteger) || equalType(expected_ret_type, typeChar))
   {
+    /* int/char functions should return int/var expression respectively */
     if(expr != nullptr) expr->type_check(expected_ret_type);
     else yyerror("Return expected an expression");
   }
-  // We should never reach this point
-  else yyerror("Return has bad expected_ret_type - execution should never reach this point!");
+  else
+  {
+    // We should never reach this point
+    yyerror("Return has bad expected_ret_type - execution should never reach this point!");
+  }
+
+  /* Update the stack in order to:
+   *  - check if the function has a return statement (for non-void functions)
+   *  - avoid generating code for statements that follow */
+  return_stack.setFound();
+
+  /* If the function has already returned we should not generate code */
+  checkIfStmtIsAfterReturn();
 }

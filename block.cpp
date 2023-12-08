@@ -22,4 +22,7 @@ void Block::printAST(std::ostream &out) const {
 void Block::sem()
 {
   for (Stmt *s : stmt_list) s->sem();
+  
+  /* If the function has already returned we should not generate code */
+  checkIfStmtIsAfterReturn();  
 }

@@ -3,10 +3,9 @@
 
 #include "stmt.hpp"
 #include "expr.hpp"
+#include "returnstack.hpp"
 
-#include <vector>
-
-extern std::vector<Type> ret_types_stack;
+extern ReturnStack return_stack;
 
 class Return : public Stmt
 {

@@ -20,8 +20,7 @@ extern "C" {
   extern void          forwardFunction    (SymbolEntry * f);
   extern void          endFunctionHeader  (SymbolEntry * f, Type type);
   extern void          destroyEntry       (SymbolEntry * e);
-  extern SymbolEntry * lookupEntry        (const char * name, LookupType type,
-                                    bool err);
+  extern SymbolEntry * lookupEntry        (const char * name, LookupType type, bool err);
 
   extern Type          typeArray          (RepInteger size, Type refType);
   extern bool          equalType          (Type type1, Type type2);

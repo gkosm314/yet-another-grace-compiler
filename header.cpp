@@ -51,7 +51,7 @@ void Header::sem()
     forwardFunction(f);
 
   openScope();
-  ret_types_stack.push_back(ret_type);
+  return_stack.push(ret_type);
 
   for (FParDef *p : *fpar_defs)
   {

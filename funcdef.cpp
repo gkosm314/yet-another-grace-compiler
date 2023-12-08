@@ -32,11 +32,19 @@ void FuncDef::hasProgramSignature()
 
 void FuncDef::sem()
 {
+  /* Perform semantic analysis for function definition */
   header->sem();
   for (LocalDef *i : *local_defs) i->sem();
   block->sem();
 
+  /* If the function has non-void return type it must include a return statement */
+  if(equalType(header->getReturnType(), typeInteger) || equalType(header->getReturnType(), typeChar))
+  {
+    /* Note: We should do this check after calling header->sem() and before calling .pop() on the stack */
+    if(!return_stack.returnFound()) yyerror("Non-void function should have return statement.");
+  }
+
   /* The new scope is opened inside header->sem() */
-  ret_types_stack.pop_back();
+  return_stack.pop();
   closeScope();
 }

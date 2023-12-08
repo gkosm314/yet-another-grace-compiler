@@ -39,6 +39,12 @@
 
 }
 
+%code {
+    #include "returnstack.hpp"
+    
+    ReturnStack return_stack;
+}
+
 %define parse.error verbose /* For debug purposes*/
 
 %expect 1
