@@ -13,10 +13,11 @@ class FuncCall : public Expr
     FuncCall(Id *f, std::vector<Expr *> *par);
     ~FuncCall();
     void printAST(std::ostream &out) const override;
+    void sem() override;
 
   private:
-    Id *funcName;
-    std::vector<Expr *> *parametersExprList;
+    Id *func_name;
+    std::vector<Expr*> *parameters_expr_list;
 };
 
 #endif
