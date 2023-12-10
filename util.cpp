@@ -66,7 +66,8 @@ void semAddLibraryFunctions(const char                     *func_name,
 
 void semInitLibraryFunctions()
 {
-  Type typeString = typeArray(INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE, typeChar);
+  /* Here autocomplete is true because this will be the parameter type for the library functions */
+  Type typeStringParam = typeArray(INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE, typeChar, true);
 
   /* Output library functions */
   semAddLibraryFunctions("writeInteger", 1,
@@ -81,7 +82,7 @@ void semInitLibraryFunctions()
                          typeVoid);
   semAddLibraryFunctions("writeString", 1,
                          std::vector<const char*>{"s"},
-                         std::vector<Type>{typeString},
+                         std::vector<Type>{typeStringParam},
                          std::vector<PassMode>{PASS_BY_VALUE},
                          typeVoid);
 
@@ -98,7 +99,7 @@ void semInitLibraryFunctions()
                          typeChar);
   semAddLibraryFunctions("readString", 2,
                          std::vector<const char*>{"n","s"},
-                         std::vector<Type>{typeInteger, typeString},
+                         std::vector<Type>{typeInteger, typeStringParam},
                          std::vector<PassMode>{PASS_BY_VALUE, PASS_BY_REFERENCE},
                          typeVoid);
 
@@ -117,24 +118,24 @@ void semInitLibraryFunctions()
   /* String handling library functions */
   semAddLibraryFunctions("strlen", 1,
                          std::vector<const char*>{"s"},
-                         std::vector<Type>{typeString},
+                         std::vector<Type>{typeStringParam},
                          std::vector<PassMode>{PASS_BY_REFERENCE},
                          typeInteger);
   semAddLibraryFunctions("strcmp", 2,
                          std::vector<const char*>{"s1", "s2"},
-                         std::vector<Type>{typeString, typeString},
+                         std::vector<Type>{typeStringParam, typeStringParam},
                          std::vector<PassMode>{PASS_BY_REFERENCE, PASS_BY_REFERENCE},
                          typeInteger);
   semAddLibraryFunctions("strcpy", 2,
                          std::vector<const char*>{"trg", "src"},
-                         std::vector<Type>{typeString, typeString},
+                         std::vector<Type>{typeStringParam, typeStringParam},
                          std::vector<PassMode>{PASS_BY_REFERENCE, PASS_BY_REFERENCE},
                          typeVoid);
   semAddLibraryFunctions("strcat", 2,
                          std::vector<const char*>{"trg", "src"},
-                         std::vector<Type>{typeString, typeString},
+                         std::vector<Type>{typeStringParam, typeStringParam},
                          std::vector<PassMode>{PASS_BY_REFERENCE, PASS_BY_REFERENCE},
                          typeVoid);
 
-  destroyType(typeString);
+  destroyType(typeStringParam);
 }

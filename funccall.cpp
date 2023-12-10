@@ -40,7 +40,7 @@ void FuncCall::sem()
         yyerror("More parameters than expected in function call.");
 
       /* Check that the expression we pass has the same type as the typical parameter */
-      e->type_check(current_argument->u.eParameter.type);
+      e->type_check_param(current_argument->u.eParameter.type);
 
       if(current_argument->u.eParameter.mode == PASS_BY_REFERENCE && !e->isLvalue())
         yyerror("Parameter defined as pass-by-reference requires an lvalue.");

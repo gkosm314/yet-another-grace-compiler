@@ -78,6 +78,7 @@ struct Type_tag {
        TYPE_POINTER                      /* Δείκτες                   */
     } kind;
     Type           refType;              /* Τύπος αναφοράς            */
+    bool           autocompleteSize;     /* Μέγεθος είναι άγνωστο     */
     RepInteger     size;                 /* Μέγεθος, αν είναι πίνακας */
     unsigned int   refCount;             /* Μετρητής αναφορών         */
 };
@@ -220,7 +221,7 @@ void          destroyEntry       (SymbolEntry * e);
 SymbolEntry * lookupEntry        (const char * name, LookupType type,
                                   bool err);
 
-Type          typeArray          (RepInteger size, Type refType);
+Type          typeArray          (RepInteger size, Type refType, bool autocompleteFlag);
 Type          typeIArray         (Type refType);
 Type          typePointer        (Type refType);
 void          destroyType        (Type type);
@@ -230,5 +231,7 @@ void          printType          (Type type);
 void          printMode          (PassMode mode);
 
 void          printSymbolTable   ();
+
+bool          equalTypeAutocomplete (Type type1, Type type2);
 
 #endif

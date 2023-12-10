@@ -22,8 +22,10 @@ extern "C" {
   extern void          destroyEntry       (SymbolEntry * e);
   extern SymbolEntry * lookupEntry        (const char * name, LookupType type, bool err);
 
-  extern Type          typeArray          (RepInteger size, Type refType);
+  extern Type          typeArray          (RepInteger size, Type refType, bool autocompleteFlag);
   extern bool          equalType          (Type type1, Type type2);
+
+  bool                 equalTypeAutocomplete (Type type1, Type type2);
 }
 
 /* This enum is used during the parsing.

@@ -16,6 +16,16 @@ void Expr::type_check(Type expected_type)
     }
 }
 
+void Expr::type_check_param(Type expected_type)
+{
+    sem();
+
+    if(!equalTypeAutocomplete(expr_type, expected_type))
+    {
+        yyerror("Type mismatch");
+    }
+}
+
 bool Expr::isLvalue()
 {
     return false;

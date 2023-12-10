@@ -63,7 +63,8 @@ Type toType(ParsedType *t)
    */
   for (auto it = t->dims->rbegin(); it != t->dims->rend(); ++it)
   {
-    tempType = typeArray(*it, baseType);
+    bool autocompletedDimension = (*it == INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE);
+    tempType = typeArray(*it, baseType, autocompletedDimension);
     baseType = tempType;    
   }
 

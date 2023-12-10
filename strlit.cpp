@@ -16,5 +16,5 @@ void StrLit::sem()
 {
   /* String literals have type char[n], with n = length_of_string + 1  */
   RepInteger char_array_len = str.length() + 1;
-  expr_type = typeArray(char_array_len, typeChar);
+  expr_type = typeArray(char_array_len, typeChar, false);
 }

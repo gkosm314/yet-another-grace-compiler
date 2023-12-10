@@ -44,11 +44,11 @@ static unsigned int   hashTableSize;   /* Μέγεθος πίνακα κατακερματισμού */
 static SymbolEntry ** hashTable;       /* Πίνακας κατακερματισμού        */
 
 static struct Type_tag typeConst [] = {
-    { TYPE_VOID,    NULL, 0, 0 },
-    { TYPE_INTEGER, NULL, 0, 0 },
-    { TYPE_BOOLEAN, NULL, 0, 0 },
-    { TYPE_CHAR,    NULL, 0, 0 },
-    { TYPE_REAL,    NULL, 0, 0 }
+    { TYPE_VOID,    NULL, 0, 0, 0 },
+    { TYPE_INTEGER, NULL, 0, 0, 0 },
+    { TYPE_BOOLEAN, NULL, 0, 0, 0 },
+    { TYPE_CHAR,    NULL, 0, 0, 0 },
+    { TYPE_REAL,    NULL, 0, 0, 0 }
 };
 
 const Type typeVoid    = &(typeConst[0]);
@@ -551,12 +551,13 @@ SymbolEntry * lookupEntry (const char * name, LookupType type, bool err)
     return NULL;
 }
 
-Type typeArray (RepInteger size, Type refType)
+Type typeArray (RepInteger size, Type refType, bool autocompleteFlag)
 {
     Type n = (Type) newPtr(sizeof(struct Type_tag));
 
     n->kind     = TYPE_ARRAY;
     n->refType  = refType;
+    n->autocompleteSize = autocompleteFlag;
     n->size     = size;
     n->refCount = 1;
     
@@ -633,6 +634,23 @@ bool equalType (Type type1, Type type2)
         case TYPE_ARRAY:
             if (type1->size != type2->size)
                 return false;
+        case TYPE_IARRAY:
+        case TYPE_POINTER:
+            return equalType(type1->refType, type2->refType);
+    }
+    return true;        
+}
+
+bool equalTypeAutocomplete (Type type1, Type type2)
+{
+    if (type1->kind != type2->kind)
+        return false;
+    switch (type1->kind) {
+        case TYPE_ARRAY:
+            /* We want to compare sizes when both types are NOT autocomplete */
+            if (!type1->autocompleteSize && !type2->autocompleteSize) 
+                if (type1->size != type2->size)
+                    return false;
         case TYPE_IARRAY:
         case TYPE_POINTER:
             return equalType(type1->refType, type2->refType);

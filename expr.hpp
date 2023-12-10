@@ -9,6 +9,7 @@ class Expr : public AST
   public:
     Type getType();
     void type_check(Type expected_type);
+    void type_check_param(Type expected_type);
     virtual bool isLvalue();
 
   protected:
