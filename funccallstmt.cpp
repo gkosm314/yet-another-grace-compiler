@@ -10,6 +10,7 @@ void FuncCallStmt::printAST(std::ostream &out) const {
 
 void FuncCallStmt::sem()
 {
+  /* Function statements should have void return type */
   func->type_check(typeVoid);
 
   /* If the function has already returned we should not generate code */
