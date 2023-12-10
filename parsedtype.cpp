@@ -1,4 +1,5 @@
 #include "parsedtype.hpp"
+#include "util.hpp"
 
 ParsedType::ParsedType(DATA_TYPE t, std::vector<int> *dims_vec) : data_type(t), dims(dims_vec) {};
 

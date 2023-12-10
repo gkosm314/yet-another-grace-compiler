@@ -5,8 +5,6 @@
 
 #include "ast.hpp"
 
-#define INT_CONST_BRACKET_LIST_DIMENSION_AUTOCOMPLETE -1
-
 class ParsedType : public AST
 {
   public:

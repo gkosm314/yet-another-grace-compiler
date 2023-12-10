@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include "lexer.hpp"
+#include "util.hpp"
 
 #include "ast.hpp"
 #include "abstractlvalue.hpp"
@@ -140,7 +141,12 @@
 %%
 
 program:
-    func_def { $$ = new Program($1); std::cout << *$$ << std::endl; delete $$; }
+    func_def { 
+                $$ = new Program($1);
+                // std::cout << *$$ << std::endl;
+                $$->sem();
+                delete $$;
+            }
 ;
 
 func_def:
@@ -324,21 +330,34 @@ cond:
 |   expr '#' expr         { $$ = new NumericCond($1, $2, $3);  }
 |   expr '<' expr         { $$ = new NumericCond($1, $2, $3);  }
 |   expr '>' expr         { $$ = new NumericCond($1, $2, $3);  }
-|   expr T_leq expr       { $$ = new NumericCond($1, $2, $3); }
-|   expr T_geq expr       { $$ = new NumericCond($1, $2, $3); }
+|   expr T_leq expr       { $$ = new NumericCond($1, $2, $3);  }
+|   expr T_geq expr       { $$ = new NumericCond($1, $2, $3);  }
 ;
 
 %%
 
 int main() {
-
   /* Initialize symbol table with hash table of size 256 */
   initSymbolTable(256);
+  
+  /* Open initial scope for library function */
+  openScope();
 
+  /* Add library functions to the most outer scope of the symbol table */
+  semInitLibraryFunctions();
+
+  /* Open program scope */
+  openScope();
+  /* Perform parsing and semantic analysis */
   int result = yyparse();
-  if (result == 0) printf("Success!\n");
-  return result;
+  /* Close program scope */
+  closeScope();
 
+  /* Close initial scope for library function */
+  closeScope();
   /* Destroy symbol table */
   destroySymbolTable();
+
+//   if (result == 0) printf("Success!\n");
+  return result;
 }
