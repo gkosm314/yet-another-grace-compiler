@@ -190,6 +190,12 @@ void closeScope ()
     while (e != NULL) {
         SymbolEntry * next = e->nextInScope;
         
+        /* Check that every forward-declared function has been defined somewhere in the scope */
+        if (e->entryType == ENTRY_FUNCTION && e->u.eFunction.isForward)
+        {
+            error("Function %s declared but not defined", e->id);
+        }
+
         hashTable[e->hashValue] = e->nextHash;
         destroyEntry(e);
         e = next;
