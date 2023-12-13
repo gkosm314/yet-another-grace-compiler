@@ -1,5 +1,6 @@
 fun main() : nothing
-
+    var i: int;
+    
     fun f(): int
     {
         return 1;
@@ -8,5 +9,5 @@ fun main() : nothing
     }
 
 {
-    f();
+    i <- f();
 }

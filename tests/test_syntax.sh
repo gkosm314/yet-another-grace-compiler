@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for FILE in /home/apostolis/Shmmy/compilers/grace/yet-another-grace-compiler/tests/scope/*;
+for FILE in /home/apostolis/Shmmy/compilers/grace/yet-another-grace-compiler/tests/runtime/*;
 # for FILE in /home/gkosm/Documents/ECE/semester_10/compiler_project/yet-another-grace-compiler/tests/type_checking/*;
 do 
     f="$(basename -- $FILE)"
