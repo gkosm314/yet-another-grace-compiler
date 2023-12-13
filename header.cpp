@@ -47,6 +47,11 @@ void Header::setForward()
 void Header::sem()
 {
   SymbolEntry *f = newFunction(id->getName());
+  /*
+   * In case of multiple forward declarations using the same signature, we will set f->isForward to true again
+   * This means that those declarations are allowed, since the check on newFunction() on symbol.c will accept them
+   * This is a decision made by us that doesn't contradict with the language specification
+   */
   if(isForward)
     forwardFunction(f);
 
