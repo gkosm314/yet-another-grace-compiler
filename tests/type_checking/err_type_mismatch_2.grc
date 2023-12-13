@@ -3,5 +3,5 @@ var a : int;
 var b : char;
 {
     b <- 'b';
-    i <- b;
+    a <- b;
 }
