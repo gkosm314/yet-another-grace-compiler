@@ -1,6 +1,6 @@
 fun main(): nothing
-    var x: char;
 
+    fun f(): nothing;
 {
 
 }
