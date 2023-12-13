@@ -35,9 +35,13 @@ enum DATA_TYPE { DATA_TYPE_int, DATA_TYPE_char, DATA_TYPE_void };
 class AST
 {
   public:
+    AST();
     virtual ~AST() = default;
     virtual void printAST(std::ostream &out) const = 0;
     virtual void sem() {};
+  protected:
+    int lineno;
+    void semError(const char *msg);
 };
 
 /* Forward declarations for util.hpp */

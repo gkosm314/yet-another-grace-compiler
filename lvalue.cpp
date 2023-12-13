@@ -26,10 +26,10 @@ void LValue::sem()
             expr_type = e->u.eParameter.type;
             break;
         case ENTRY_FUNCTION:
-            yyerror("LValue cannot be a function!");
+            semError("LValue cannot be a function!");
             break;
         default:
-            yyerror("lvalue-sem(): invalid entry - execution should never reach this point");
+            semError("lvalue-sem(): invalid entry - execution should never reach this point");
             break;
     }
 }

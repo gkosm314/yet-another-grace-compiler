@@ -40,7 +40,8 @@ Type toType(DATA_TYPE datatype_arg)
       break;
     default:
       /* Execution should never reach this point */
-      yyerror("Invalid datatype_arg passed in toType()");
+      std::cout << "Invalid datatype_arg passed in toType()" << std::endl;
+      exit(1);
       break;
   }  
 

@@ -11,5 +11,5 @@ void NumericCond::printAST(std::ostream &out) const {
 void NumericCond::sem()
 {
   if (check_assignable_operands(left, right)) expr_type = typeBoolean;
-  else yyerror("Type mismatch (numeric cond)");
+  else semError("Type mismatch (numeric cond)");
 }

@@ -35,6 +35,6 @@ void LMatrix::sem()
    * We check that you do not apply the [] operator to a type that is not array
    * Remember: basic types (typeInteger/typeChar/typeVoid) have refType = NULL
    */
-  if(t->refType == nullptr) yyerror("Wrong type: applied [] operator to a non-array type");
+  if(t->refType == nullptr) semError("Wrong type: applied [] operator to a non-array type");
   else expr_type = t->refType;
 }

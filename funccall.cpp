@@ -30,26 +30,26 @@ void FuncCall::sem()
     /* If the function name is not found, lookupEntry will throw an error */
     SymbolEntry *f = lookupEntry(func_name->getName(), LOOKUP_ALL_SCOPES, true);
 
-    if(f->entryType != ENTRY_FUNCTION) yyerror("Could not find function name.");
+    if(f->entryType != ENTRY_FUNCTION) semError("Could not find function name.");
 
     SymbolEntry *current_argument = f->u.eFunction.firstArgument;
 
     for(Expr *e : *parameters_expr_list)
     {
       if(current_argument == NULL)
-        yyerror("More parameters than expected in function call.");
+        semError("More parameters than expected in function call.");
 
       /* Check that the expression we pass has the same type as the typical parameter */
       e->type_check_param(current_argument->u.eParameter.type);
 
       if(current_argument->u.eParameter.mode == PASS_BY_REFERENCE && !e->isLvalue())
-        yyerror("Parameter defined as pass-by-reference requires an lvalue.");
+        semError("Parameter defined as pass-by-reference requires an lvalue.");
 
       current_argument = current_argument->u.eParameter.next;
     }
 
     if(current_argument != NULL)
-      yyerror("Fewer parameters than expected in function call.");
+      semError("Fewer parameters than expected in function call.");
     
     expr_type = f->u.eFunction.resultType;
 }

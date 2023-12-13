@@ -29,18 +29,18 @@ void Return::sem()
   if(equalType(expected_ret_type, typeVoid))
   {
     /* void function may end with "return;" but not with "return e;" */
-    if(expr != nullptr) yyerror("Return did not expect an expression");
+    if(expr != nullptr) semError("Return did not expect an expression");
   }
   else if(equalType(expected_ret_type, typeInteger) || equalType(expected_ret_type, typeChar))
   {
     /* int/char functions should return int/var expression respectively */
     if(expr != nullptr) expr->type_check(expected_ret_type);
-    else yyerror("Return expected an expression");
+    else semError("Return expected an expression");
   }
   else
   {
     // We should never reach this point
-    yyerror("Return has bad expected_ret_type - execution should never reach this point!");
+    semError("Return has bad expected_ret_type - execution should never reach this point!");
   }
 
   /* Update the stack in order to:

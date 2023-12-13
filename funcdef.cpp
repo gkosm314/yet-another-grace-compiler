@@ -26,8 +26,8 @@ void FuncDef::printAST(std::ostream &out) const {
 
 void FuncDef::hasProgramSignature()
 {
-  if(header->getParametersCount() != 0) yyerror("Program cannot take parameters");
-  if(!equalType(header->getReturnType(), typeVoid)) yyerror("Program must be of type nothing");
+  if(header->getParametersCount() != 0) semError("Program cannot take parameters");
+  if(!equalType(header->getReturnType(), typeVoid)) semError("Program must be of type nothing");
 }
 
 void FuncDef::sem()
@@ -41,7 +41,7 @@ void FuncDef::sem()
   if(equalType(header->getReturnType(), typeInteger) || equalType(header->getReturnType(), typeChar))
   {
     /* Note: We should do this check after calling header->sem() and before calling .pop() on the stack */
-    if(!return_stack.returnFound()) yyerror("Non-void function should have return statement.");
+    if(!return_stack.returnFound()) semError("Non-void function should have return statement.");
   }
 
   /* The new scope is opened inside header->sem() */

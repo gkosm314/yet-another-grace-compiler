@@ -11,7 +11,7 @@ void Assign::printAST(std::ostream &out) const {
 void Assign::sem()
 {
   /* We check that lval is not a function inside lval->sem() */
-  if (!check_assignable_operands(lval, expr)) yyerror("Bad types (assign)");
+  if (!check_assignable_operands(lval, expr)) semError("Bad types (assign)");
   /* If the function has already returned we should not generate code */
   checkIfStmtIsAfterReturn();
 }

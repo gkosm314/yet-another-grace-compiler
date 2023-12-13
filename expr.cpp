@@ -12,7 +12,7 @@ void Expr::type_check(Type expected_type)
 
     if(!equalType(expr_type, expected_type))
     {
-        yyerror("Type mismatch");
+        semError("Type mismatch");
     }
 }
 
@@ -22,7 +22,7 @@ void Expr::type_check_param(Type expected_type)
 
     if(!equalTypeAutocomplete(expr_type, expected_type))
     {
-        yyerror("Type mismatch");
+        semError("Type mismatch");
     }
 }
 
