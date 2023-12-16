@@ -1,7 +1,10 @@
 .PHONY: clean distclean default
 
-CXX=c++
-CXXFLAGS=-Wall -std=c++11 -g
+LLVMCONFIG=llvm-config-12
+
+CXX=clang++
+CXXFLAGS=-Wall -g `$(LLVMCONFIG) --cxxflags`
+LDFLAGS=`$(LLVMCONFIG) --ldflags --system-libs --libs all`
 
 default: gracec
 
@@ -27,7 +30,7 @@ objects := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 # Reminder: $^ deduplicates the target's prerequisites
 # This is needed to avoid having parser.o/lexer.o two times, when parser.hpp exist from a previous make
 gracec: $(objects) symbol.o parser.o lexer.o general.o error.o
-	$(CXX) $(CXXFLAGS) -o gracec $^
+	$(CXX) $(CXXFLAGS) -o gracec $^ $(LDFLAGS)
 
 clean:
 	$(RM) lexer.cpp parser.cpp parser.hpp parser.output *.o
