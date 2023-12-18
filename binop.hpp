@@ -2,6 +2,7 @@
 #define __BINOP_HPP__ 
 
 #include "expr.hpp"
+#include "util.hpp"
 
 class BinOp : public Expr 
 {
@@ -10,6 +11,7 @@ class BinOp : public Expr
     ~BinOp();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Expr *left;

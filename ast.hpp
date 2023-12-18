@@ -2,6 +2,10 @@
 #define __AST_HPP__ 
 
 #include <iostream>
+#include <llvm/IR/Value.h>
+#include <llvm/IR/IRBuilder.h>
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
 
 /* This is needed in order to link C with C++ */
 extern "C" {
@@ -39,6 +43,8 @@ class AST
     virtual ~AST() = default;
     virtual void printAST(std::ostream &out) const = 0;
     virtual void sem() {};
+    virtual llvm::Value *compile() {};
+
   protected:
     int lineno;
     void semError(const char *msg);

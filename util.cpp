@@ -140,3 +140,7 @@ void semInitLibraryFunctions()
 
   destroyType(typeStringParam);
 }
+
+llvm::LLVMContext TheContext;
+llvm::IRBuilder<> Builder(TheContext);
+std::unique_ptr<llvm::Module> TheModule;

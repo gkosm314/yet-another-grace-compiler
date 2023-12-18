@@ -16,3 +16,25 @@ void BinOp::sem()
 
   expr_type = typeInteger;
 }
+
+llvm::Value* BinOp::compile() {
+  llvm::Value *L = left->compile();
+  llvm::Value *R = right->compile();
+  if (!L || !R)
+    return nullptr;
+  switch (op) {
+    case '+':
+      return Builder.CreateAdd(L, R, "addtmp");
+    case '-':
+      return Builder.CreateSub(L, R, "subtmp");
+    case '*':
+      return Builder.CreateMul(L, R, "multmp");
+    case '/':
+      return Builder.CreateSDiv(L, R, "divtmp");
+    case '%':
+      return Builder.CreateSRem(L, R, "modtmp");
+    default:
+      return nullptr;
+    return nullptr;
+  }
+}
