@@ -10,12 +10,12 @@ class NumericCond : public Condition
     ~NumericCond();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Expr *left;
     char op;
     Expr *right;
 };
-
 
 #endif

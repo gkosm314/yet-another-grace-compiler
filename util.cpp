@@ -28,7 +28,8 @@ Type toType(DATA_TYPE datatype_arg)
 {
   Type t;
 
-  switch (datatype_arg) {
+  switch (datatype_arg)
+  {
     case DATA_TYPE_int:
       t = typeInteger;
       break;
@@ -46,6 +47,29 @@ Type toType(DATA_TYPE datatype_arg)
   }  
 
   return t;
+}
+
+llvmType *getLLVMType(Type t)
+{
+  if (equalType(t, typeVoid))
+  {
+    return llvmType::getVoidTy(TheContext);
+  }
+  else if (equalType(t, typeInteger))
+  {
+    return llvmType::getInt32Ty(TheContext);
+  }
+  else if (equalType(t, typeChar))
+  {
+    return llvmType::getInt8Ty(TheContext);
+  }
+  else
+  {
+    /* Execution should never reach this point */
+    std::cout << "Invalid datatype_arg passed in toType()" << std::endl;
+    exit(1);
+    return 0; 
+  }
 }
 
 void semAddLibraryFunctions(const char                     *func_name,
@@ -144,3 +168,13 @@ void semInitLibraryFunctions()
 llvm::LLVMContext TheContext;
 llvm::IRBuilder<> Builder(TheContext);
 std::unique_ptr<llvm::Module> TheModule;
+
+llvm::ConstantInt* c8(char c) {
+  // returns a signed int because of the APInt call
+  return llvm::ConstantInt::get(TheContext, llvm::APInt(8, c, true));
+}
+
+llvm::ConstantInt* c32(int n) {
+  // returns a signed int because of the APInt call
+  return llvm::ConstantInt::get(TheContext, llvm::APInt(32, n, true));
+}

@@ -10,3 +10,7 @@ void CharConst::sem()
 {
   expr_type = typeChar;
 }
+
+llvm::Value* CharConst::compile() {
+  return c8(val);
+}

@@ -11,3 +11,7 @@ void IntConst::sem()
 {
   expr_type = typeInteger;
 }
+
+llvm::Value* IntConst::compile() {
+  return c32(val);
+}

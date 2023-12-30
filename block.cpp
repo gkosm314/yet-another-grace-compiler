@@ -24,5 +24,11 @@ void Block::sem()
   for (Stmt *s : stmt_list) s->sem();
   
   /* If the function has already returned we should not generate code */
-  checkIfStmtIsAfterReturn();  
+  checkIfStmtIsAfterReturn();
+}
+
+llvm::Value* Block::compile() {
+  for (Stmt *s : stmt_list)
+    s->compile();
+  return nullptr;
 }

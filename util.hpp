@@ -12,11 +12,19 @@ std::ostream &operator<<(std::ostream &out, const Type &t);
 
 void yyerror(const char *msg);
 
-Type toType(DATA_TYPE datatype_arg);
-
 void semInitLibraryFunctions();
+
+Type toType(DATA_TYPE datatype_arg);
 
 extern llvm::LLVMContext TheContext;
 extern llvm::IRBuilder<> Builder;
 extern std::unique_ptr<llvm::Module> TheModule;
+
+typedef llvm::Type llvmType;
+
+llvmType *getLLVMType(Type t);
+
+llvm::ConstantInt* c8(char c);
+llvm::ConstantInt* c32(int n);
+
 #endif

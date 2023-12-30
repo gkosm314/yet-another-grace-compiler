@@ -13,3 +13,33 @@ void NumericCond::sem()
   if (check_assignable_operands(left, right)) expr_type = typeBoolean;
   else semError("Type mismatch (numeric cond)");
 }
+
+llvm::Value* NumericCond::compile() {
+    llvm::Value *L = left->compile();
+    llvm::Value *R = right->compile();
+
+    if (!L || !R)
+      return nullptr;
+    
+    switch (op) {
+      case '<':
+        return Builder.CreateICmpSLT(L, R, "cmplttmp");
+      case '>':
+        return Builder.CreateICmpSGT(L, R, "cmpgttmp");
+      case '#':
+        return Builder.CreateICmpNE(L, R, "cmpnetmp");
+      case '=':
+        return Builder.CreateICmpEQ(L, R, "cmpeqtmp");
+      case 'l':
+        return Builder.CreateICmpSLE(L, R, "cmpletmp");
+      case 'g':
+        return Builder.CreateICmpSGE(L, R, "cmpgetmp");
+      default:
+        return nullptr;
+      return nullptr;
+    }  
+
+    // TODO: Check when implmenting if::compile whethe something like this is needed:
+    // Convert bool 0/1 to double 0.0 or 1.0
+    // return Builder->CreateUIToFP(L, Type::getDoubleTy(*TheContext), "booltmp");
+}

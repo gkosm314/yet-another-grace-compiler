@@ -9,6 +9,7 @@ class IntConst : public Expr
     IntConst(int v);
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
   
   private:
     const int val; 

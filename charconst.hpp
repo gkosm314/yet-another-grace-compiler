@@ -9,6 +9,7 @@ class CharConst : public Expr
     CharConst(char c);
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
  
   private:
     char val;

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "ast.hpp"
+#include "util.hpp"
 #include "fpardef.hpp"
 #include "returnstack.hpp"
 
@@ -19,6 +20,7 @@ class Header : public AST
     Type getReturnType();
     void setForward();
     void sem() override;
+    llvm::Function* compile() override;
 
   private:
     Id *id;

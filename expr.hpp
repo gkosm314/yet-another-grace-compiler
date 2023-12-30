@@ -2,6 +2,7 @@
 #define __EXPR_HPP__ 
 
 #include "ast.hpp"
+#include "util.hpp"
 
 /* abstract class */
 class Expr : public AST

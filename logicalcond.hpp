@@ -10,6 +10,7 @@ class LogicalCond : public Condition
     ~LogicalCond();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Condition *c1;

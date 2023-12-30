@@ -14,3 +14,16 @@ void UnaryOp::sem()
   expr->type_check(typeInteger);
   expr_type = typeInteger;
 }
+
+llvm::Value* UnaryOp::compile() {
+  llvm::Value *L = expr->compile();
+  switch (op) {
+    case '+':
+      return L;
+    case '-':
+      return Builder.CreateFNeg(L, "unarytemp");
+    default:
+      return nullptr;
+    return nullptr;
+  } 
+}

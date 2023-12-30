@@ -14,6 +14,7 @@ class Block : public Stmt
     void append(Stmt *s);
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     std::vector<Stmt*> stmt_list;

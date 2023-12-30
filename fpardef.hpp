@@ -15,6 +15,8 @@ class FParDef : public AST
     void printAST(std::ostream &out) const override;
     void setFunction(SymbolEntry *e);
     void sem() override;
+    Type getType();
+    std::vector<Id*> *getIds();
 
   private:
     std::vector<Id*> *ids;

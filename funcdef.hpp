@@ -15,6 +15,7 @@ class FuncDef : public LocalDef
     void printAST(std::ostream &out) const override;
     void hasProgramSignature();
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Header *header;

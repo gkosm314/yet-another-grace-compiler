@@ -20,8 +20,10 @@ void BinOp::sem()
 llvm::Value* BinOp::compile() {
   llvm::Value *L = left->compile();
   llvm::Value *R = right->compile();
+
   if (!L || !R)
     return nullptr;
+  
   switch (op) {
     case '+':
       return Builder.CreateAdd(L, R, "addtmp");

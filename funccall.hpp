@@ -14,6 +14,7 @@ class FuncCall : public Expr
     ~FuncCall();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Id *func_name;

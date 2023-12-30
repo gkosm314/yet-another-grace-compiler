@@ -18,3 +18,29 @@ void LogicalCond::sem()
 
   expr_type = typeBoolean;
 }
+
+llvm::Value* LogicalCond::compile() {
+  llvm::Value *L = c1->compile();
+  llvm::Value *R;
+
+  if (!L)
+    return nullptr;
+  
+  if (c2 != nullptr) {
+    R = c2->compile();
+    if (!R)
+      return nullptr;
+  }
+  
+  switch (op) {
+    case 'n':
+      return Builder.CreateNot(L, "logicalnottemp");
+    case 'a':
+      return Builder.CreateAnd(L, R, "logicalandtemp");
+    case 'o':
+      return Builder.CreateOr(L, R, "logicalortemp");
+    default:
+      return nullptr;
+    return nullptr;
+  } 
+}

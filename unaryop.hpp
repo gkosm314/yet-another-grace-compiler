@@ -10,6 +10,7 @@ class UnaryOp : public Expr
     ~UnaryOp();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Expr *expr;

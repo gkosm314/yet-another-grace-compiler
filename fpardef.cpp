@@ -56,3 +56,11 @@ void FParDef::sem()
      As a result, f should not be used after FParDef::sem() is completed. */
   f = nullptr;
 }
+
+Type FParDef::getType() { 
+  return param_type;
+}
+
+std::vector<Id*> *FParDef::getIds() {
+  return ids;
+}

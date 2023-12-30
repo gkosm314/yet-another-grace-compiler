@@ -48,3 +48,15 @@ void FuncDef::sem()
   return_stack.pop();
   closeScope();
 }
+
+
+llvm::Value* FuncDef::compile() {
+  /* Header */
+  header->compile();
+
+  /* Local defs */
+
+  /* Body */
+
+  return nullptr;
+}
