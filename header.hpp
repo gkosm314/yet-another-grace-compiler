@@ -21,6 +21,7 @@ class Header : public AST
     void setForward();
     void sem() override;
     llvm::Function* compile() override;
+    std::string getFunctionName();
 
   private:
     Id *id;

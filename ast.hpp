@@ -6,6 +6,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
+#include <llvm/IR/Verifier.h>
 
 /* This is needed in order to link C with C++ */
 extern "C" {

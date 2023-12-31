@@ -27,4 +27,6 @@ llvmType *getLLVMType(Type t);
 llvm::ConstantInt* c8(char c);
 llvm::ConstantInt* c32(int n);
 
+void llvm_codegen();
+
 #endif

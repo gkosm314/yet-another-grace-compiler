@@ -23,3 +23,9 @@ void FuncDecl::sem()
   return_stack.pop();
   closeScope();
 }
+
+llvm::Value* FuncDecl::compile()
+{
+  header->compile();
+  return nullptr;
+}

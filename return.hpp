@@ -14,9 +14,11 @@ class Return : public Stmt
     ~Return();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
-    Expr *expr;
+    Expr      *expr;
+    llvmType  *llmv_type;
 };
 
 #endif

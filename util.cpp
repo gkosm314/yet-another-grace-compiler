@@ -168,6 +168,11 @@ void semInitLibraryFunctions()
 llvm::LLVMContext TheContext;
 llvm::IRBuilder<> Builder(TheContext);
 std::unique_ptr<llvm::Module> TheModule;
+llvm::Type *i8;
+llvm::Type *i32;
+llvm::Type *i64;
+llvm::Function *TheWriteInteger;
+llvm::Function *TheWriteString;
 
 llvm::ConstantInt* c8(char c) {
   // returns a signed int because of the APInt call
@@ -177,4 +182,34 @@ llvm::ConstantInt* c8(char c) {
 llvm::ConstantInt* c32(int n) {
   // returns a signed int because of the APInt call
   return llvm::ConstantInt::get(TheContext, llvm::APInt(32, n, true));
+}
+
+
+void llvm_codegen() {
+  TheModule = std::make_unique<llvm::Module>("grace program", TheContext);
+  // Initialize types
+  i8 = llvm::IntegerType::get(TheContext, 8);
+  i32 = llvm::IntegerType::get(TheContext, 32);
+  i64 = llvm::IntegerType::get(TheContext, 64);
+
+  // Initialize library functions
+  llvm::FunctionType *writeInteger_type =
+    llvm::FunctionType::get(llvmType::getVoidTy(TheContext), {i32}, false);
+  TheWriteInteger =
+    llvm::Function::Create(writeInteger_type, llvm::Function::ExternalLinkage,
+                      "writeInteger", TheModule.get());
+  llvm::FunctionType *writeString_type =
+    llvm::FunctionType::get(llvmType::getVoidTy(TheContext),
+                      {llvm::PointerType::get(i8, 0)}, false);
+  TheWriteString =
+    llvm::Function::Create(writeString_type, llvm::Function::ExternalLinkage,
+                      "writeString", TheModule.get());
+
+  // Define and start the main function.
+  // llvm::FunctionType *main_type = llvm::FunctionType::get(i32, {}, false);
+  // llvm::Function *main =
+  //   llvm::Function::Create(main_type, llvm::Function::ExternalLinkage,
+  //                      "main", TheModule.get());
+  // llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext, "entry", main);
+  // Builder.SetInsertPoint(BB);
 }

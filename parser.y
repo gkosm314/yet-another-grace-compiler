@@ -145,6 +145,7 @@ program:
                 $$ = new Program($1);
                 // std::cout << *$$ << std::endl;
                 $$->sem();
+                $$->compile();
                 delete $$;
             }
 ;
@@ -340,7 +341,7 @@ int main() {
   /* Initialize symbol table with hash table of size 256 */
   initSymbolTable(256);
   
-  /* Open initial scope for library function */
+  /* Open initial scope for library functions */
   openScope();
 
   /* Add library functions to the most outer scope of the symbol table */
@@ -353,11 +354,10 @@ int main() {
   /* Close program scope */
   closeScope();
 
-  /* Close initial scope for library function */
+  /* Close initial scope for library functions */
   closeScope();
   /* Destroy symbol table */
   destroySymbolTable();
 
-//   if (result == 0) printf("Success!\n");
   return result;
 }

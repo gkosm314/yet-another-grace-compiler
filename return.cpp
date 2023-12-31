@@ -50,4 +50,21 @@ void Return::sem()
 
   /* If the function has already returned we should not generate code */
   checkIfStmtIsAfterReturn();
+
+  llmv_type = getLLVMType(expected_ret_type);
+}
+
+
+llvm::Value* Return::compile()
+{
+  llvm::Value *RetVal;
+
+  if(expr != nullptr) {
+    RetVal = expr->compile();
+    Builder.CreateRet(RetVal);
+  }
+  else
+    Builder.CreateRetVoid();
+  
+  return nullptr;
 }

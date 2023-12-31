@@ -16,3 +16,9 @@ void FuncCallStmt::sem()
   /* If the function has already returned we should not generate code */
   checkIfStmtIsAfterReturn();  
 }
+
+llvm::Value* FuncCallStmt::compile() 
+{
+  func->compile();
+  return nullptr;
+}

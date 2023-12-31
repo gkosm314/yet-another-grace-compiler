@@ -71,25 +71,34 @@ void Header::sem()
 
 llvm::Function* Header::compile()
 {
-  /* Make the function type - example: void(int,char) */
+  /* Get function arguments types */
   std::vector<llvmType*> arg_types;
-
   for (FParDef *i: *fpar_defs) {
+    /* Get LLVM type of argument */
     llvmType* t = getLLVMType(i->getType()); 
-    int idsSize = i->getIds()->size();
-    for (int i=0; i<idsSize; i++)
+    int num_vars = i->getIds()->size();
+    for (int i=0; i < num_vars; i++)
       arg_types.push_back(t);
   }
-  llvmType *retType = getLLVMType(ret_type);
 
-  llvm::FunctionType *ft = llvm::FunctionType::get(retType, arg_types, false);
+  /* TODO: add parameters to llvm symbol table */
 
+  /* Get function return type */
+  llvmType *rt = getLLVMType(ret_type);
 
+  /* Make the function type - example: void(int,char) */
+  llvm::FunctionType *ft = llvm::FunctionType::get(rt, arg_types, false);
 
-  /* Create Function */
+  /* Create function */
   /* TODO: get mangled name here */
-  std::string mangled_name = id->getName();
+  std::string mangled_name = getFunctionName();
   llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, mangled_name, TheModule.get());
 
   return f;
+}
+
+std::string Header::getFunctionName()
+{
+  /* TODO: get mangled name here */
+  return id->getName();
 }

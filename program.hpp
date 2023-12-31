@@ -11,6 +11,7 @@ class Program : public AST
     ~Program();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     FuncDef *fd;

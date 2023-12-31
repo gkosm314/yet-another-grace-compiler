@@ -11,6 +11,7 @@ class FuncDecl : public LocalDef
     ~FuncDecl();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Header *header; 

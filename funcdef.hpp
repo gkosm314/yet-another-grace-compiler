@@ -15,12 +15,13 @@ class FuncDef : public LocalDef
     void printAST(std::ostream &out) const override;
     void hasProgramSignature();
     void sem() override;
-    llvm::Value* compile() override;
+    llvm::Function* compile() override;
 
   private:
     Header *header;
     std::vector<LocalDef*> *local_defs;
     Block *block;
+    bool void_ret_type_without_ret_stmt = false;
 };
 
 #endif
