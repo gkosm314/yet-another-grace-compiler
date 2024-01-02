@@ -11,6 +11,7 @@ class While : public Stmt
     ~While();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Condition *cond;
