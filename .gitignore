@@ -1,6 +1,10 @@
 #object files
 *.o
 
+#llvm intermediates
+*.s
+*.ll
+
 #flex
 lexer.cpp
 
@@ -19,3 +23,4 @@ gracec
 #backups/drafts
 bck/
 a.txt
+a.out
