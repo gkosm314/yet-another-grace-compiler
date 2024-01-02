@@ -24,7 +24,6 @@ llvm::Value* If::compile()
 {
   /* Compile condition */
   llvm::Value *v = cond->compile();
-  // llvm::Value *cond = Builder.CreateICmpNE(v, c64(0), "if_cond");
 
   /* Grab current function */
   llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
@@ -34,16 +33,21 @@ llvm::Value* If::compile()
   llvm::BasicBlock *ElseBB  = llvm::BasicBlock::Create(TheContext, "else", TheFunction);
   llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(TheContext, "endif", TheFunction);
   
+  /* Check condition and branch to "then" or to "else" */
   Builder.CreateCondBr(v, ThenBB, ElseBB);
+
+  /* Compile "then" */
   Builder.SetInsertPoint(ThenBB);
   stmt1->compile();
-  
   Builder.CreateBr(AfterBB);
+
+  /* Compile "else" */
   Builder.SetInsertPoint(ElseBB);
   if (stmt2 != nullptr)
     stmt2->compile();
-  
   Builder.CreateBr(AfterBB);
+
+  /* Setup compilation for the code that follows after the if-statement */
   Builder.SetInsertPoint(AfterBB);
 
   return nullptr;
