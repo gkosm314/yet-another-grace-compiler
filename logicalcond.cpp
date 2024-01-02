@@ -14,7 +14,8 @@ void LogicalCond::printAST(std::ostream &out) const {
 void LogicalCond::sem()
 {
   c1->type_check(typeBoolean);
-  c2->type_check(typeBoolean);
+  if (c2 != nullptr)
+    c2->type_check(typeBoolean);
 
   expr_type = typeBoolean;
 }
@@ -41,6 +42,5 @@ llvm::Value* LogicalCond::compile() {
       return Builder.CreateOr(L, R, "logicalortemp");
     default:
       return nullptr;
-    return nullptr;
-  } 
+  }
 }
