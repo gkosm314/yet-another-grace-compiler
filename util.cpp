@@ -168,11 +168,10 @@ void semInitLibraryFunctions()
 llvm::LLVMContext TheContext;
 llvm::IRBuilder<> Builder(TheContext);
 std::unique_ptr<llvm::Module> TheModule;
-llvm::Type *i8;
-llvm::Type *i32;
-llvm::Type *i64;
-llvm::Function *TheWriteInteger;
-llvm::Function *TheWriteString;
+llvmType *i8;
+llvmType *i32;
+llvmType *i64;
+llvmType *voidTy;
 
 llvm::ConstantInt* c8(char c) {
   // returns a signed int because of the APInt call
@@ -184,25 +183,38 @@ llvm::ConstantInt* c64(int n) {
   return llvm::ConstantInt::get(TheContext, llvm::APInt(64, n, true));
 }
 
+void codegenAddLibraryFunction(const char * func_name, llvmType* ret_type, const std::vector<llvmType*> param_type)
+{
+  llvm::FunctionType *t = llvm::FunctionType::get(ret_type, param_type, false);
+  llvm::Function::Create(t, llvm::Function::ExternalLinkage, func_name, TheModule.get());
+}
+
 void codegenInitLibraryFunctions() {
   TheModule = std::make_unique<llvm::Module>("grace program", TheContext);
-  // Initialize types
+ 
+  /* Initialize types */
   i8 = llvm::IntegerType::get(TheContext, 8);
   i32 = llvm::IntegerType::get(TheContext, 32);
   i64 = llvm::IntegerType::get(TheContext, 64);
+  voidTy = llvmType::getVoidTy(TheContext);
 
-  // Initialize library functions
-  llvm::FunctionType *writeInteger_type =
-    llvm::FunctionType::get(llvmType::getVoidTy(TheContext), {i64}, false);
-  TheWriteInteger =
-    llvm::Function::Create(writeInteger_type, llvm::Function::ExternalLinkage,
-                      "writeInteger", TheModule.get());
-  llvm::FunctionType *writeString_type =
-    llvm::FunctionType::get(llvmType::getVoidTy(TheContext),
-                      {llvm::PointerType::get(i8, 0)}, false);
-  TheWriteString =
-    llvm::Function::Create(writeString_type, llvm::Function::ExternalLinkage,
-                      "writeString", TheModule.get());
+  /* Initialize library functions */
+  codegenAddLibraryFunction("writeInteger", voidTy, std::vector<llvmType*>{i64});
+  codegenAddLibraryFunction("writeChar", voidTy, std::vector<llvmType*>{i8});
+  codegenAddLibraryFunction("writeString", voidTy, std::vector<llvmType*>{llvm::PointerType::get(i8, 0)});
+
+  codegenAddLibraryFunction("readInteger", i64, std::vector<llvmType*>{});
+  codegenAddLibraryFunction("readChar", i8, std::vector<llvmType*>{});
+  codegenAddLibraryFunction("readString", voidTy, std::vector<llvmType*>{i64, llvm::PointerType::get(i8, 0)});
+
+  codegenAddLibraryFunction("ascii", i64, std::vector<llvmType*>{i8});
+  codegenAddLibraryFunction("chr", i8, std::vector<llvmType*>{i64});
+
+  codegenAddLibraryFunction("strlen", i64, std::vector<llvmType*>{llvm::PointerType::get(i8, 0)});
+  codegenAddLibraryFunction("strcmp", i64, std::vector<llvmType*>{llvm::PointerType::get(i8, 0), llvm::PointerType::get(i8, 0)});
+  codegenAddLibraryFunction("strcpy", voidTy, std::vector<llvmType*>{llvm::PointerType::get(i8, 0), llvm::PointerType::get(i8, 0)});
+  codegenAddLibraryFunction("strcat", voidTy, std::vector<llvmType*>{llvm::PointerType::get(i8, 0), llvm::PointerType::get(i8, 0)});
+
 }
 
 void codegenMain(llvm::Function* program_func)
