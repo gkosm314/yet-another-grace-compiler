@@ -21,7 +21,7 @@ llvm::Value* UnaryOp::compile() {
     case '+':
       return L;
     case '-':
-      return Builder.CreateFNeg(L, "unarytemp");
+      return Builder.CreateNeg(L, "unarytemp");
     default:
       return nullptr;
     return nullptr;

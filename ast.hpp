@@ -44,7 +44,7 @@ class AST
     virtual ~AST() = default;
     virtual void printAST(std::ostream &out) const = 0;
     virtual void sem() {};
-    virtual llvm::Value *compile() {};
+    virtual llvm::Value *compile() { return nullptr; };
 
   protected:
     int lineno;

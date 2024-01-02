@@ -13,5 +13,5 @@ void IntConst::sem()
 }
 
 llvm::Value* IntConst::compile() {
-  return c32(val);
+  return c64(val);
 }

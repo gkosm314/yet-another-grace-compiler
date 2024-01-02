@@ -16,11 +16,13 @@ void Program::sem()
 
 llvm::Value* Program::compile()
 {
-  llvm_codegen();
-
-  /* Compile */
-  fd->compile();
+  codegenInitLibraryFunctions();
   
+  /* Compile program */
+  llvm::Function* program = fd->compile();
+  
+  codegenMain(program);
+
   /* Verify the IR */
   bool bad = verifyModule(*TheModule, &llvm::errs());
   if (bad) {

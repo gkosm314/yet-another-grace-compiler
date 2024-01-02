@@ -22,11 +22,14 @@ extern std::unique_ptr<llvm::Module> TheModule;
 
 typedef llvm::Type llvmType;
 
+extern llvmType *i64;
+
 llvmType *getLLVMType(Type t);
 
 llvm::ConstantInt* c8(char c);
-llvm::ConstantInt* c32(int n);
+llvm::ConstantInt* c64(int n);
 
-void llvm_codegen();
+void codegenInitLibraryFunctions();
+void codegenMain(llvm::Function* program_func);
 
 #endif

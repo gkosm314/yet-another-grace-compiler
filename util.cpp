@@ -57,7 +57,7 @@ llvmType *getLLVMType(Type t)
   }
   else if (equalType(t, typeInteger))
   {
-    return llvmType::getInt32Ty(TheContext);
+    return llvmType::getInt64Ty(TheContext);
   }
   else if (equalType(t, typeChar))
   {
@@ -179,13 +179,12 @@ llvm::ConstantInt* c8(char c) {
   return llvm::ConstantInt::get(TheContext, llvm::APInt(8, c, true));
 }
 
-llvm::ConstantInt* c32(int n) {
+llvm::ConstantInt* c64(int n) {
   // returns a signed int because of the APInt call
-  return llvm::ConstantInt::get(TheContext, llvm::APInt(32, n, true));
+  return llvm::ConstantInt::get(TheContext, llvm::APInt(64, n, true));
 }
 
-
-void llvm_codegen() {
+void codegenInitLibraryFunctions() {
   TheModule = std::make_unique<llvm::Module>("grace program", TheContext);
   // Initialize types
   i8 = llvm::IntegerType::get(TheContext, 8);
@@ -194,7 +193,7 @@ void llvm_codegen() {
 
   // Initialize library functions
   llvm::FunctionType *writeInteger_type =
-    llvm::FunctionType::get(llvmType::getVoidTy(TheContext), {i32}, false);
+    llvm::FunctionType::get(llvmType::getVoidTy(TheContext), {i64}, false);
   TheWriteInteger =
     llvm::Function::Create(writeInteger_type, llvm::Function::ExternalLinkage,
                       "writeInteger", TheModule.get());
@@ -204,12 +203,21 @@ void llvm_codegen() {
   TheWriteString =
     llvm::Function::Create(writeString_type, llvm::Function::ExternalLinkage,
                       "writeString", TheModule.get());
+}
 
-  // Define and start the main function.
-  // llvm::FunctionType *main_type = llvm::FunctionType::get(i32, {}, false);
-  // llvm::Function *main =
-  //   llvm::Function::Create(main_type, llvm::Function::ExternalLinkage,
-  //                      "main", TheModule.get());
-  // llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext, "entry", main);
-  // Builder.SetInsertPoint(BB);
+void codegenMain(llvm::Function* program_func)
+{
+  /* Create main function. This function is the entry point for the assembly code.
+   * This function includes only a call to the program. */
+  llvm::FunctionType *main_type = llvm::FunctionType::get(i64, {}, false);
+  llvm::Function *main = llvm::Function::Create(main_type, llvm::Function::ExternalLinkage,
+                                                "main", TheModule.get());
+  
+  /* Create the basic block for the main function */
+  llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext, "entry", main);
+  Builder.SetInsertPoint(BB);
+  /* Call the program */
+  Builder.CreateCall(program_func);
+  /* Return correct execution code */
+  Builder.CreateRet(c64(0));
 }
