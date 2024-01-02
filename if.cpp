@@ -19,3 +19,32 @@ void If::sem()
   /* If the function has already returned we should not generate code */
   checkIfStmtIsAfterReturn();  
 }
+
+llvm::Value* If::compile() 
+{
+  /* Compile condition */
+  llvm::Value *v = cond->compile();
+  // llvm::Value *cond = Builder.CreateICmpNE(v, c64(0), "if_cond");
+
+  /* Grab current function */
+  llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
+
+  /* Create basic blocks*/
+  llvm::BasicBlock *ThenBB  = llvm::BasicBlock::Create(TheContext, "then", TheFunction);
+  llvm::BasicBlock *ElseBB  = llvm::BasicBlock::Create(TheContext, "else", TheFunction);
+  llvm::BasicBlock *AfterBB = llvm::BasicBlock::Create(TheContext, "endif", TheFunction);
+  
+  Builder.CreateCondBr(v, ThenBB, ElseBB);
+  Builder.SetInsertPoint(ThenBB);
+  stmt1->compile();
+  
+  Builder.CreateBr(AfterBB);
+  Builder.SetInsertPoint(ElseBB);
+  if (stmt2 != nullptr)
+    stmt2->compile();
+  
+  Builder.CreateBr(AfterBB);
+  Builder.SetInsertPoint(AfterBB);
+
+  return nullptr;
+}

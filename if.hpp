@@ -11,6 +11,7 @@ class If : public Stmt
     ~If();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     Condition *cond;
