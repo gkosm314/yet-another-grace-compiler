@@ -50,8 +50,6 @@ void Header::sem()
 
   /* Store mangled name */
   mangled_name = mangle(id->getName(), f->scopeId);
-  /* Store scope id to use for fpardef name mangling */
-  scope_id = f->scopeId;
 
   /* In case of multiple forward declarations using the same signature, we will set f->isForward to true again
    * This means that those declarations are allowed, since the check on newFunction() on symbol.c will accept them
@@ -61,6 +59,8 @@ void Header::sem()
     forwardFunction(f);
 
   openScope();
+
+  /* Keep return type */
   return_stack.push(ret_type);
 
   for (FParDef *p : *fpar_defs)
@@ -77,39 +77,17 @@ void Header::sem()
 llvm::Function* Header::compile()
 {
   /* Get function arguments types and mangled names */
-  std::vector<llvmType*>   arg_types;
-  std::vector<std::string> mangled_param_names;
-
-  for (FParDef *i: *fpar_defs)
-  {
-    /* Get LLVM type of argument */
-    /* TODO: this works only with simple types */
-    llvmType* t = getLLVMType(i->getType());
-    std::vector<Id*> fpardef_ids = *(i->getIds());
-
-    /* Create function arguments signature and store mangled names for the arguments */
-    for (int j=0; j < fpardef_ids.size(); j++)
-    {
-      arg_types.push_back(t);
-      mangled_param_names.push_back(mangle(fpardef_ids[j]->getName(), scope_id));
-    }
-  }
-
-  /* TODO: add parameters to llvm symbol table */
+  /* Each call to the compile method of the parameter pushes its type and its mangled name
+   * to the vector that are passed by reference. The types vector is used to create the function signature */
+  for (FParDef *p: *fpar_defs)
+    p->compile(&mangled_param_names, &param_types);
 
   /* Get function return type */
   llvmType *rt = getLLVMType(ret_type);
-
   /* Make the function type - example: void(int,char) */
-  llvm::FunctionType *ft = llvm::FunctionType::get(rt, arg_types, false);
-
+  llvm::FunctionType *ft = llvm::FunctionType::get(rt, param_types, false);
   /* Create function */
   llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, mangled_name, TheModule.get());
-
-  /* Set mangled names for the paramters */
-  unsigned int current_arg = 0;
-  for (auto &arg : f->args())
-    arg.setName(mangled_param_names[current_arg++]);
 
   return f;
 }
@@ -117,4 +95,14 @@ llvm::Function* Header::compile()
 std::string Header::getMangledName()
 {
   return mangled_name;
+}
+
+std::vector<llvmType*> Header::getParamLLVMTypes()
+{
+  return param_types;
+}
+
+std::vector<std::string> Header::getParamMangledNames()
+{
+  return mangled_param_names;
 }

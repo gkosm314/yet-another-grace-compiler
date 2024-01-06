@@ -21,7 +21,10 @@ class Header : public AST
     void setForward();
     void sem() override;
     llvm::Function* compile() override;
+
     std::string getMangledName();
+    std::vector<llvmType*> getParamLLVMTypes();
+    std::vector<std::string> getParamMangledNames();
 
   private:
     Id *id;
@@ -29,8 +32,11 @@ class Header : public AST
     Type ret_type;
     
     std::string mangled_name;
-    unsigned int scope_id;
     bool isForward = false;
+
+    /* The following fields are valid only after compile() has been called*/
+    std::vector<llvmType*>   param_types;
+    std::vector<std::string> mangled_param_names;
 };
 
 #endif

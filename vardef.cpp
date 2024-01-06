@@ -45,10 +45,11 @@ llvm::Value* VarDef::compile()
   /* TODO: this works only with simple types */
   llvmType* t = getLLVMType(var_type);
 
-  /* Create alloca instructions */
   for(int i = 0; i < ids->size(); i++)
   {
+    /* Create alloca instruction */
     llvm::AllocaInst *alloca = Builder.CreateAlloca(t, nullptr, mangled_names[i]);
+    /* Add variable to the variable map */
     varMap[mangled_names[i]] = alloca;
   }
 

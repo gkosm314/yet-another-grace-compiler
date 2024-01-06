@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "util.hpp"
 #include "ast.hpp"
 #include "parsedtype.hpp"
 #include "id.hpp"
@@ -15,10 +16,8 @@ class FParDef : public AST
     void printAST(std::ostream &out) const override;
     void setFunction(SymbolEntry *e);
     void sem() override;
-    Type getType();
-    std::vector<Id*> *getIds();
-
-    /* codegen for parameter definition handled in header.cpp */
+    llvm::Value* compile() override; /* This function is empty - we should never use it */
+    llvm::Value* compile(std::vector<std::string> * signature_mangled_names, std::vector<llvmType*> * signature_types);
 
   private:
     std::vector<Id*> *ids;
@@ -28,6 +27,7 @@ class FParDef : public AST
 
     /* Symbol entry of the function to which this param belongs */
     SymbolEntry *f;
+    unsigned int scope_id;
 };
 
 #endif

@@ -70,7 +70,21 @@ llvm::Function* FuncDef::compile()
   llvm::BasicBlock *BB = llvm::BasicBlock::Create(TheContext, "entry", f);
   Builder.SetInsertPoint(BB);
 
-  /* Local defs */
+  /* Allocate memory for function arguments */
+  unsigned int             current_arg         = 0;
+  std::vector<std::string> mangled_param_names = header->getParamMangledNames();
+  std::vector<llvmType*>   param_types         = header->getParamLLVMTypes();
+  for (auto &arg : f->args())
+  {
+    /* Create alloca instruction for the argument */
+    llvm::AllocaInst *alloca = Builder.CreateAlloca(param_types[current_arg], nullptr, mangled_param_names[current_arg]);  
+    /* Initialize argument with the passed parameter */
+    Builder.CreateStore(&arg, alloca);
+    /* Add argument to the variable map */
+    varMap[mangled_param_names[current_arg++]] = alloca;
+  }
+
+  /* Allocate memory for local variables and compile local functions */
   for (LocalDef *i : *local_defs)
   {
     i->compile();
@@ -78,7 +92,7 @@ llvm::Function* FuncDef::compile()
     Builder.SetInsertPoint(BB);
   }
 
-  /* Body */
+  /* Compile body */
   block->compile();
   
   /* Create return value for void function without return statement inside its body */
