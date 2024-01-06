@@ -37,6 +37,9 @@ extern "C" {
    It is different from the enums used in "symbol.h", which are used for the semantic analysis. */
 enum DATA_TYPE { DATA_TYPE_int, DATA_TYPE_char, DATA_TYPE_void };
 
+/* Maps the mangled name of each variable to the corresponding AllocaInst (pointer) */
+extern std::map<std::string, llvm::AllocaInst*> varMap;
+
 class AST
 {
   public:

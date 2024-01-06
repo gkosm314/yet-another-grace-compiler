@@ -12,6 +12,8 @@ class LValue : public AbstractLvalue
     ~LValue();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
+    llvm::AllocaInst * findAllocaInst() override;
 
   private:
     Id *id;

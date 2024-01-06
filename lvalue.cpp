@@ -33,6 +33,22 @@ void LValue::sem()
             break;
     }   
 
-    /* Store mangled name */
+    /* Keep mangled name */
     mangled_name = mangle(id->getName(), e->scopeId);
+}
+
+llvm::AllocaInst* LValue::findAllocaInst()
+{
+    return varMap[mangled_name];
+}
+
+llvm::Value* LValue::compile()
+{
+    llvm::AllocaInst *var_addr = varMap[mangled_name];
+    if (!var_addr)
+        /* Execution should never reach this point */
+        return nullptr;
+
+    /* Load the value */
+    return Builder.CreateLoad(var_addr->getAllocatedType(), var_addr);    
 }

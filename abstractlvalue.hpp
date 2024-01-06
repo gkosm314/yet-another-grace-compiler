@@ -8,6 +8,8 @@ class AbstractLvalue : public Expr
 {
   public:
     bool isLvalue() override;
+    /* TODO: think if this should be pure virtual (=0) */
+    virtual llvm::AllocaInst * findAllocaInst() { return nullptr; }
 };
 
 #endif

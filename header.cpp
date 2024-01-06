@@ -83,6 +83,7 @@ llvm::Function* Header::compile()
   for (FParDef *i: *fpar_defs)
   {
     /* Get LLVM type of argument */
+    /* TODO: this works only with simple types */
     llvmType* t = getLLVMType(i->getType());
     std::vector<Id*> fpardef_ids = *(i->getIds());
 

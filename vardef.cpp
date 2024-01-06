@@ -33,6 +33,24 @@ void VarDef::sem()
     const char * var_name = (*ids)[i]->getName();
     /* Add variable to the symbol table */
     SymbolEntry *e = newVariable(var_name, var_type);
-    mangled_names[i] = mangle(var_name, e->scopeId);
+    mangled_names.push_back(mangle(var_name, e->scopeId));
   }
+}
+
+llvm::Value* VarDef::compile()
+{
+  /* TODO: extend to support arrays */
+
+  /* Get LLVM type of argument */
+  /* TODO: this works only with simple types */
+  llvmType* t = getLLVMType(var_type);
+
+  /* Create alloca instructions */
+  for(int i = 0; i < ids->size(); i++)
+  {
+    llvm::AllocaInst *alloca = Builder.CreateAlloca(t, nullptr, mangled_names[i]);
+    varMap[mangled_names[i]] = alloca;
+  }
+
+  return nullptr; 
 }

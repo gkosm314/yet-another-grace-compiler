@@ -11,6 +11,7 @@ class Assign : public Stmt
     ~Assign();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
     
   private:
     AbstractLvalue *lval;

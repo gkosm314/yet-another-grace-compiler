@@ -14,6 +14,7 @@ class VarDef : public LocalDef
     ~VarDef();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
 
   private:
     std::vector<Id*> *ids; // Will never be nullptr by construction of parser

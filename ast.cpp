@@ -2,6 +2,9 @@
 
 extern int yylineno;
 
+/* Maps the mangled name of each variable to the corresponding AllocaInst (pointer) */
+std::map<std::string, llvm::AllocaInst*> varMap;
+
 AST::AST() : lineno(yylineno) {};
 
 void AST::semError(const char *msg)

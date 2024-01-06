@@ -15,3 +15,19 @@ void Assign::sem()
   /* If the function has already returned we should not generate code */
   checkIfStmtIsAfterReturn();
 }
+
+llvm::Value* Assign::compile()
+{
+  /* Compile expr to assign */
+  llvm::Value *val = expr->compile();
+  if (!val)
+    return nullptr;
+
+  /* Find the AllocaInst that corresponds to the variable we want to change */
+  llvm::AllocaInst *var_addr = lval->findAllocaInst();
+  if (var_addr == nullptr)
+    return nullptr;
+
+  Builder.CreateStore(val, var_addr);
+  return nullptr;
+}

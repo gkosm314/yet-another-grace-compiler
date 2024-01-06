@@ -71,9 +71,13 @@ llvm::Function* FuncDef::compile()
   Builder.SetInsertPoint(BB);
 
   /* Local defs */
-  
-  /* TODO: compile localdefs here */
-  
+  for (LocalDef *i : *local_defs)
+  {
+    i->compile();
+    /* We want to continue inserting code inside the current function */
+    Builder.SetInsertPoint(BB);
+  }
+
   /* Body */
   block->compile();
   
