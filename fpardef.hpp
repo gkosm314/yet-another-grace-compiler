@@ -18,6 +18,8 @@ class FParDef : public AST
     Type getType();
     std::vector<Id*> *getIds();
 
+    /* codegen for parameter definition handled in header.cpp */
+
   private:
     std::vector<Id*> *ids;
     ParsedType *param_parsed_type;

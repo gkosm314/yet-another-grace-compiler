@@ -32,4 +32,6 @@ llvm::ConstantInt* c64(int n);
 void codegenInitLibraryFunctions();
 void codegenMain(llvm::Function* program_func);
 
+std::string mangle(const char * name, unsigned int scope_id);
+
 #endif

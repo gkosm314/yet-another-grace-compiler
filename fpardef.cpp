@@ -1,6 +1,5 @@
 #include "fpardef.hpp"
 
-
 FParDef::FParDef(std::vector<Id *> *ids_vec, ParsedType *f, bool ref) : ids(ids_vec), param_parsed_type(f)
 {
   if(ref) pass_mode = PASS_BY_REFERENCE;

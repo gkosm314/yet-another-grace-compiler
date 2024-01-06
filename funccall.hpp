@@ -18,6 +18,7 @@ class FuncCall : public Expr
 
   private:
     Id *func_name;
+    std::string mangled_name;
     std::vector<Expr*> *parameters_expr_list;
 };
 

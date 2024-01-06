@@ -110,6 +110,7 @@ typedef struct SymbolEntry_tag SymbolEntry;
 struct SymbolEntry_tag {
    const char   * id;                 /* Ονομα αναγνωριστικού          */
    EntryType      entryType;          /* Τύπος της εγγραφής            */
+   unsigned int   scopeId;            /* scope id for name mangling    */
    unsigned int   nestingLevel;       /* Βάθος φωλιάσματος             */
    unsigned int   hashValue;          /* Τιμή κατακερματισμού          */
    SymbolEntry  * nextHash;           /* Επόμενη εγγραφή στον Π.Κ.     */
@@ -168,6 +169,7 @@ struct SymbolEntry_tag {
 typedef struct Scope_tag Scope;
 
 struct Scope_tag {
+    unsigned int   scopeId;                  /* id for name mangling   */
     unsigned int   nestingLevel;             /* Βάθος φωλιάσματος      */
     unsigned int   negOffset;                /* Τρέχον αρνητικό offset */
     Scope        * parent;                   /* Περιβάλλουσα εμβέλεια  */

@@ -28,7 +28,11 @@ void VarDef::printAST(std::ostream &out) const {
 void VarDef::sem()
 {
   /* Iterate over the ids of the vars that we want to define */
-  for(Id* id : *ids)
+  for(int i = 0; i < ids->size(); i++)
+  {
+    const char * var_name = (*ids)[i]->getName();
     /* Add variable to the symbol table */
-    newVariable(id->getName(), var_type);
+    SymbolEntry *e = newVariable(var_name, var_type);
+    mangled_names[i] = mangle(var_name, e->scopeId);
+  }
 }

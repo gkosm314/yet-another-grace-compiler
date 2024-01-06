@@ -233,3 +233,12 @@ void codegenMain(llvm::Function* program_func)
   /* Return correct execution code */
   Builder.CreateRet(c64(0));
 }
+
+std::string mangle(const char * name, unsigned int scope_id)
+{
+  /* Scope with scope_id = 0 contains only the library functions, which are functions that are not mangled */
+  if(scope_id > 0)
+    return std::string(name) + "_" + std::to_string(scope_id);
+  else
+    return std::string(name);
+}

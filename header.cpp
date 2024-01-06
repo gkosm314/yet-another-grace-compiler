@@ -47,8 +47,13 @@ void Header::setForward()
 void Header::sem()
 {
   SymbolEntry *f = newFunction(id->getName());
-  /*
-   * In case of multiple forward declarations using the same signature, we will set f->isForward to true again
+
+  /* Store mangled name */
+  mangled_name = mangle(id->getName(), f->scopeId);
+  /* Store scope id to use for fpardef name mangling */
+  scope_id = f->scopeId;
+
+  /* In case of multiple forward declarations using the same signature, we will set f->isForward to true again
    * This means that those declarations are allowed, since the check on newFunction() on symbol.c will accept them
    * This is a decision made by us that doesn't contradict with the language specification
    */
@@ -71,14 +76,22 @@ void Header::sem()
 
 llvm::Function* Header::compile()
 {
-  /* Get function arguments types */
-  std::vector<llvmType*> arg_types;
-  for (FParDef *i: *fpar_defs) {
+  /* Get function arguments types and mangled names */
+  std::vector<llvmType*>   arg_types;
+  std::vector<std::string> mangled_param_names;
+
+  for (FParDef *i: *fpar_defs)
+  {
     /* Get LLVM type of argument */
-    llvmType* t = getLLVMType(i->getType()); 
-    int num_vars = i->getIds()->size();
-    for (int i=0; i < num_vars; i++)
+    llvmType* t = getLLVMType(i->getType());
+    std::vector<Id*> fpardef_ids = *(i->getIds());
+
+    /* Create function arguments signature and store mangled names for the arguments */
+    for (int j=0; j < fpardef_ids.size(); j++)
+    {
       arg_types.push_back(t);
+      mangled_param_names.push_back(mangle(fpardef_ids[j]->getName(), scope_id));
+    }
   }
 
   /* TODO: add parameters to llvm symbol table */
@@ -90,15 +103,17 @@ llvm::Function* Header::compile()
   llvm::FunctionType *ft = llvm::FunctionType::get(rt, arg_types, false);
 
   /* Create function */
-  /* TODO: get mangled name here */
-  std::string mangled_name = getFunctionName();
   llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, mangled_name, TheModule.get());
+
+  /* Set mangled names for the paramters */
+  unsigned int current_arg = 0;
+  for (auto &arg : f->args())
+    arg.setName(mangled_param_names[current_arg++]);
 
   return f;
 }
 
-std::string Header::getFunctionName()
+std::string Header::getMangledName()
 {
-  /* TODO: get mangled name here */
-  return id->getName();
+  return mangled_name;
 }

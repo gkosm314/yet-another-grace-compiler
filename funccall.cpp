@@ -27,11 +27,11 @@ void FuncCall::printAST(std::ostream &out) const {
 
 void FuncCall::sem()
 {
-
-  // TODO: generate the mangled name
-
   /* If the function name is not found, lookupEntry will throw an error */
   SymbolEntry *f = lookupEntry(func_name->getName(), LOOKUP_ALL_SCOPES, true);
+
+  /* Store mangled name*/
+  mangled_name = mangle(func_name->getName(), f->scopeId);
 
   if(f->entryType != ENTRY_FUNCTION) semError("Could not find function name.");
 
@@ -64,8 +64,6 @@ llvm::Value* FuncCall::compile() {
     find function ptr from llvm symbol table (with llvm built-in getFunction())
   */
 
-  // TODO: Use mangled name to find the function ptr
-  std::string mangled_name = func_name->getName();
   llvm::Function *f = TheModule->getFunction(mangled_name);
 
   std::vector<llvm::Value*> param_values;

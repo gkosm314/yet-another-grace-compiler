@@ -31,5 +31,8 @@ void LValue::sem()
         default:
             semError("lvalue-sem(): invalid entry - execution should never reach this point");
             break;
-    }
+    }   
+
+    /* Store mangled name */
+    mangled_name = mangle(id->getName(), e->scopeId);
 }

@@ -19,6 +19,8 @@ class VarDef : public LocalDef
     std::vector<Id*> *ids; // Will never be nullptr by construction of parser
     ParsedType *parsed_type;
     Type var_type;
+
+    std::vector<std::string> mangled_names;
 };
 
 
