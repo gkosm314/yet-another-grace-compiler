@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "lvalue.hpp"
 #include "expr.hpp"
 #include "id.hpp"
 
@@ -20,6 +21,7 @@ class FuncCall : public Expr
     Id *func_name;
     std::string mangled_name;
     std::vector<Expr*> *parameters_expr_list;
+    std::vector<bool>   parameters_pass_by_ref;
 };
 
 #endif

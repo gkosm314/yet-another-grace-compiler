@@ -24,6 +24,8 @@ void LValue::sem()
             break;
         case ENTRY_PARAMETER:
             expr_type = e->u.eParameter.type;
+            /* If the parameter was passed by reference, we have to dereference it to use its value */
+            if(e->u.eParameter.mode == PASS_BY_REFERENCE) isRef = true;
             break;
         case ENTRY_FUNCTION:
             semError("LValue cannot be a function!");
@@ -39,7 +41,17 @@ void LValue::sem()
 
 llvmAddr LValue::findLLVMAddr()
 {
-    return varMap[mangled_name];
+    llvmAddr var_addr = varMap[mangled_name];
+    if (!var_addr)
+        /* Execution should never reach this point */
+        return nullptr;
+
+    /* Returns the stack address of the value (from alloca)
+     *   -   normal variable        -> the stack address is inside the map      (direct access)
+     *   -  reference to a variable -> the stack address is the value I store   (indirect access - dereference)
+     */
+    if(!isRef) return var_addr;
+    else return Builder.CreateLoad(llvm::PointerType::get(getLLVMType(expr_type), 0), var_addr);
 }
 
 llvmAddr LValue::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t)
@@ -53,11 +65,11 @@ llvmAddr LValue::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType **
 
 llvm::Value* LValue::compile()
 {
-    llvmAddr var_addr = varMap[mangled_name];
+    llvmAddr var_addr = findLLVMAddr();
     if (!var_addr)
         /* Execution should never reach this point */
         return nullptr;
 
     /* Load the value */
-    return Builder.CreateLoad(getLLVMType(expr_type), var_addr);    
+    return Builder.CreateLoad(getLLVMType(expr_type), var_addr);
 }

@@ -45,8 +45,14 @@ void FuncCall::sem()
     /* Check that the expression we pass has the same type as the typical parameter */
     e->type_check_param(current_argument->u.eParameter.type);
 
-    if(current_argument->u.eParameter.mode == PASS_BY_REFERENCE && !e->isLvalue())
-      semError("Parameter defined as pass-by-reference requires an lvalue.");
+    /* Track pass-by-ref parameters to generate address instead of value during codegen */
+    if(current_argument->u.eParameter.mode == PASS_BY_REFERENCE)
+    {
+      /* Check that pass-by-reference parameter receives a lvalue as argument */
+      if(!e->isLvalue()) semError("Parameter defined as pass-by-reference requires an lvalue.");
+      parameters_pass_by_ref.push_back(true);
+    }
+    else parameters_pass_by_ref.push_back(false);
 
     current_argument = current_argument->u.eParameter.next;
   }
@@ -67,9 +73,21 @@ llvm::Value* FuncCall::compile() {
   llvm::Function *f = TheModule->getFunction(mangled_name);
 
   std::vector<llvm::Value*> param_values;
+  int current_param = 0;
   for (Expr *e : *parameters_expr_list)
   {
-    llvm::Value *v = e->compile();
+    llvm::Value *v;
+
+    /* If this parameter is pass-by-ref we pass its address, otherwise we pass its value */
+    if(parameters_pass_by_ref[current_param++])
+    {
+      AbstractLvalue *l = (AbstractLvalue *) e;
+      v = l->findLLVMAddr();
+    }
+    else
+      v = e->compile();
+
+    /* Push the argument */
     if(v != nullptr)
       param_values.push_back(v);
     else
