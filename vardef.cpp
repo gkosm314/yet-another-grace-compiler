@@ -45,7 +45,7 @@ llvm::Value* VarDef::compile()
   for(int i = 0; i < ids->size(); i++)
   {
     /* Create alloca instruction */
-    llvm::AllocaInst *alloca = Builder.CreateAlloca(t, nullptr, mangled_names[i]);
+    llvmAddr alloca = Builder.CreateAlloca(t, nullptr, mangled_names[i]);
     /* Add variable to the variable map */
     varMap[mangled_names[i]] = alloca;
   }

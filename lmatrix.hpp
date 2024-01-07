@@ -10,6 +10,10 @@ class LMatrix : public AbstractLvalue
     ~LMatrix();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvm::Value* compile() override;
+
+    llvmAddr findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t) override;
+    llvmAddr findLLVMAddr() override;
 
   private:
     AbstractLvalue *lvalue;

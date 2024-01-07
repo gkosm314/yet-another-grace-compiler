@@ -22,6 +22,7 @@ extern std::unique_ptr<llvm::Module> TheModule;
 
 typedef llvm::Type llvmType;
 
+extern llvmType *i32;
 extern llvmType *i64;
 
 llvmType *getLLVMType(Type t);

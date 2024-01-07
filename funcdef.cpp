@@ -77,7 +77,7 @@ llvm::Function* FuncDef::compile()
   for (auto &arg : f->args())
   {
     /* Create alloca instruction for the argument */
-    llvm::AllocaInst *alloca = Builder.CreateAlloca(param_types[current_arg], nullptr, mangled_param_names[current_arg]);  
+    llvmAddr alloca = Builder.CreateAlloca(param_types[current_arg], nullptr, mangled_param_names[current_arg]);  
     /* Initialize argument with the passed parameter */
     Builder.CreateStore(&arg, alloca);
     /* Add argument to the variable map */

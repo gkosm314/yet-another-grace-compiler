@@ -23,8 +23,8 @@ llvm::Value* Assign::compile()
   if (!val)
     return nullptr;
 
-  /* Find the AllocaInst that corresponds to the variable we want to change */
-  llvm::AllocaInst *var_addr = lval->findAllocaInst();
+  /* Find the llvmAddr that corresponds to the variable we want to change */
+  llvmAddr var_addr = lval->findLLVMAddr();
   if (var_addr == nullptr)
     return nullptr;
 

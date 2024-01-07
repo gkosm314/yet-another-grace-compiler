@@ -9,7 +9,8 @@ class AbstractLvalue : public Expr
   public:
     bool isLvalue() override;
     /* TODO: think if this should be pure virtual (=0) */
-    virtual llvm::AllocaInst * findAllocaInst() { return nullptr; }
+    virtual llvmAddr findLLVMAddr() { return nullptr; }
+    virtual llvmAddr findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t) { return nullptr; }
 };
 
 #endif

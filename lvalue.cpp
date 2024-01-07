@@ -37,18 +37,27 @@ void LValue::sem()
     mangled_name = mangle(id->getName(), e->scopeId);
 }
 
-llvm::AllocaInst* LValue::findAllocaInst()
+llvmAddr LValue::findLLVMAddr()
 {
     return varMap[mangled_name];
 }
 
+llvmAddr LValue::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t)
+{
+    /* push 0 in the beginning of the offsets to dereference the GEP pointer */
+    offsets->insert(offsets->begin(), c64(0));
+    *t = getLLVMType(expr_type);
+    /* end of the recursion - return the base of the matrix */
+    return findLLVMAddr();
+}
+
 llvm::Value* LValue::compile()
 {
-    llvm::AllocaInst *var_addr = varMap[mangled_name];
+    llvmAddr var_addr = varMap[mangled_name];
     if (!var_addr)
         /* Execution should never reach this point */
         return nullptr;
 
     /* Load the value */
-    return Builder.CreateLoad(var_addr->getAllocatedType(), var_addr);    
+    return Builder.CreateLoad(getLLVMType(expr_type), var_addr);    
 }

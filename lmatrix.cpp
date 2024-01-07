@@ -38,3 +38,44 @@ void LMatrix::sem()
   if(t->refType == nullptr) semError("Wrong type: applied [] operator to a non-array type");
   else expr_type = t->refType;
 }
+
+llvmAddr LMatrix::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t)
+{
+  /* Compile expr */
+  llvm::Value *off = expr->compile();
+  if(off == nullptr)
+    return nullptr;
+
+  /* Push my offset in the vector that is passed by reference */
+  offsets->insert(offsets->begin(), off);
+
+  /* Call the aux function for your LHS
+   * at the end of the recursion the llvmAddr of the matrix will be returned by the LValue node
+   * every intermediate LMatrix will push_front its own offset */
+  return lvalue->findLLVMAddrAux(offsets, t);
+}
+
+llvmAddr LMatrix::findLLVMAddr()
+{
+  /* example: for "a[4][7][2]"
+   *      base_addr  = llvmAddr of "a"
+   *      offsets    = <0,4,7,2> (0 is used to dereference the GEP pointer) 
+   */
+  std::vector<llvm::Value*> offsets;
+  llvmType* base_type;
+  llvmAddr  base_addr = findLLVMAddrAux(&offsets, &base_type); /* called by this object to append its offset too */
+
+  return Builder.CreateGEP(base_type, base_addr, offsets);
+}
+
+llvm::Value* LMatrix::compile()
+{
+  llvmAddr var_addr = findLLVMAddr();
+  if (!var_addr)
+      /* Execution should never reach this point */
+      return nullptr;
+
+  /* Load the value */
+  /* TODO: maybe change to return llvmAddr if this is not a int/char element */
+  return Builder.CreateLoad(getLLVMType(expr_type), var_addr);    
+}
