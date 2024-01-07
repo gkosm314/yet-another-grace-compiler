@@ -65,10 +65,7 @@ llvmType *getLLVMType(Type t)
   }
   else
   {
-    /* Execution should never reach this point */
-    std::cout << "Invalid datatype_arg passed in getLLVMType()" << std::endl;
-    exit(1);
-    return 0; 
+    return llvm::ArrayType::get(getLLVMType(t->refType), t->size); 
   }
 }
 

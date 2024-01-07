@@ -39,10 +39,7 @@ void VarDef::sem()
 
 llvm::Value* VarDef::compile()
 {
-  /* TODO: extend to support arrays */
-
   /* Get LLVM type of argument */
-  /* TODO: this works only with simple types */
   llvmType* t = getLLVMType(var_type);
 
   for(int i = 0; i < ids->size(); i++)
