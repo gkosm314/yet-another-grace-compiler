@@ -25,7 +25,11 @@ void LValue::sem()
         case ENTRY_PARAMETER:
             expr_type = e->u.eParameter.type;
             /* If the parameter was passed by reference, we have to dereference it to use its value */
-            if(e->u.eParameter.mode == PASS_BY_REFERENCE) isRef = true;
+            if(e->u.eParameter.mode == PASS_BY_REFERENCE)
+            {
+                isRef = true;
+                if(e->u.eParameter.type->autocompleteSize) isAutocompleteParam = true;
+            }
             break;
         case ENTRY_FUNCTION:
             semError("LValue cannot be a function!");
@@ -56,10 +60,15 @@ llvmAddr LValue::findLLVMAddr()
 
 llvmAddr LValue::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t)
 {
-    /* push 0 in the beginning of the offsets to dereference the GEP pointer */
-    offsets->insert(offsets->begin(), c64(0));
+    /* TODO: add comments*/
+    if(!isAutocompleteParam)
+    {
+        /* push 0 in the beginning of the offsets to dereference the GEP pointer */
+        offsets->insert(offsets->begin(), c64(0));
+    }
+
+    /* end of the recursion - return the address and the type of the matrix */
     *t = getLLVMType(expr_type);
-    /* end of the recursion - return the base of the matrix */
     return findLLVMAddr();
 }
 

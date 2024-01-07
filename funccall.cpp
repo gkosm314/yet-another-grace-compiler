@@ -50,9 +50,13 @@ void FuncCall::sem()
     {
       /* Check that pass-by-reference parameter receives a lvalue as argument */
       if(!e->isLvalue()) semError("Parameter defined as pass-by-reference requires an lvalue.");
-      parameters_pass_by_ref.push_back(true);
+
+      if(current_argument->u.eParameter.type->autocompleteSize)
+        parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE);
+      else
+        parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_REF);
     }
-    else parameters_pass_by_ref.push_back(false);
+    else parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_VALUE);
 
     current_argument = current_argument->u.eParameter.next;
   }
@@ -76,16 +80,26 @@ llvm::Value* FuncCall::compile() {
   int current_param = 0;
   for (Expr *e : *parameters_expr_list)
   {
-    llvm::Value *v;
+    llvm::Value *v = nullptr;
 
     /* If this parameter is pass-by-ref we pass its address, otherwise we pass its value */
-    if(parameters_pass_by_ref[current_param++])
+    FUNC_CALL_ARG param_pass_mode = parameters_pass_mode[current_param++];
+    switch(param_pass_mode)
     {
-      AbstractLvalue *l = (AbstractLvalue *) e;
-      v = l->findLLVMAddr();
+      case FUNC_CALL_ARG_PASS_BY_VALUE:
+        v = e->compile();
+        break;
+      case FUNC_CALL_ARG_PASS_BY_REF:
+        v = ((AbstractLvalue *) e)->findLLVMAddr();
+        break;
+      case FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE:
+        v = ((AbstractLvalue *) e)->findLLVMAddr();
+        /* TODO add comments*/
+        llvmType *t = getLLVMType(e->getType())->getContainedType(0)->getPointerTo();
+        v = Builder.CreateBitCast(v, t);
+        break;
     }
-    else
-      v = e->compile();
+
 
     /* Push the argument */
     if(v != nullptr)

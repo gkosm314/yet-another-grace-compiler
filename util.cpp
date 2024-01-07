@@ -65,7 +65,8 @@ llvmType *getLLVMType(Type t)
   }
   else
   {
-    return llvm::ArrayType::get(getLLVMType(t->refType), t->size); 
+    if(t->size > 0) return llvm::ArrayType::get(getLLVMType(t->refType), t->size);
+    else return getLLVMType(t->refType);
   }
 }
 
