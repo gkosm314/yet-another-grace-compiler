@@ -27,20 +27,55 @@ llvm::Value* LogicalCond::compile() {
   if (!L)
     return nullptr;
   
-  if (c2 != nullptr) {
-    R = c2->compile();
-    if (!R)
-      return nullptr;
-  }
+  /* 'not' logical condition*/
+  if (op == 'n')
+    return Builder.CreateNot(L, "logicalnottemp");
   
-  switch (op) {
-    case 'n':
-      return Builder.CreateNot(L, "logicalnottemp");
-    case 'a':
-      return Builder.CreateAnd(L, R, "logicalandtemp");
-    case 'o':
-      return Builder.CreateOr(L, R, "logicalortemp");
-    default:
-      return nullptr;
-  }
+  /* 'and' and 'or' logical conditions */ 
+  /* Grab current function and create basic blocks */
+  llvm::Function *TheFunction = Builder.GetInsertBlock()->getParent();
+  llvm::BasicBlock *NoSkipBB  = llvm::BasicBlock::Create(TheContext, "noskip", TheFunction);
+  llvm::BasicBlock *SkipBB    = llvm::BasicBlock::Create(TheContext, "skip", TheFunction);
+  llvm::BasicBlock *CurBB = Builder.GetInsertBlock();
+  
+  /* 
+   * Short circuit:
+   * and: If L is false, then we skip R 
+   * or: If L is true, then we skip R
+   */
+  if (op == 'a')
+    Builder.CreateCondBr(L, NoSkipBB, SkipBB);
+  else if (op == 'o')
+    Builder.CreateCondBr(L, SkipBB, NoSkipBB);
+  else
+    /* Execution should never reach this point */
+    return nullptr;
+  
+  /* Compile c2 */
+  Builder.SetInsertPoint(NoSkipBB);
+  R = c2->compile();
+
+  /* Create the Instruction */ 
+  llvm::Value *opVal;
+  if (op == 'a')
+    opVal = Builder.CreateAnd(L, R, "logicalandtemp");
+  else if (op == 'o')
+    opVal = Builder.CreateOr(L, R, "logicalandtemp");
+  else 
+    /* Execution should never reach this point */
+    return nullptr;
+  
+  /*
+   * This is important, in case of multiple chained logical operations we want the phi instruction below
+   * to have the correct incoming edge
+  */
+  llvm::BasicBlock *OpValBB = Builder.GetInsertBlock();
+  Builder.CreateBr(SkipBB);
+
+  /* SkipBB */
+  Builder.SetInsertPoint(SkipBB);
+  llvm::PHINode *val = Builder.CreatePHI(L->getType(), 2, "phival");
+  val->addIncoming(L, CurBB);
+  val->addIncoming(opVal, OpValBB);
+  return val;
 }
