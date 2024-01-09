@@ -57,6 +57,7 @@ llvmAddr LMatrix::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType *
 
 llvmAddr LMatrix::findLLVMAddr()
 {
+  /* TODO: mention that 0 does not exist for autocomplete */
   /* example: for "a[4][7][2]"
    *      base_addr  = llvmAddr of "a"
    *      offsets    = <0,4,7,2> (0 is used to dereference the GEP pointer) 

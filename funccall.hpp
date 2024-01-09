@@ -3,8 +3,16 @@
 
 #include <vector>
 
+#include "lvalue.hpp"
 #include "expr.hpp"
 #include "id.hpp"
+
+enum FUNC_CALL_ARG
+{
+  FUNC_CALL_ARG_PASS_BY_VALUE,
+  FUNC_CALL_ARG_PASS_BY_REF,
+  FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE
+};
 
 /* In situations like a <- f(); the rhs has to implement eval() */ 
 class FuncCall : public Expr 
@@ -20,6 +28,7 @@ class FuncCall : public Expr
     Id *func_name;
     std::string mangled_name;
     std::vector<Expr*> *parameters_expr_list;
+    std::vector<FUNC_CALL_ARG> parameters_pass_mode;
 };
 
 #endif

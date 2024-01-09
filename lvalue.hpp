@@ -19,6 +19,8 @@ class LValue : public AbstractLvalue
   private:
     Id *id;
     std::string mangled_name;
+    bool isRef = false;
+    bool isAutocompleteParam = false;
 };
 
 

@@ -71,8 +71,18 @@ llvm::Value* FParDef::compile()
 llvm::Value* FParDef::compile(std::vector<std::string> * signature_mangled_names, std::vector<llvmType*> * signature_types)
 {
   /* Get LLVM type of argument */
-  /* TODO: this works only with simple types */
-  llvmType* t = getLLVMType(param_type);
+  /* TODO: check if this works only with simple types (autocomplete?) */
+  llvmType* t;
+  switch(pass_mode)
+  {
+    case PASS_BY_VALUE:
+      t = getLLVMType(param_type);
+      break;
+    case PASS_BY_REFERENCE:
+      /* For pass-by-reference the argument's type is a pointer to the equivelant type */
+      t = llvm::PointerType::get(getLLVMType(param_type), 0);
+      break;
+  }
 
   /* Create function arguments signature and store the mangled names of the arguments */
   /* We push the types and the mangled names to the vectors that are passed by the reference */

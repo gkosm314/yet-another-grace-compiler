@@ -45,8 +45,18 @@ void FuncCall::sem()
     /* Check that the expression we pass has the same type as the typical parameter */
     e->type_check_param(current_argument->u.eParameter.type);
 
-    if(current_argument->u.eParameter.mode == PASS_BY_REFERENCE && !e->isLvalue())
-      semError("Parameter defined as pass-by-reference requires an lvalue.");
+    /* Track pass-by-ref parameters to generate address instead of value during codegen */
+    if(current_argument->u.eParameter.mode == PASS_BY_REFERENCE)
+    {
+      /* Check that pass-by-reference parameter receives a lvalue as argument */
+      if(!e->isLvalue()) semError("Parameter defined as pass-by-reference requires an lvalue.");
+
+      if(current_argument->u.eParameter.type->autocompleteSize)
+        parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE);
+      else
+        parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_REF);
+    }
+    else parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_VALUE);
 
     current_argument = current_argument->u.eParameter.next;
   }
@@ -67,9 +77,31 @@ llvm::Value* FuncCall::compile() {
   llvm::Function *f = TheModule->getFunction(mangled_name);
 
   std::vector<llvm::Value*> param_values;
+  int current_param = 0;
   for (Expr *e : *parameters_expr_list)
   {
-    llvm::Value *v = e->compile();
+    llvm::Value *v = nullptr;
+
+    /* If this parameter is pass-by-ref we pass its address, otherwise we pass its value */
+    FUNC_CALL_ARG param_pass_mode = parameters_pass_mode[current_param];
+    switch(param_pass_mode)
+    {
+      case FUNC_CALL_ARG_PASS_BY_VALUE:
+        v = e->compile();
+        break;
+      case FUNC_CALL_ARG_PASS_BY_REF:
+        v = ((AbstractLvalue *) e)->findLLVMAddr();
+        break;
+      case FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE:
+        v = ((AbstractLvalue *) e)->findLLVMAddr();
+        /* TODO add comments*/
+        v = Builder.CreateBitCast(v, f->getFunctionType()->getParamType(current_param));
+        break;
+    }
+
+    current_param++;
+
+    /* Push the argument */
     if(v != nullptr)
       param_values.push_back(v);
     else
