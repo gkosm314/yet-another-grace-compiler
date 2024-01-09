@@ -83,7 +83,7 @@ llvm::Value* FuncCall::compile() {
     llvm::Value *v = nullptr;
 
     /* If this parameter is pass-by-ref we pass its address, otherwise we pass its value */
-    FUNC_CALL_ARG param_pass_mode = parameters_pass_mode[current_param++];
+    FUNC_CALL_ARG param_pass_mode = parameters_pass_mode[current_param];
     switch(param_pass_mode)
     {
       case FUNC_CALL_ARG_PASS_BY_VALUE:
@@ -95,11 +95,11 @@ llvm::Value* FuncCall::compile() {
       case FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE:
         v = ((AbstractLvalue *) e)->findLLVMAddr();
         /* TODO add comments*/
-        llvmType *t = getLLVMType(e->getType())->getContainedType(0)->getPointerTo();
-        v = Builder.CreateBitCast(v, t);
+        v = Builder.CreateBitCast(v, f->getFunctionType()->getParamType(current_param));
         break;
     }
 
+    current_param++;
 
     /* Push the argument */
     if(v != nullptr)
