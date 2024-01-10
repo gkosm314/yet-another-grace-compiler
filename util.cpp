@@ -106,7 +106,7 @@ void semInitLibraryFunctions()
   semAddLibraryFunctions("writeString", 1,
                          std::vector<const char*>{"s"},
                          std::vector<Type>{typeStringParam},
-                         std::vector<PassMode>{PASS_BY_VALUE},
+                         std::vector<PassMode>{PASS_BY_REFERENCE},
                          typeVoid);
 
   /* Input library functions */

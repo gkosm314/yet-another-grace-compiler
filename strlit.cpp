@@ -18,3 +18,8 @@ void StrLit::sem()
   RepInteger char_array_len = str.length() + 1;
   expr_type = typeArray(char_array_len, typeChar, false);
 }
+
+llvmAddr StrLit::findLLVMAddr()
+{
+  return Builder.CreateGlobalStringPtr(llvm::StringRef(str));
+}

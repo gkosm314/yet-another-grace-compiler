@@ -12,6 +12,7 @@ class StrLit : public AbstractLvalue
     ~StrLit();
     void printAST(std::ostream &out) const override;
     void sem() override;
+    llvmAddr findLLVMAddr() override;
 
   private:
     std::string str;
