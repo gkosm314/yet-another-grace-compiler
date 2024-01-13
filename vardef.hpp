@@ -16,6 +16,8 @@ class VarDef : public LocalDef
     void sem() override;
     llvm::Value* compile() override;
 
+    void pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes);
+
   private:
     std::vector<Id*> *ids; // Will never be nullptr by construction of parser
     ParsedType *parsed_type;

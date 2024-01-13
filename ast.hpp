@@ -8,9 +8,13 @@
 #include "llvm/IR/Module.h"
 #include <llvm/IR/Verifier.h>
 
+#include <set>
+
 /* This is needed in order to link C with C++ */
 extern "C" {
   #include "symbol.h"
+
+  extern Scope       * currentScope;
   
   extern void          initSymbolTable    (unsigned int size);
   extern void          destroySymbolTable (void);
@@ -40,6 +44,17 @@ enum DATA_TYPE { DATA_TYPE_int, DATA_TYPE_char, DATA_TYPE_void };
 /* Maps the mangled name of each variable to the corresponding llvmAddr */
 typedef llvm::Value* llvmAddr;
 extern std::map<std::string, llvmAddr> varMap;
+
+/* This set contains the mangled names of variables that are escape variables.
+ * In other words, this set contains the mangled names of variables that are used in a nested scope.
+ * Mangled names are unique accross the whole program -> no ambiguity.
+ */
+extern std::set<std::string> escapeVars;
+
+/* Maps every (non-toplevel) function to the function that defines it
+ * Both the key and the value are mangled function names that uniquely identify each function 
+ */
+extern std::map<std::string, std::string> outerFunc;
 
 class AST
 {

@@ -71,6 +71,7 @@ llvm::Function* FuncDef::compile()
   Builder.SetInsertPoint(BB);
 
   /* Allocate memory for function arguments */
+  /* TODO: validate this works okey after we added the static link in the vectors */
   unsigned int             current_arg         = 0;
   std::vector<std::string> mangled_param_names = header->getParamMangledNames();
   std::vector<llvmType*>   param_types         = header->getParamLLVMTypes();
@@ -83,6 +84,12 @@ llvm::Function* FuncDef::compile()
     /* Add argument to the variable map */
     varMap[mangled_param_names[current_arg++]] = alloca;
   }
+
+  /* Create LLVM struct type to represent stack frame of this function.
+   * A pointer to this struct type will be passed as the first argument to every function
+   * defined inside this FuncDef. 
+   */
+  generateStackFrameStruct();
 
   /* Allocate memory for local variables and compile local functions */
   for (LocalDef *i : *local_defs)
@@ -101,4 +108,38 @@ llvm::Function* FuncDef::compile()
 
   llvm::verifyFunction(*f);
   return f;
+}
+
+llvmType * FuncDef::generateStackFrameStruct()
+{
+  /* Note:  we do not create LLVM instructions inside the function's body
+   *        we just register the struct type that will be used to represent the stack frame of the function
+  */
+
+  /* This vector defines the types of the fields inside the struct
+   * For every escaping parameter/variable we need a field that store a reference to the escaping variable
+   * We maintain the same order that is used in local_defs vector.
+   */
+  std::vector<llvmType*> escapeTypes;
+
+  /* Add static link to outer function */
+  header->pushStaticLinkTypeForStackFrameStruct(&escapeTypes);
+
+  /* Add types of the escaped parameters defined by this FuncDef to the escapeTypes vector */
+  header->pushEscapeTypesForStackFrameStruct(&escapeTypes);
+
+  /* Add types of the escaped variables defined by this FuncDef to the escapeTypes vector */
+  for(LocalDef *i : *local_defs)
+  {
+    /* Check if this local def is a vardef */
+    VarDef *var_def = dynamic_cast<VarDef*>(i);
+    if(var_def) var_def->pushEscapeTypesForStackFrameStruct(&escapeTypes);
+  }
+
+  /* We use StructType::create instead of StructType::get to create a named struct
+   * The unique name of the stack frame will be "sf_" + the mangled function name.
+   * example: sf_f_14 
+   */
+  std::string stack_frame_name = getStackFrameName(header->getMangledName());
+  return llvm::StructType::create(TheContext, escapeTypes, stack_frame_name);
 }

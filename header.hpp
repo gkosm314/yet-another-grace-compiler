@@ -26,6 +26,9 @@ class Header : public AST
     std::vector<llvmType*> getParamLLVMTypes();
     std::vector<std::string> getParamMangledNames();
 
+    void pushStaticLinkTypeForStackFrameStruct(std::vector<llvmType*> *escapeTypes);
+    void pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes);
+
   private:
     Id *id;
     std::vector<FParDef*> *fpar_defs;

@@ -94,3 +94,16 @@ llvm::Value* FParDef::compile(std::vector<std::string> * signature_mangled_names
 
   return nullptr;
 }
+
+void FParDef::pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes)
+{
+  /* The stack frame only contains references to the parameters */
+  llvmType* t = llvm::PointerType::get(getLLVMType(param_type), 0);
+
+  for (Id *id : *ids)
+  {
+    std::string mangled_name = mangle(id->getName(), scope_id);
+    /* If the parameter is an escape parameter, add a field to store it in the stack frame */
+    if(escapeVars.find(mangled_name) != escapeVars.end()) escapeTypes->push_back(t);
+  }  
+}

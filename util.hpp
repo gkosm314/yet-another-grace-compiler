@@ -34,5 +34,6 @@ void codegenInitLibraryFunctions();
 void codegenMain(llvm::Function* program_func);
 
 std::string mangle(const char * name, unsigned int scope_id);
+std::string getStackFrameName(std::string mangled_function_name);
 
 #endif

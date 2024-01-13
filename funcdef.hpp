@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "localdef.hpp"
+#include "vardef.hpp"
 #include "header.hpp"
 #include "block.hpp"
 
@@ -22,6 +23,8 @@ class FuncDef : public LocalDef
     std::vector<LocalDef*> *local_defs;
     Block *block;
     bool void_ret_type_without_ret_stmt = false;
+
+    llvmType * generateStackFrameStruct();
 };
 
 #endif

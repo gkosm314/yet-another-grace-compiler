@@ -240,3 +240,8 @@ std::string mangle(const char * name, unsigned int scope_id)
   else
     return std::string(name);
 }
+
+std::string getStackFrameName(std::string mangled_function_name)
+{
+  return "sf_" + mangled_function_name;
+}

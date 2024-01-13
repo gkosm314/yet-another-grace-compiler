@@ -41,6 +41,11 @@ void LValue::sem()
 
     /* Keep mangled name */
     mangled_name = mangle(id->getName(), e->scopeId);
+
+    /* Difference between the nesting level of the declaration and
+     * the nesting level of the expression that uses this particular lvalue */
+    nestingDepth = currentScope->nestingLevel - e->nestingLevel;
+    if(nestingDepth > 0) escapeVars.insert(mangled_name);
 }
 
 llvmAddr LValue::findLLVMAddr()
@@ -61,6 +66,7 @@ llvmAddr LValue::findLLVMAddr()
 llvmAddr LValue::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t)
 {
     /* TODO: add comments*/
+    /* TODO: validate that this works even if the parameter was passed to an outer function and we used it as an escape parameter*/
     if(!isAutocompleteParam)
     {
         /* push 0 in the beginning of the offsets to dereference the GEP pointer */
