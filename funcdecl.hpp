@@ -13,6 +13,8 @@ class FuncDecl : public LocalDef
     void sem() override;
     llvm::Value* compile() override;
 
+    virtual void setOuterFunc(std::string outer_func_mangled_name) override;
+
   private:
     Header *header; 
 };

@@ -34,7 +34,11 @@ void FuncDef::sem()
 {
   /* Perform semantic analysis for function definition */
   header->sem();
-  for (LocalDef *i : *local_defs) i->sem();
+  for (LocalDef *i : *local_defs)
+  {
+    i->sem();
+    i->setOuterFunc(header->getMangledName());
+  } 
   block->sem();
 
   /* If the function has non-void return type it must include a return statement */
@@ -110,6 +114,11 @@ llvm::Function* FuncDef::compile()
   return f;
 }
 
+void FuncDef::setOuterFunc(std::string outer_func_mangled_name)
+{
+  outerFunc[header->getMangledName()] = outer_func_mangled_name;
+}
+
 llvmType * FuncDef::generateStackFrameStruct()
 {
   /* Note:  we do not create LLVM instructions inside the function's body
@@ -123,6 +132,7 @@ llvmType * FuncDef::generateStackFrameStruct()
   std::vector<llvmType*> escapeTypes;
 
   /* Add static link to outer function */
+  /* TASK: this should happen only for non-top-level functions */
   header->pushStaticLinkTypeForStackFrameStruct(&escapeTypes);
 
   /* Add types of the escaped parameters defined by this FuncDef to the escapeTypes vector */

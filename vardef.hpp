@@ -16,6 +16,7 @@ class VarDef : public LocalDef
     void sem() override;
     llvm::Value* compile() override;
 
+    virtual void setOuterFunc(std::string outer_func_mangled_name) override {};
     void pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes);
 
   private:

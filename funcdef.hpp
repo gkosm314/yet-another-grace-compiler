@@ -18,6 +18,8 @@ class FuncDef : public LocalDef
     void sem() override;
     llvm::Function* compile() override;
 
+    virtual void setOuterFunc(std::string outer_func_mangled_name) override;
+
   private:
     Header *header;
     std::vector<LocalDef*> *local_defs;
