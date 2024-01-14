@@ -26,6 +26,7 @@ class FuncDef : public LocalDef
     Block *block;
     bool void_ret_type_without_ret_stmt = false;
 
+    void createStackFrame(llvmType *stack_frame_type);
     llvmType * generateStackFrameStruct();
 };
 

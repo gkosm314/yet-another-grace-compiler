@@ -93,7 +93,11 @@ llvm::Function* FuncDef::compile()
    * A pointer to this struct type will be passed as the first argument to every function
    * defined inside this FuncDef. 
    */
-  generateStackFrameStruct();
+  /* This line must remain before the compilation of the local definition
+   * because the definition of the stack frame structure is needed for the defintion
+   * of the nested functions since their first parameter is a pointer to this structure
+   */
+  llvmType *stack_frame_type = generateStackFrameStruct();
 
   /* Allocate memory for local variables and compile local functions */
   for (LocalDef *i : *local_defs)
@@ -102,6 +106,9 @@ llvm::Function* FuncDef::compile()
     /* We want to continue inserting code inside the current function */
     Builder.SetInsertPoint(BB);
   }
+
+  /* Define LLVM type for the stack frame of this function and allocate memory for it */
+  createStackFrame(stack_frame_type);
 
   /* Compile body */
   block->compile();
@@ -150,6 +157,15 @@ llvmType * FuncDef::generateStackFrameStruct()
    * The unique name of the stack frame will be "sf_" + the mangled function name.
    * example: sf_f_14 
    */
+  std::string stack_frame_type_name = getStackFrameStructName(header->getMangledName());
+  return llvm::StructType::create(TheContext, escapeTypes, stack_frame_type_name);
+}
+
+void FuncDef::createStackFrame(llvmType *stack_frame_type)
+{
   std::string stack_frame_name = getStackFrameName(header->getMangledName());
-  return llvm::StructType::create(TheContext, escapeTypes, stack_frame_name);
+  /* Allocate memory for the stack frame struct */
+  llvmAddr alloca = Builder.CreateAlloca(stack_frame_type, nullptr, stack_frame_name);  
+  /* Add stack frame to the variable map */
+  varMap[stack_frame_name] = alloca;  
 }

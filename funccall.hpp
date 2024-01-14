@@ -29,6 +29,10 @@ class FuncCall : public Expr
     std::string mangled_name;
     std::vector<Expr*> *parameters_expr_list;
     std::vector<FUNC_CALL_ARG> parameters_pass_mode;
+
+    unsigned int callDepth;
+    unsigned int calleDeclDepth;
+    llvmAddr getStackFramePtrToPass();
 };
 
 #endif

@@ -179,6 +179,11 @@ llvm::ConstantInt* c8(char c) {
   return llvm::ConstantInt::get(TheContext, llvm::APInt(8, c, true));
 }
 
+llvm::ConstantInt* c32(int n) {
+  // returns a signed int because of the APInt call
+  return llvm::ConstantInt::get(TheContext, llvm::APInt(32, n, true));
+}
+
 llvm::ConstantInt* c64(int n) {
   // returns a signed int because of the APInt call
   return llvm::ConstantInt::get(TheContext, llvm::APInt(64, n, true));
@@ -245,6 +250,11 @@ std::string mangle(const char * name, unsigned int scope_id)
 }
 
 std::string getStackFrameName(std::string mangled_function_name)
+{
+  return "stack_frame_" + mangled_function_name;
+}
+
+std::string getStackFrameStructName(std::string mangled_function_name)
 {
   return "sf_" + mangled_function_name;
 }

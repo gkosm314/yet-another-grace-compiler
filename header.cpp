@@ -121,7 +121,7 @@ void Header::pushStaticLinkTypeForStackFrameStruct(std::vector<llvmType*> *v)
   /* Get the name of the function that encapsulated this function (outer function) */
   std::string outer_func_mangled_name = outerFunc[mangled_name];
   /* Get the name of the struct that represent the stack frame of the outer function */
-  std::string outer_func_stack_frame_struct_name = getStackFrameName(outer_func_mangled_name);
+  std::string outer_func_stack_frame_struct_name = getStackFrameStructName(outer_func_mangled_name);
   /* Get the type of the struct that represent the stack frame of the outer function and push it in the function's signature */
   v->push_back(llvm::StructType::getTypeByName(TheContext, outer_func_stack_frame_struct_name)->getPointerTo());
 }

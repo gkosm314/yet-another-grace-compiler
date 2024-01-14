@@ -28,13 +28,16 @@ extern llvmType *i64;
 llvmType *getLLVMType(Type t);
 
 llvm::ConstantInt* c8(char c);
+llvm::ConstantInt* c32(int n);
 llvm::ConstantInt* c64(int n);
 
 void codegenInitLibraryFunctions();
 void codegenMain(llvm::Function* program_func);
 
 std::string mangle(const char * name, unsigned int scope_id);
+
 std::string getStackFrameName(std::string mangled_function_name);
+std::string getStackFrameStructName(std::string mangled_function_name);
 
 #define TOP_LEVEL_FUNCTION_MAXIMUM_SCOPE 2
 
