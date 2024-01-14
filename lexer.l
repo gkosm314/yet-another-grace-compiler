@@ -21,6 +21,7 @@ HEX_VAL  [0-9a-f][0-9a-f]
 %x STRING
 %x STRING_ESCAPE
 
+%option noinput
 %option nounput
 %option noyywrap
 %option yylineno
