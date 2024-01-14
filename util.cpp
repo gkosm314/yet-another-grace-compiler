@@ -85,6 +85,9 @@ void semAddLibraryFunctions(const char                     *func_name,
 
    endFunctionHeader(f, return_type);
    closeScope();
+
+   /* Register functions as top-level functions */
+   funcDepth[func_name] = currentScope->nestingLevel;
 }
 
 void semInitLibraryFunctions()
@@ -244,4 +247,9 @@ std::string mangle(const char * name, unsigned int scope_id)
 std::string getStackFrameName(std::string mangled_function_name)
 {
   return "sf_" + mangled_function_name;
+}
+
+bool isTopLevelFunc(std::string mangled_function_name)
+{
+  return funcDepth[mangled_function_name] <= TOP_LEVEL_FUNCTION_MAXIMUM_SCOPE;
 }

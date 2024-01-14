@@ -51,6 +51,9 @@ void Header::sem()
   /* Store mangled name */
   mangled_name = mangle(id->getName(), f->scopeId);
 
+  /* Keep function's nesting level */
+  funcDepth[mangled_name] = f->nestingLevel;
+
   /* In case of multiple forward declarations using the same signature, we will set f->isForward to true again
    * This means that those declarations are allowed, since the check on newFunction() on symbol.c will accept them
    * This is a decision made by us that doesn't contradict with the language specification
@@ -76,6 +79,12 @@ void Header::sem()
 
 llvm::Function* Header::compile()
 {
+  if(!isTopLevelFunc(mangled_name))
+  {
+    pushStaticLinkTypeForStackFrameStruct(&param_types);
+    mangled_param_names.push_back("static_link_" + mangled_name);
+  }
+
   /* Get function arguments types and mangled names */
   /* Each call to the compile method of the parameter pushes its type and its mangled name
    * to the vector that are passed by reference. The types vector is used to create the function signature */
@@ -114,7 +123,7 @@ void Header::pushStaticLinkTypeForStackFrameStruct(std::vector<llvmType*> *v)
   /* Get the name of the struct that represent the stack frame of the outer function */
   std::string outer_func_stack_frame_struct_name = getStackFrameName(outer_func_mangled_name);
   /* Get the type of the struct that represent the stack frame of the outer function and push it in the function's signature */
-  v->push_back(llvm::StructType::getTypeByName(TheContext, outer_func_stack_frame_struct_name));
+  v->push_back(llvm::StructType::getTypeByName(TheContext, outer_func_stack_frame_struct_name)->getPointerTo());
 }
 
 void Header::pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes)

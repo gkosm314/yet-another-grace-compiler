@@ -131,9 +131,9 @@ llvmType * FuncDef::generateStackFrameStruct()
    */
   std::vector<llvmType*> escapeTypes;
 
-  /* Add static link to outer function */
-  /* TASK: this should happen only for non-top-level functions */
-  header->pushStaticLinkTypeForStackFrameStruct(&escapeTypes);
+  /* Add static link to outer function. This applies only tp non-top-level functions */
+  if(!isTopLevelFunc(header->getMangledName()))
+    header->pushStaticLinkTypeForStackFrameStruct(&escapeTypes);
 
   /* Add types of the escaped parameters defined by this FuncDef to the escapeTypes vector */
   header->pushEscapeTypesForStackFrameStruct(&escapeTypes);

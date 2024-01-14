@@ -36,4 +36,8 @@ void codegenMain(llvm::Function* program_func);
 std::string mangle(const char * name, unsigned int scope_id);
 std::string getStackFrameName(std::string mangled_function_name);
 
+#define TOP_LEVEL_FUNCTION_MAXIMUM_SCOPE 2
+
+bool isTopLevelFunc(std::string mangled_function_name);
+
 #endif

@@ -19,6 +19,9 @@ std::set<std::string> escapeVars;
  */
 std::map<std::string, std::string> outerFunc;
 
+/* Maps every function to its depth Keys are mangled function names that uniquely identify each function */
+std::map<std::string, unsigned int> funcDepth;
+
 AST::AST() : lineno(yylineno) {};
 
 void AST::semError(const char *msg)
