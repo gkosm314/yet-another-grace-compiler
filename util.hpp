@@ -43,4 +43,6 @@ std::string getStackFrameStructName(std::string mangled_function_name);
 
 bool isTopLevelFunc(std::string mangled_function_name);
 
+llvmAddr walkupStaticLinkChain(unsigned int decl_depth, unsigned int usage_depth, llvmType **final_stack_frame_type = nullptr);
+
 #endif

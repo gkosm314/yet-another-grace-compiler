@@ -92,7 +92,7 @@ llvm::Value* FuncCall::compile() {
     parameters_pass_mode.insert(parameters_pass_mode.begin(), FUNC_CALL_ARG_PASS_BY_REF);
     
     /* Walk up the static links chain to find the correct static link to pass as parameter */
-    llvmAddr stack_frame_addr = getStackFramePtrToPass();
+    llvmAddr stack_frame_addr = walkupStaticLinkChain(calleDeclDepth, callDepth);
     param_values.push_back(stack_frame_addr);
     current_param++;
   }
@@ -128,42 +128,4 @@ llvm::Value* FuncCall::compile() {
   }
 
   return Builder.CreateCall(f, param_values);
-}
-
-llvmAddr FuncCall::getStackFramePtrToPass()
-{
-  /* Grab caller's name */
-  llvm::Function *caller = Builder.GetInsertBlock()->getParent();
-
-  /* The caller's first parameter is a pointer to a stack frame structure.
-   * We have allocated memory for this stack frame structure. */
-  std::string current_func_mangled_name = caller->getName().str();
-  
-  /* Note that we start walking up from the stack frame the caller created, 
-     not from the stack frame that was passed to the caller as a parameter */
-  
-  /* address of current stack frame */
-  llvmAddr    stack_frame_addr = varMap[getStackFrameName(current_func_mangled_name)];
-  /* type of current stack frame */
-  llvmType   *stack_frame_type = llvm::StructType::getTypeByName(TheContext, getStackFrameStructName(current_func_mangled_name));
-
-  /* When invoking a function declared at a depth of k levels above the current call
-   * (e.g., 1 for a recursive/sibling function because the call is within the body)
-   * we walk up the frames chain upwards k times */
-  unsigned int k = callDepth - calleDeclDepth;
-  while (k > 0)
-  {
-    /* move to the outer function */
-    current_func_mangled_name = outerFunc[current_func_mangled_name];
-    /* type of next stack frame */
-    llvmType *next_stack_frame_type = llvm::StructType::getTypeByName(TheContext, getStackFrameStructName(current_func_mangled_name));
-    /* get address of next stack frame */
-    stack_frame_addr = Builder.CreateLoad(next_stack_frame_type->getPointerTo(), Builder.CreateStructGEP(stack_frame_type, stack_frame_addr, 0));
-    /* update the type of the current stack frame */
-    stack_frame_type = next_stack_frame_type;
-
-    k--;
-  }
-
-  return stack_frame_addr;
 }

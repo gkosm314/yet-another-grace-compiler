@@ -263,3 +263,44 @@ bool isTopLevelFunc(std::string mangled_function_name)
 {
   return funcDepth[mangled_function_name] <= TOP_LEVEL_FUNCTION_MAXIMUM_SCOPE;
 }
+
+llvmAddr walkupStaticLinkChain(unsigned int decl_depth, unsigned int usage_depth, llvmType **final_stack_frame_type)
+{
+  /* Grab caller's name */
+  llvm::Function *caller = Builder.GetInsertBlock()->getParent();
+
+  /* The caller's first parameter is a pointer to a stack frame structure.
+   * We have allocated memory for this stack frame structure. */
+  std::string current_func_mangled_name = caller->getName().str();
+  
+  /* Note that we start walking up from the stack frame the caller created, 
+     not from the stack frame that was passed to the caller as a parameter */
+  
+  /* address of current stack frame */
+  llvmAddr    stack_frame_addr = varMap[getStackFrameName(current_func_mangled_name)];
+  /* type of current stack frame */
+  llvmType   *stack_frame_type = llvm::StructType::getTypeByName(TheContext, getStackFrameStructName(current_func_mangled_name));
+
+  /* When invoking a function declared at a depth of k levels above the current call
+   * (e.g., 1 for a recursive/sibling function because the call is within the body)
+   * we walk up the frames chain upwards k times */
+  unsigned int k = usage_depth - decl_depth;
+  while (k > 0)
+  {
+    /* move to the outer function */
+    current_func_mangled_name = outerFunc[current_func_mangled_name];
+    /* type of next stack frame */
+    llvmType *next_stack_frame_type = llvm::StructType::getTypeByName(TheContext, getStackFrameStructName(current_func_mangled_name));
+    /* get address of next stack frame */
+    stack_frame_addr = Builder.CreateLoad(next_stack_frame_type->getPointerTo(), Builder.CreateStructGEP(stack_frame_type, stack_frame_addr, 0));
+    /* update the type of the current stack frame */
+    stack_frame_type = next_stack_frame_type;
+
+    k--;
+  }
+
+  /* Output the type of the stack frame you reached at the end of the walkup (if caller asked for it) */
+  if(final_stack_frame_type) *final_stack_frame_type = stack_frame_type;
+
+  return stack_frame_addr;
+}

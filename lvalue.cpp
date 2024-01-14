@@ -42,15 +42,26 @@ void LValue::sem()
     /* Keep mangled name */
     mangled_name = mangle(id->getName(), e->scopeId);
 
-    /* Difference between the nesting level of the declaration and
-     * the nesting level of the expression that uses this particular lvalue */
-    nestingDepth = currentScope->nestingLevel - e->nestingLevel;
-    if(nestingDepth > 0) escapeVars.insert(mangled_name);
+    /* If there is a difference between the nesting level of the declaration and
+     * the nesting level of the expression that uses this particular lvalue,
+     * then the variable is an escape variable */
+    lvalueDepth = currentScope->nestingLevel;
+    varDeclDepth = e->nestingLevel;
+    if(lvalueDepth > varDeclDepth)
+    {
+        escapeVars.insert(mangled_name);
+        isEscape = true;
+        /* every escape var is treated as reference to a stack allocated variable of an outer function */
+        isRef = true;
+    }
 }
 
 llvmAddr LValue::findLLVMAddr()
 {
-    llvmAddr var_addr = varMap[mangled_name];
+    llvmAddr var_addr = nullptr;
+    if(!isEscape) var_addr = varMap[mangled_name];
+    else var_addr = getAllocaAddrOfEscapeVar();
+    
     if (!var_addr)
         /* Execution should never reach this point */
         return nullptr;
@@ -87,4 +98,16 @@ llvm::Value* LValue::compile()
 
     /* Load the value */
     return Builder.CreateLoad(getLLVMType(expr_type), var_addr);
+}
+
+llvmAddr LValue::getAllocaAddrOfEscapeVar()
+{
+    /* type of the stack frame inside which we will find a reference to the lvalue */
+    llvmType *stack_frame_type;
+    /* get address of the stack frame inside which we will find a reference to the lvalue */
+    llvmAddr stack_frame_addr = walkupStaticLinkChain(varDeclDepth, lvalueDepth, &stack_frame_type);
+    /* get the position of the reference to the lvalue inside the stack frame */
+    unsigned int field_pos = stackframePos[mangled_name];
+
+    return Builder.CreateStructGEP(stack_frame_type, stack_frame_addr, field_pos);
 }

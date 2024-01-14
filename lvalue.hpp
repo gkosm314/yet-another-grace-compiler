@@ -21,8 +21,11 @@ class LValue : public AbstractLvalue
     std::string mangled_name;
     bool isRef = false;
     bool isAutocompleteParam = false;
+    bool isEscape = false;
 
-    unsigned int nestingDepth;
+    unsigned int lvalueDepth;
+    unsigned int varDeclDepth;
+    llvmAddr getAllocaAddrOfEscapeVar();
 };
 
 

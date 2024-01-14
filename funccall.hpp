@@ -32,7 +32,6 @@ class FuncCall : public Expr
 
     unsigned int callDepth;
     unsigned int calleDeclDepth;
-    llvmAddr getStackFramePtrToPass();
 };
 
 #endif

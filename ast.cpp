@@ -19,8 +19,12 @@ std::set<std::string> escapeVars;
  */
 std::map<std::string, std::string> outerFunc;
 
-/* Maps every function to its depth Keys are mangled function names that uniquely identify each function */
+/* Maps every function to its depth. Keys are mangled function names that uniquely identify each function */
 std::map<std::string, unsigned int> funcDepth;
+
+/* Maps every escape variable to its position in the stack frame of the function that defines it. 
+ * Keys are mangled variable names that uniquely identify each variable. */
+std::map<std::string, unsigned int> stackframePos;
 
 AST::AST() : lineno(yylineno) {};
 

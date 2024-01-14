@@ -59,6 +59,10 @@ extern std::map<std::string, std::string> outerFunc;
 /* Maps every function to its depth Keys are mangled function names that uniquely identify each function */
 extern std::map<std::string, unsigned int> funcDepth;
 
+/* Maps every escape variable to its position in the stack frame of the function that defines it. 
+ * Keys are mangled variable names that uniquely identify each variable. */
+extern std::map<std::string, unsigned int> stackframePos;
+
 class AST
 {
   public:

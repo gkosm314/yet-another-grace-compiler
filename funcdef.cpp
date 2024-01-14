@@ -198,5 +198,8 @@ void FuncDef::populateStackFrame()
 
     /* store the address of the escape var in the stack frame field */
     Builder.CreateStore(escape_var_addr ,stack_frame_field_addr);
+
+    /* keep the index of the variable inside the stack frame so that you know where to look for it */
+    stackframePos[escapeNames[idx]] = idx;
   }
 }
