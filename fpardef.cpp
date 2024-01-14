@@ -95,7 +95,7 @@ llvm::Value* FParDef::compile(std::vector<std::string> * signature_mangled_names
   return nullptr;
 }
 
-void FParDef::pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes)
+void FParDef::pushFieldsForStackFrameStruct(std::vector<std::string> *names, std::vector<llvmType*> *types, std::vector<bool> *isref)
 {
   /* The stack frame only contains references to the parameters */
   llvmType* t = llvm::PointerType::get(getLLVMType(param_type), 0);
@@ -104,6 +104,15 @@ void FParDef::pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeT
   {
     std::string mangled_name = mangle(id->getName(), scope_id);
     /* If the parameter is an escape parameter, add a field to store it in the stack frame */
-    if(escapeVars.find(mangled_name) != escapeVars.end()) escapeTypes->push_back(t);
+    if(escapeVars.find(mangled_name) != escapeVars.end())
+    {
+      names->push_back(mangled_name);
+      types->push_back(t);
+      
+      if(pass_mode == PASS_BY_REFERENCE)
+        isref->push_back(true);
+      else
+        isref->push_back(false);
+    }
   }  
 }

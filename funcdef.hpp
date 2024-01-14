@@ -26,7 +26,18 @@ class FuncDef : public LocalDef
     Block *block;
     bool void_ret_type_without_ret_stmt = false;
 
+    std::string mangled_name;
+
+    /* This vector defines the types of the fields inside the struct
+    * For every escaping parameter/variable we need a field that store a reference to the escaping variable
+    * We maintain the same order that is used in local_defs vector.
+    */
+    std::vector<std::string> escapeNames; /* mangled */
+    std::vector<llvmType*> escapeTypes;
+    std::vector<bool> escapeIsRef;
+
     void createStackFrame(llvmType *stack_frame_type);
+    void populateStackFrame();
     llvmType * generateStackFrameStruct();
 };
 

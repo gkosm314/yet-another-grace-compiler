@@ -53,7 +53,7 @@ llvm::Value* VarDef::compile()
   return nullptr; 
 }
 
-void VarDef::pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes)
+void VarDef::pushFieldsForStackFrameStruct(std::vector<std::string> *names, std::vector<llvmType*> *types)
 {
   /* The stack frame only contains references to the variables */
   llvmType* t = llvm::PointerType::get(getLLVMType(var_type), 0);
@@ -61,6 +61,10 @@ void VarDef::pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTy
   for (auto &mangled_name : mangled_names)
   {
     /* If the variable is an escape variable, add a field to store it in the stack frame */
-    if(escapeVars.find(mangled_name) != escapeVars.end()) escapeTypes->push_back(t);
+    if(escapeVars.find(mangled_name) != escapeVars.end())
+    {
+      names->push_back(mangled_name);
+      types->push_back(t);
+    }
   }  
 }

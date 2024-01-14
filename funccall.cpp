@@ -81,7 +81,22 @@ llvm::Value* FuncCall::compile() {
   llvm::Function *f = TheModule->getFunction(mangled_name);
 
   std::vector<llvm::Value*> param_values;
+
   int current_param = 0;
+  
+  /* If the function we call is not a top-level function,
+   * we have to pass a pointer to the appropriate stack frame as the first argument  */
+  if(!isTopLevelFunc(mangled_name))
+  {
+    /* WARNING: This pass_mode will not be used, we insert it here so that the current_param index remains consistent */
+    parameters_pass_mode.insert(parameters_pass_mode.begin(), FUNC_CALL_ARG_PASS_BY_REF);
+    
+    /* Walk up the static links chain to find the correct static link to pass as parameter */
+    llvmAddr stack_frame_addr = getStackFramePtrToPass();
+    param_values.push_back(stack_frame_addr);
+    current_param++;
+  }
+
   for (Expr *e : *parameters_expr_list)
   {
     llvm::Value *v = nullptr;
@@ -110,14 +125,6 @@ llvm::Value* FuncCall::compile() {
       param_values.push_back(v);
     else
       return nullptr;
-  }
-  
-  /* If the function we call is not a top-level function,
-   * we have to pass a pointer to the appropriate stack frame as the first argument  */
-  if(!isTopLevelFunc(mangled_name))
-  {
-    llvmAddr stack_frame_addr = getStackFramePtrToPass();
-    param_values.insert(param_values.begin(), stack_frame_addr);
   }
 
   return Builder.CreateCall(f, param_values);

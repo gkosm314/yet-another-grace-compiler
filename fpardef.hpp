@@ -19,7 +19,7 @@ class FParDef : public AST
     llvm::Value* compile() override; /* This function is empty - we should never use it */
     llvm::Value* compile(std::vector<std::string> * signature_mangled_names, std::vector<llvmType*> * signature_types);
 
-    void pushEscapeTypesForStackFrameStruct(std::vector<llvmType*> *escapeTypes);
+    void pushFieldsForStackFrameStruct(std::vector<std::string> *names, std::vector<llvmType*> *types, std::vector<bool> *isref);
 
   private:
     std::vector<Id*> *ids;

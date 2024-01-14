@@ -34,11 +34,16 @@ void FuncDef::sem()
 {
   /* Perform semantic analysis for function definition */
   header->sem();
+  mangled_name = header->getMangledName();
+
+  /* Perform semantic analysis for local definitions of the function */
   for (LocalDef *i : *local_defs)
   {
     i->sem();
-    i->setOuterFunc(header->getMangledName());
+    i->setOuterFunc(mangled_name);
   } 
+
+  /* Perform semantic analysis for the statements of the function */
   block->sem();
 
   /* If the function has non-void return type it must include a return statement */
@@ -61,7 +66,6 @@ void FuncDef::sem()
 llvm::Function* FuncDef::compile()
 {
   /* Header */
-  std::string mangled_name = header->getMangledName();
   llvm::Function *f = TheModule->getFunction(mangled_name);
 
   /* f is not nullptr when the header is already compiled due to a forward declaration */
@@ -109,6 +113,8 @@ llvm::Function* FuncDef::compile()
 
   /* Define LLVM type for the stack frame of this function and allocate memory for it */
   createStackFrame(stack_frame_type);
+  /* Populate stack frame by assigning pointers to the escaped variables to its fields */
+  populateStackFrame();
 
   /* Compile body */
   block->compile();
@@ -123,7 +129,7 @@ llvm::Function* FuncDef::compile()
 
 void FuncDef::setOuterFunc(std::string outer_func_mangled_name)
 {
-  outerFunc[header->getMangledName()] = outer_func_mangled_name;
+  outerFunc[mangled_name] = outer_func_mangled_name;
 }
 
 llvmType * FuncDef::generateStackFrameStruct()
@@ -132,40 +138,65 @@ llvmType * FuncDef::generateStackFrameStruct()
    *        we just register the struct type that will be used to represent the stack frame of the function
   */
 
-  /* This vector defines the types of the fields inside the struct
-   * For every escaping parameter/variable we need a field that store a reference to the escaping variable
-   * We maintain the same order that is used in local_defs vector.
-   */
-  std::vector<llvmType*> escapeTypes;
-
-  /* Add static link to outer function. This applies only tp non-top-level functions */
-  if(!isTopLevelFunc(header->getMangledName()))
-    header->pushStaticLinkTypeForStackFrameStruct(&escapeTypes);
+  /* Add static link to outer function. This applies only to non-top-level functions */
+  if(!isTopLevelFunc(mangled_name))
+  {
+    header->pushStaticLinkForStackFrameStruct(&escapeNames, &escapeTypes);
+    escapeIsRef.push_back(true);
+  }
 
   /* Add types of the escaped parameters defined by this FuncDef to the escapeTypes vector */
-  header->pushEscapeTypesForStackFrameStruct(&escapeTypes);
+  header->pushFieldsForStackFrameStruct(&escapeNames, &escapeTypes, &escapeIsRef);
 
   /* Add types of the escaped variables defined by this FuncDef to the escapeTypes vector */
   for(LocalDef *i : *local_defs)
   {
     /* Check if this local def is a vardef */
     VarDef *var_def = dynamic_cast<VarDef*>(i);
-    if(var_def) var_def->pushEscapeTypesForStackFrameStruct(&escapeTypes);
+    if(var_def)
+    {
+      var_def->pushFieldsForStackFrameStruct(&escapeNames, &escapeTypes);
+      escapeIsRef.push_back(false);
+    }
   }
 
   /* We use StructType::create instead of StructType::get to create a named struct
    * The unique name of the stack frame will be "sf_" + the mangled function name.
    * example: sf_f_14 
    */
-  std::string stack_frame_type_name = getStackFrameStructName(header->getMangledName());
+  std::string stack_frame_type_name = getStackFrameStructName(mangled_name);
   return llvm::StructType::create(TheContext, escapeTypes, stack_frame_type_name);
 }
 
 void FuncDef::createStackFrame(llvmType *stack_frame_type)
 {
-  std::string stack_frame_name = getStackFrameName(header->getMangledName());
+  std::string stack_frame_name = getStackFrameName(mangled_name);
   /* Allocate memory for the stack frame struct */
   llvmAddr alloca = Builder.CreateAlloca(stack_frame_type, nullptr, stack_frame_name);  
   /* Add stack frame to the variable map */
   varMap[stack_frame_name] = alloca;  
+}
+
+void FuncDef::populateStackFrame()
+{
+  /* address of current stack frame */
+  llvmAddr    stack_frame_addr = varMap[getStackFrameName(mangled_name)];
+  /* type of current stack frame */
+  llvmType   *stack_frame_type = llvm::StructType::getTypeByName(TheContext, getStackFrameStructName(mangled_name));
+
+  /* Iterate over every field of our stack frame structure */
+  unsigned int stack_frame_fields_cnt = escapeNames.size();
+  for (unsigned int idx = 0; idx < stack_frame_fields_cnt; idx++)
+  {
+    /* get address of the stack frame's field we will populate in this iteration */
+    llvmAddr stack_frame_field_addr = Builder.CreateStructGEP(stack_frame_type, stack_frame_addr, idx);
+    llvmAddr escape_var_addr;
+    
+    /* get the address at which the escape var is stored */
+    if(!escapeIsRef[idx]) escape_var_addr = varMap[escapeNames[idx]];
+    else escape_var_addr = Builder.CreateLoad(escapeTypes[idx], varMap[escapeNames[idx]]);
+
+    /* store the address of the escape var in the stack frame field */
+    Builder.CreateStore(escape_var_addr ,stack_frame_field_addr);
+  }
 }
