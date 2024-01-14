@@ -88,12 +88,17 @@ llvm::Function* Header::compile()
   for (FParDef *p: *fpar_defs)
     p->compile(&mangled_param_names, &param_types);
 
-  /* Get function return type */
-  llvmType *rt = getLLVMType(ret_type);
-  /* Make the function type - example: void(int,char) */
-  llvm::FunctionType *ft = llvm::FunctionType::get(rt, param_types, false);
-  /* Create function */
-  llvm::Function *f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, mangled_name, TheModule.get());
+  /* Check whether function f has already been created due to forward declaration */
+  llvm::Function *f = TheModule->getFunction(mangled_name);
+  if (!f)
+  {
+    /* Get function return type */
+    llvmType *rt = getLLVMType(ret_type);
+    /* Make the function type - example: void(int,char) */
+    llvm::FunctionType *ft = llvm::FunctionType::get(rt, param_types, false);
+    /* Create function */
+    f = llvm::Function::Create(ft, llvm::Function::ExternalLinkage, mangled_name, TheModule.get()); 
+  }
 
   return f;
 }
