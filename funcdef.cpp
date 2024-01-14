@@ -58,11 +58,7 @@ llvm::Function* FuncDef::compile()
 {
   /* Header */
   std::string mangled_name = header->getMangledName();
-  llvm::Function *f = TheModule->getFunction(mangled_name);
-
-  /* f is not nullptr when the header is already compiled due to a forward declaration */
-  if (!f)
-    f = header->compile();
+  llvm::Function *f = header->compile();
 
   if (!f)
     return nullptr;
