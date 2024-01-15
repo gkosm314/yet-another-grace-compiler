@@ -1,11 +1,14 @@
 fun p(): nothing
     fun f() : int
     {
-        return 1;
-        writeString("This should not be printed");
+        writeInteger(100);
+        writeChar('\n');
+        return 200;
+        writeInteger(300);
     }
 {
     writeInteger(f());
+    writeChar('\n');
 }
 
-$ 1;
+$ 100, 200
