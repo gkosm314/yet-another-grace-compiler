@@ -48,9 +48,6 @@ void Return::sem()
    *  - avoid generating code for statements that follow */
   return_stack.setFound();
 
-  /* If the function has already returned we should not generate code */
-  checkIfStmtIsAfterReturn();
-
   llmv_type = getLLVMType(expected_ret_type);
 }
 

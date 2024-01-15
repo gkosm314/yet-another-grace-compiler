@@ -12,9 +12,6 @@ void While::sem()
 {
   cond->type_check(typeBoolean);
   stmt->sem();
-
-  /* If the function has already returned we should not generate code */
-  checkIfStmtIsAfterReturn();  
 }
 
 llvm::Value* While::compile()

@@ -11,12 +11,6 @@ extern ReturnStack return_stack;
 class Stmt : public AST
 {
   public:
-  protected:
-    bool generate_code = true; /* By default we generate code for a statement*/
-    void checkIfStmtIsAfterReturn()
-    {
-      if(return_stack.returnFound()) generate_code = false;
-    }
 };
 
 #endif

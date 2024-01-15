@@ -15,9 +15,7 @@ extern "C" {
  * We pop the ret_type from the stack when the definition (or declaration) finishes.
  *
  * We also keep track of whether a return statement was already found in the function.
- * We do this in order to:
- *     - ensure that non-void functions include a return statement
- *     - not generate code for statements that should be skipped
+ * We do this in order to ensure that non-void functions include a return statement.
  */
 class ReturnStack
 {

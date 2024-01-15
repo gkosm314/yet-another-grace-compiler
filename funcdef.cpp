@@ -44,10 +44,6 @@ void FuncDef::sem()
     if(!return_stack.returnFound()) semError("Non-void function should have return statement.");
   }
 
-  /* Mark the function as void without a return statement inside its body - we need this for codegen*/
-  if(equalType(header->getReturnType(), typeVoid))
-    if(!return_stack.returnFound()) void_ret_type_without_ret_stmt = true;
-
   /* The new scope is opened inside header->sem() */
   return_stack.pop();
   closeScope();
@@ -91,9 +87,14 @@ llvm::Function* FuncDef::compile()
   /* Compile body */
   block->compile();
   
-  /* Create return value for void function without return statement inside its body */
-  if(void_ret_type_without_ret_stmt)
-    Builder.CreateRetVoid();
+  /* If the exit basic block does not have a return statement at the end, add one */
+  if(!Builder.GetInsertBlock()->getTerminator())
+  {
+    if(equalType(header->getReturnType(), typeInteger) || equalType(header->getReturnType(), typeChar))
+      Builder.CreateRet(c64(0));
+    else
+      Builder.CreateRetVoid();
+  }
 
   llvm::verifyFunction(*f);
   return f;
