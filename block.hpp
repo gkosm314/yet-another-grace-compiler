@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "stmt.hpp"
+#include "return.hpp"
 
 /* A vector of statements */ 
 class Block : public Stmt

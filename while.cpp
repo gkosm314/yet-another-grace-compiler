@@ -35,8 +35,12 @@ llvm::Value* While::compile()
   /* Compile body */
   Builder.SetInsertPoint(WhileBodyBB);
   stmt->compile();
-  /* Jump to condition in order to re-evaluate it */
-  Builder.CreateBr(WhileCondBB);
+  /* If the compiled stmt is a return statement or a block that contains a return statement,
+   * then appending a "br" is useless and will lead to invalid LLVM IR
+   * because the "WhileBodyBB" BasicBlock will have two terminators */  
+  if(!stmt->willReturn())
+    /* Jump to condition in order to re-evaluate it */
+    Builder.CreateBr(WhileCondBB);
 
   /* Setup compilation for the code that follows after the while-statement*/
   Builder.SetInsertPoint(AfterWhileBB);

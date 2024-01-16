@@ -24,8 +24,22 @@ void Block::sem()
   for (Stmt *s : stmt_list) s->sem();
 }
 
-llvm::Value* Block::compile() {
+llvm::Value* Block::compile()
+{
   for (Stmt *s : stmt_list)
+  {
     s->compile();
+    
+    /* If the statement you just compiled is a return statement: 
+     *    - do not compile anything else in this block 
+     *    - block will return (useful to avoid inserting a reduntant branch when exiting an if/else/while)
+     */
+    if(dynamic_cast<Return*>(s))
+    {
+      will_return = true;
+      break;
+    }
+  }
+
   return nullptr;
 }

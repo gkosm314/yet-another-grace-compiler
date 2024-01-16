@@ -11,6 +11,9 @@ extern ReturnStack return_stack;
 class Stmt : public AST
 {
   public:
+    bool willReturn() { return will_return; }
+  protected:
+    bool will_return = false;
 };
 
 #endif

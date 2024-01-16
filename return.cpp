@@ -3,7 +3,10 @@
 #include "lexer.hpp"
 #include "symbol.h"
 
-Return::Return(Expr *e) : expr(e) {}
+Return::Return(Expr *e) : expr(e)
+{
+  will_return = true;
+}
 
 Return::~Return() { 
   delete expr;

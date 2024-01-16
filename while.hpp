@@ -3,6 +3,7 @@
 
 #include "stmt.hpp"
 #include "condition.hpp"
+#include "return.hpp"
 
 class While : public Stmt 
 {
