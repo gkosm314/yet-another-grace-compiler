@@ -24,7 +24,6 @@ class FuncDef : public LocalDef
     Header *header;
     std::vector<LocalDef*> *local_defs;
     Block *block;
-    bool void_ret_type_without_ret_stmt = false;
 
     std::string mangled_name;
 

@@ -3,7 +3,10 @@
 #include "lexer.hpp"
 #include "symbol.h"
 
-Return::Return(Expr *e) : expr(e) {}
+Return::Return(Expr *e) : expr(e)
+{
+  will_return = true;
+}
 
 Return::~Return() { 
   delete expr;
@@ -47,9 +50,6 @@ void Return::sem()
    *  - check if the function has a return statement (for non-void functions)
    *  - avoid generating code for statements that follow */
   return_stack.setFound();
-
-  /* If the function has already returned we should not generate code */
-  checkIfStmtIsAfterReturn();
 
   llmv_type = getLLVMType(expected_ret_type);
 }

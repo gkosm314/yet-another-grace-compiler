@@ -12,8 +12,6 @@ void Assign::sem()
 {
   /* We check that lval is not a function inside lval->sem() */
   if (!check_assignable_operands(lval, expr)) semError("Bad types (assign)");
-  /* If the function has already returned we should not generate code */
-  checkIfStmtIsAfterReturn();
 }
 
 llvm::Value* Assign::compile()

@@ -14,10 +14,7 @@ void If::sem()
 {
   cond->type_check(typeBoolean);
   stmt1->sem();
-  if (stmt2 != nullptr) stmt2->sem();
-
-  /* If the function has already returned we should not generate code */
-  checkIfStmtIsAfterReturn();  
+  if (stmt2 != nullptr) stmt2->sem();  
 }
 
 llvm::Value* If::compile() 
@@ -39,13 +36,21 @@ llvm::Value* If::compile()
   /* Compile "then" */
   Builder.SetInsertPoint(ThenBB);
   stmt1->compile();
-  Builder.CreateBr(AfterBB);
+  /* If the compiled stmt is a return statement or a block that contains a return statement,
+   * then appending a "br" is useless and will lead to invalid LLVM IR
+   * because the "ThenBB" BasicBlock will have two terminators */
+  if(!stmt1->willReturn())
+    Builder.CreateBr(AfterBB);
 
   /* Compile "else" */
   Builder.SetInsertPoint(ElseBB);
   if (stmt2 != nullptr)
     stmt2->compile();
-  Builder.CreateBr(AfterBB);
+  /* If the compiled stmt is a return statement or a block that contains a return statement,
+   * then appending a "br" is useless and will lead to invalid LLVM IR
+   * because the "ElseBB" BasicBlock will have two terminators */
+  if (!stmt2 || !stmt2->willReturn())
+    Builder.CreateBr(AfterBB);
 
   /* Setup compilation for the code that follows after the if-statement */
   Builder.SetInsertPoint(AfterBB);
