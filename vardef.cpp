@@ -65,6 +65,10 @@ void VarDef::pushFieldsForStackFrameStruct(std::vector<std::string> *names, std:
     {
       names->push_back(mangled_name);
       types->push_back(t);
+      
+      /* keep the pos of the variable inside the stack frame so that you know where to look for it
+       * the position of the variable is the position of the type you just push_backed */
+      stackframePos[mangled_name] = types->size() - 1;
     }
   }  
 }

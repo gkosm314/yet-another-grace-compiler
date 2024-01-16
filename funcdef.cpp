@@ -140,6 +140,10 @@ llvmType * FuncDef::generateStackFrameStruct()
   {
     header->pushStaticLinkForStackFrameStruct(&escapeNames, &escapeTypes);
     escapeIsRef.push_back(true);
+
+    /* keep the index of the variable inside the stack frame so that you know where to look for it */
+    /* assumption: static link to the stack frame of the outer function is the first field of our stack frame*/
+    stackframePos["static_link_" + mangled_name] = 0;
   }
 
   /* Add types of the escaped parameters defined by this FuncDef to the escapeTypes vector */
@@ -195,8 +199,5 @@ void FuncDef::populateStackFrame()
 
     /* store the address of the escape var in the stack frame field */
     Builder.CreateStore(escape_var_addr ,stack_frame_field_addr);
-
-    /* keep the index of the variable inside the stack frame so that you know where to look for it */
-    stackframePos[escapeNames[idx]] = idx;
   }
 }
