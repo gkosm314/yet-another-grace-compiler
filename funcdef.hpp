@@ -38,6 +38,8 @@ class FuncDef : public LocalDef
     void createStackFrame(llvmType *stack_frame_type);
     void populateStackFrame();
     llvmType * generateStackFrameStruct();
+
+    void optimize(llvm::Function *f);
 };
 
 #endif

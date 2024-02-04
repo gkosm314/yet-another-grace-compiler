@@ -120,6 +120,9 @@ llvm::Function* FuncDef::compile()
       Builder.CreateRetVoid();
   }
 
+  if(run_optimizations)
+    optimize(f);
+
   llvm::verifyFunction(*f);
   return f;
 }
@@ -200,4 +203,9 @@ void FuncDef::populateStackFrame()
     /* store the address of the escape var in the stack frame field */
     Builder.CreateStore(escape_var_addr ,stack_frame_field_addr);
   }
+}
+
+void FuncDef::optimize(llvm::Function *f)
+{
+  TheFPM->run(*f);   
 }

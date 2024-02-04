@@ -168,7 +168,9 @@ void semInitLibraryFunctions()
 
 llvm::LLVMContext TheContext;
 llvm::IRBuilder<> Builder(TheContext);
+std::unique_ptr<llvm::legacy::FunctionPassManager> TheFPM;
 std::unique_ptr<llvm::Module> TheModule;
+
 llvmType *i8;
 llvmType *i32;
 llvmType *i64;
@@ -195,9 +197,8 @@ void codegenAddLibraryFunction(const char * func_name, llvmType* ret_type, const
   llvm::Function::Create(t, llvm::Function::ExternalLinkage, func_name, TheModule.get());
 }
 
-void codegenInitLibraryFunctions() {
-  TheModule = std::make_unique<llvm::Module>("grace program", TheContext);
- 
+void codegenInitLibraryFunctions()
+{
   /* Initialize types */
   i8 = llvm::IntegerType::get(TheContext, 8);
   i32 = llvm::IntegerType::get(TheContext, 32);
@@ -221,6 +222,31 @@ void codegenInitLibraryFunctions() {
   codegenAddLibraryFunction("strcpy", voidTy, std::vector<llvmType*>{llvm::PointerType::get(i8, 0), llvm::PointerType::get(i8, 0)});
   codegenAddLibraryFunction("strcat", voidTy, std::vector<llvmType*>{llvm::PointerType::get(i8, 0), llvm::PointerType::get(i8, 0)});
 
+}
+
+void codegenInitFPM()
+{
+  TheFPM = std::make_unique<llvm::legacy::FunctionPassManager>(TheModule.get());
+  
+  if (run_optimizations)
+  {
+    /* Promote memory to registers */
+    TheFPM->add(llvm::createPromoteMemoryToRegisterPass());
+    /* Simple "peephole" optimizations */
+    TheFPM->add(llvm::createInstructionCombiningPass());
+    /* Reassociate expressions */
+    TheFPM->add(llvm::createReassociatePass());
+    /* Function-level constant propagation and merging */
+    TheFPM->add(llvm::createSCCPPass());
+    /* Eliminate common subexpressions */
+    TheFPM->add(llvm::createGVNPass());
+    /* Dead code elimination*/
+    TheFPM->add(llvm::createDeadCodeEliminationPass());
+    /* Delete unreachable blocks */
+    TheFPM->add(llvm::createCFGSimplificationPass());
+  }
+  
+  TheFPM->doInitialization();
 }
 
 void codegenMain(llvm::Function* program_func)

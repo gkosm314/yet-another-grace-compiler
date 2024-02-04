@@ -18,6 +18,7 @@ Type toType(DATA_TYPE datatype_arg);
 
 extern llvm::LLVMContext TheContext;
 extern llvm::IRBuilder<> Builder;
+extern std::unique_ptr<llvm::legacy::FunctionPassManager> TheFPM;
 extern std::unique_ptr<llvm::Module> TheModule;
 
 typedef llvm::Type llvmType;
@@ -32,6 +33,7 @@ llvm::ConstantInt* c32(int n);
 llvm::ConstantInt* c64(int n);
 
 void codegenInitLibraryFunctions();
+void codegenInitFPM();
 void codegenMain(llvm::Function* program_func);
 
 std::string mangle(const char * name, unsigned int scope_id);

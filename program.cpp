@@ -16,11 +16,12 @@ void Program::sem()
 
 llvm::Value* Program::compile()
 {
+  TheModule = std::make_unique<llvm::Module>("grace program", TheContext);
+  codegenInitFPM();
   codegenInitLibraryFunctions();
   
   /* Compile program */
   llvm::Function* program = fd->compile();
-  
   codegenMain(program);
 
   /* Verify the IR */

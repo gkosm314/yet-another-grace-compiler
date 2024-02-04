@@ -4,9 +4,14 @@
 #include <iostream>
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/LegacyPassManager.h>
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 #include <llvm/IR/Verifier.h>
+#include <llvm/Transforms/InstCombine/InstCombine.h>
+#include <llvm/Transforms/Scalar.h>
+#include <llvm/Transforms/Scalar/GVN.h>
+#include <llvm/Transforms/Utils.h>
 
 #include <set>
 
@@ -82,5 +87,7 @@ std::ostream &operator<<(std::ostream &out, const AST &ast);
 std::ostream &operator<<(std::ostream &out, const Type &t);
 void yyerror(const char *msg);
 Type toType(DATA_TYPE datatype_arg);
+
+extern bool run_optimizations;
 
 #endif
