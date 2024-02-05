@@ -227,19 +227,30 @@ void codegenInitLibraryFunctions()
 void codegenInitFPM()
 {
   TheFPM = std::make_unique<llvm::legacy::FunctionPassManager>(TheModule.get());
-  
   if (run_optimizations)
   {
+    /* Analysis passes used by the transform passes */
+    TheFPM->add(llvm::createTypeBasedAAWrapperPass());
+    TheFPM->add(llvm::createBasicAAWrapperPass());
+    
+    /* Initial CFGS simplification pass */
+    TheFPM->add(llvm::createCFGSimplificationPass());    
+    /* Scalar Replacement of Aggregates */
+    TheFPM->add(llvm::createSROAPass());
     /* Promote memory to registers */
     TheFPM->add(llvm::createPromoteMemoryToRegisterPass());
+    /* Eliminates trivially redundant computations */
+    TheFPM->add(llvm::createEarlyCSEPass());
     /* Simple "peephole" optimizations */
     TheFPM->add(llvm::createInstructionCombiningPass());
     /* Reassociate expressions */
     TheFPM->add(llvm::createReassociatePass());
-    /* Function-level constant propagation and merging */
-    TheFPM->add(llvm::createSCCPPass());
     /* Eliminate common subexpressions */
     TheFPM->add(llvm::createGVNPass());
+    /* Propagate conditionals */
+    TheFPM->add(llvm::createCorrelatedValuePropagationPass());
+    /* Function-level constant propagation and merging */
+    TheFPM->add(llvm::createSCCPPass());
     /* Dead code elimination*/
     TheFPM->add(llvm::createDeadCodeEliminationPass());
     /* Delete unreachable blocks */

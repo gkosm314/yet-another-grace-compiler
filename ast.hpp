@@ -2,6 +2,8 @@
 #define __AST_HPP__ 
 
 #include <iostream>
+#include "llvm/Analysis/BasicAliasAnalysis.h"
+#include "llvm/Analysis/TypeBasedAliasAnalysis.h"
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LegacyPassManager.h>
