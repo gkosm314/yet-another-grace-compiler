@@ -158,10 +158,7 @@ llvmType * FuncDef::generateStackFrameStruct()
     /* Check if this local def is a vardef */
     VarDef *var_def = dynamic_cast<VarDef*>(i);
     if(var_def)
-    {
-      var_def->pushFieldsForStackFrameStruct(&escapeNames, &escapeTypes);
-      escapeIsRef.push_back(false);
-    }
+      var_def->pushFieldsForStackFrameStruct(&escapeNames, &escapeTypes, &escapeIsRef);
   }
 
   /* We use StructType::create instead of StructType::get to create a named struct

@@ -53,7 +53,7 @@ llvm::Value* VarDef::compile()
   return nullptr; 
 }
 
-void VarDef::pushFieldsForStackFrameStruct(std::vector<std::string> *names, std::vector<llvmType*> *types)
+void VarDef::pushFieldsForStackFrameStruct(std::vector<std::string> *names, std::vector<llvmType*> *types, std::vector<bool> *isref)
 {
   /* The stack frame only contains references to the variables */
   llvmType* t = llvm::PointerType::get(getLLVMType(var_type), 0);
@@ -65,6 +65,9 @@ void VarDef::pushFieldsForStackFrameStruct(std::vector<std::string> *names, std:
     {
       names->push_back(mangled_name);
       types->push_back(t);
+      
+      /* variables defined in this function are never pointers */
+      isref->push_back(false);
       
       /* keep the pos of the variable inside the stack frame so that you know where to look for it
        * the position of the variable is the position of the type you just push_backed */

@@ -17,7 +17,7 @@ class VarDef : public LocalDef
     llvm::Value* compile() override;
 
     virtual void setOuterFunc(std::string outer_func_mangled_name) override {};
-    void pushFieldsForStackFrameStruct(std::vector<std::string> *names, std::vector<llvmType*> *types);
+    void pushFieldsForStackFrameStruct(std::vector<std::string> *names, std::vector<llvmType*> *types, std::vector<bool> *isref);
 
   private:
     std::vector<Id*> *ids; // Will never be nullptr by construction of parser
