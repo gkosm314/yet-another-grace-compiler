@@ -53,9 +53,16 @@ void FuncCall::sem()
     if(current_argument->u.eParameter.mode == PASS_BY_REFERENCE)
     {
       /* Check that pass-by-reference parameter receives a lvalue as argument */
-      if(!e->isLvalue()) semError("Parameter defined as pass-by-reference requires an lvalue.");
+      AbstractLvalue *lval = dynamic_cast<AbstractLvalue*>(e);
+      bool autocompletedRealParam = false;
 
-      if(current_argument->u.eParameter.type->autocompleteSize)
+      if(!lval) semError("Parameter defined as pass-by-reference requires an lvalue.");
+      else autocompletedRealParam = lval->hasAutocompleteDimension();
+
+      /* If either the typical or the real parameter have autocompleted dimension,
+       * we have to perform a bitcast during the codegen of parameter passing to make the LLVM types match
+       */
+      if(current_argument->u.eParameter.type->autocompleteSize || autocompletedRealParam)
         parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE);
       else
         parameters_pass_mode.push_back(FUNC_CALL_ARG_PASS_BY_REF);

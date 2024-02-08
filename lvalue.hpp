@@ -15,6 +15,8 @@ class LValue : public AbstractLvalue
     llvm::Value* compile() override;
     llvmAddr findLLVMAddr() override;
     llvmAddr findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t) override;
+    
+    bool hasAutocompleteDimension() override;
 
   private:
     Id *id;

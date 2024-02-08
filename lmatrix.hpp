@@ -15,6 +15,8 @@ class LMatrix : public AbstractLvalue
     llvmAddr findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t) override;
     llvmAddr findLLVMAddr() override;
 
+    bool hasAutocompleteDimension() override;
+
   private:
     AbstractLvalue *lvalue;
     Expr *expr;

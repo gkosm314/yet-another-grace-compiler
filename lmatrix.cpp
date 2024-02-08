@@ -80,3 +80,8 @@ llvm::Value* LMatrix::compile()
   /* TODO: maybe change to return llvmAddr if this is not a int/char element */
   return Builder.CreateLoad(getLLVMType(expr_type), var_addr);    
 }
+
+bool LMatrix::hasAutocompleteDimension()
+{
+    return lvalue->hasAutocompleteDimension();
+}

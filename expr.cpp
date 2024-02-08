@@ -26,11 +26,6 @@ void Expr::type_check_param(Type expected_type)
     }
 }
 
-bool Expr::isLvalue()
-{
-    return false;
-}
-
 bool check_assignable_operands(Expr *left, Expr *right)
 {
   /* Either both operands will be integers or both operands will be chars. */

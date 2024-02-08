@@ -23,3 +23,8 @@ llvmAddr StrLit::findLLVMAddr()
 {
   return Builder.CreateGlobalStringPtr(llvm::StringRef(str));
 }
+
+bool StrLit::hasAutocompleteDimension()
+{
+    return false;
+}

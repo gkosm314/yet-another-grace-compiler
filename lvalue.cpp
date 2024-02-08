@@ -111,3 +111,8 @@ llvmAddr LValue::getAllocaAddrOfEscapeVar()
 
     return Builder.CreateStructGEP(stack_frame_type, stack_frame_addr, field_pos);
 }
+
+bool LValue::hasAutocompleteDimension()
+{
+    return isAutocompleteParam;
+}
