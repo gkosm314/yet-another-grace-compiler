@@ -19,6 +19,13 @@ void StrLit::sem()
   expr_type = typeArray(char_array_len, typeChar, false);
 }
 
+llvmAddr StrLit::findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t)
+{
+    /* end of the recursion - return the address and the type of the matrix */
+    *t = getLLVMType(expr_type);
+    return findLLVMAddr();
+}
+
 llvmAddr StrLit::findLLVMAddr()
 {
   return Builder.CreateGlobalStringPtr(llvm::StringRef(str));

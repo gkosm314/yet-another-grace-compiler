@@ -7,9 +7,8 @@
 class AbstractLvalue : public Expr
 {
   public:
-    /* TODO: think if this should be pure virtual (=0) */
-    virtual llvmAddr findLLVMAddr() { return nullptr; }
-    virtual llvmAddr findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t) { return nullptr; }
+    virtual llvmAddr findLLVMAddr() = 0;
+    virtual llvmAddr findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t) = 0;
     virtual bool hasAutocompleteDimension() = 0;
 };
 

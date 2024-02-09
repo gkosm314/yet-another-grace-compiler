@@ -13,6 +13,7 @@ class StrLit : public AbstractLvalue
     void printAST(std::ostream &out) const override;
     void sem() override;
     llvmAddr findLLVMAddr() override;
+    llvmAddr findLLVMAddrAux(std::vector<llvm::Value*> *offsets, llvmType ** t) override;
     bool hasAutocompleteDimension() override;
 
   private:
