@@ -5,7 +5,6 @@
 extern int yylineno;
 
 /* Maps the mangled name of each variable to the corresponding llvmAddr */
-/* TODO: rename to allocaMap */
 std::map<std::string, llvmAddr> varMap;
 
 /* This set contains the mangled names of variables that are escape variables.

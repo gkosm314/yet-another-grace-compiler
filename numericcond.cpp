@@ -38,8 +38,4 @@ llvm::Value* NumericCond::compile() {
         return nullptr;
       return nullptr;
     }  
-
-    // TODO: Check when implmenting if::compile whethe something like this is needed:
-    // Convert bool 0/1 to double 0.0 or 1.0
-    // return Builder->CreateUIToFP(L, Type::getDoubleTy(*TheContext), "booltmp");
 }

@@ -120,7 +120,7 @@ llvm::Value* FuncCall::compile() {
         break;
       case FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE:
         v = ((AbstractLvalue *) e)->findLLVMAddr();
-        /* TODO add comments*/
+        /* Change the type LLVM assumes for this array in order for it to match the autocompleted type */
         v = Builder.CreateBitCast(v, f->getFunctionType()->getParamType(current_param));
         break;
     }

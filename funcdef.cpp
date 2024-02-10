@@ -71,7 +71,6 @@ llvm::Function* FuncDef::compile()
   Builder.SetInsertPoint(BB);
 
   /* Allocate memory for function arguments */
-  /* TODO: validate this works okey after we added the static link in the vectors */
   unsigned int             current_arg         = 0;
   std::vector<std::string> mangled_param_names = header->getParamMangledNames();
   std::vector<llvmType*>   param_types         = header->getParamLLVMTypes();

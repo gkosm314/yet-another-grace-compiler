@@ -71,7 +71,6 @@ llvm::Value* FParDef::compile()
 llvm::Value* FParDef::compile(std::vector<std::string> * signature_mangled_names, std::vector<llvmType*> * signature_types)
 {
   /* Get LLVM type of argument */
-  /* TODO: check if this works only with simple types (autocomplete?) */
   llvmType* t;
   switch(pass_mode)
   {
