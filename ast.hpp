@@ -90,6 +90,7 @@ std::ostream &operator<<(std::ostream &out, const Type &t);
 void yyerror(const char *msg);
 Type toType(DATA_TYPE datatype_arg);
 
-extern bool run_optimizations;
+extern bool run_optimizations, emit_final_code_to_stdout, emit_imm_code_to_stdout;
+extern std::string filename;
 
 #endif
