@@ -42,7 +42,8 @@
 
 %code {
     #include "returnstack.hpp"
-    
+    #include <getopt.h>
+    extern FILE* yyin;
     ReturnStack return_stack;
 }
 
@@ -337,7 +338,7 @@ cond:
 
 %%
 
-int main() {
+int main(int argc, char *argv[]) {
   /* Initialize symbol table with hash table of size 256 */
   initSymbolTable(256);
   
@@ -349,7 +350,36 @@ int main() {
 
   /* Open program scope */
   openScope();
+  
+  emit_final_code_to_stdout = emit_imm_code_to_stdout = false;
   /* Perform parsing and semantic analysis */
+  int c;
+  while ((c = getopt (argc, argv, "fio")) != -1)
+  {
+    switch (c)
+      {
+      case 'f':
+        emit_final_code_to_stdout = true;
+        break;
+      case 'i':
+        emit_imm_code_to_stdout = true;
+        break;
+      case 'o':
+        run_optimizations = true;
+        break;
+      }
+  }
+  bool read_from_stdin = emit_final_code_to_stdout || emit_imm_code_to_stdout;
+  /* std::cout << "f flag: " << emit_final_code_to_stdout << " i flag: " <<  emit_imm_code_to_stdout << " o flag: " << run_optimizations << " Read from stdin: " << read_from_stdin << std::endl; */
+  if (!read_from_stdin)
+  {    
+    /* std::cout <<  "Reading from file: " << argv[argc-1] << std::endl;  */
+    FILE* fp = fopen(argv[argc-1], "r");
+    filename = argv[argc-1];
+    if(fp)
+      yyin = fp;
+  }
+  
   int result = yyparse();
   /* Close program scope */
   closeScope();

@@ -33,4 +33,5 @@ void AST::semError(const char *msg)
   exit(1);
 }
 
-bool run_optimizations = true;
+bool run_optimizations, emit_final_code_to_stdout, emit_imm_code_to_stdout;
+std::string filename;

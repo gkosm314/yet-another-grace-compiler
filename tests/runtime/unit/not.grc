@@ -2,4 +2,3 @@ fun main(): nothing
 {
     if not 1 > 0 then ;
 }
-
