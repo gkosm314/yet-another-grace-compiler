@@ -117,6 +117,9 @@ llvm::Value* FuncCall::compile() {
         break;
       case FUNC_CALL_ARG_PASS_BY_REF:
         v = ((AbstractLvalue *) e)->findLLVMAddr();
+        /* In case we want to pass a string to a fixed-length parameter (ref x:char[6])
+         * we have to cast the i8* pointer returned from llvm::CreateGlobalStrPtr to [6 x i8]* */
+        if(dynamic_cast<StrLit*>(e)) v = Builder.CreateBitCast(v, f->getFunctionType()->getParamType(current_param));
         break;
       case FUNC_CALL_ARG_PASS_BY_REF_WITH_AUTOCOMPLETE:
         v = ((AbstractLvalue *) e)->findLLVMAddr();

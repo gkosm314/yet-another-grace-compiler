@@ -6,6 +6,7 @@
 #include "lvalue.hpp"
 #include "expr.hpp"
 #include "id.hpp"
+#include "strlit.hpp"
 
 enum FUNC_CALL_ARG
 {
