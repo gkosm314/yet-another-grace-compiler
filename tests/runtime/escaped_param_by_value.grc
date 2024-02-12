@@ -7,7 +7,7 @@ fun p(): nothing
             {
                 writeInteger(x);
                 writeChar('\n');
-                x <- 99; _b
+                x <- 99;
                 writeInteger(x);
                 writeChar('\n');
             }     
