@@ -17,6 +17,26 @@ The project was developed using `llvm-12`.
 
 `make distclean` same as `make clean` but also deletes the `gracec` executable.
 
+## Testing
+
+An extensive testing suite is developed to assure  
+
+Tests are available in the `/tests` directory and are organized in the following way:
+
+- `lexical`: testing lexer
+- `optimizations`: testing optimization passes
+- `parser`: testing parser
+- `scope`: testing scopes
+- `type_checking`: testing types
+- `runtime`: testing code generation
+- `runtime/leetcode`: leetcode problems solved in `grace`
+- `runtime/repo`: tests from the [NTUA compilers repo](https://github.com/kostis/ntua_compilers/tree/master)
+- `runtime/unit`: unit tests
+
+The convention used in the naming of tests is that if a filename begins with `err` (e.g. `/tests/parser/err_arr_def_expr.grc`) the compilation should not be successfull.
+
+A utility script is provided in `tests/run_tests.sh` to automatically run the test suite (make sure you change the directory path at the beginning of a file)
+
 ## Using the gracec compiler
 
 The `gracec` executable can be used to produce intermediate and final code
