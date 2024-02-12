@@ -1,5 +1,5 @@
 #!/bin/bash
 
-./gracec -i < $1 > a.ll
-llc-12 -regalloc=pbqp a.ll -o a.s
-clang a.s libgrc.a -no-pie -o a.out
+./gracec -i -o < $1 > a.imm
+llc-12 -regalloc=pbqp a.imm -o a.asm
+clang a.asm libgrc.a -no-pie -o a.out

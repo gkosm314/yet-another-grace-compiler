@@ -31,16 +31,16 @@ The following flags are supported:
 
 If neither `-i` nor `-f` are set, the source code is read from a file, the path of which is the only argument passed to `gracec`. In that case, the intermediate code is place to a `.imm` file in the same path as the source code file. Same goes about the final code which is placed in a `.asm` file. For example, running `./gracec /tmp/buy_and_sell_stock.grc` will produce the files: `/tmp/buy_and_sell_stock.imm` and `/tmp/buy_and_sell_stock.asm`
 
-Setting both the `-i` and `-f` flags is not supported, since the output would consist of both intermediate and final code, making it confusing to read
+Setting both the `-i` and `-f` flags is not supported, since the output would consist of both intermediate and final code, making it confusing to read.
 
-The final code can then be compiled to an executable by a compiler like `clang`. Note that in this case a file containing the library calls should be linked, eg `libgrc.a`
+The final code can then be compiled to an executable by a compiler like `clang`. Note that in this case a file containing the library calls should be linked, eg `libgrc.a`.
 
-Additionally, the intermediate code can be compiled to final code using llc. This is useful in case additional passes or params are to be added to llvm via llc
+Additionally, the intermediate code can be compiled to final code using llc. This is useful in case additional passes or params are to be added to llvm via llc.
 
-An example workflow as provided in `do.sh`:
+An example workflow as provided in `do.sh` (invoked as `./do.sh PATH/TO/GRC/FILE`):
 
 ```
-./gracec -i < PATH/TO/GRC/FILE > a.imm
+./gracec -i -o < $1 > a.imm
 llc-12 -regalloc=pbqp a.imm -o a.asm
 clang a.asm libgrc.a -no-pie -o a.out
 ```
